@@ -219,6 +219,8 @@ Veb panel (Blade, qurilish bosqichisiz): **Dashboard** (foydalanuvchilar, faol t
 
 **AI biznes yordamchi (Pro):** `POST /ai/assistant {message, history?}` → `{reply, tools_used}`. Claude foydalanuvchining haqiqiy ma'lumotlarini faqat-o'qish vositalari orqali so'raydi (`sales_summary`, `top_products`, `overdue_debts`, `low_stock`, `customer_debt`, `expenses_summary`), hisobni o'zi o'ylab topmaydi; boshqa foydalanuvchilar ma'lumotiga kira olmaydi va hech narsani o'zgartirmaydi (yozuvchi amallar — ovozli boshqaruvda tasdiq bilan). Sikl 5 qadam bilan cheklangan; 20 so'rov/daqiqa.
 
+**Excel/PDF eksport (Pro):** `GET /exports/{type}?format=xlsx|pdf&from=&to=` (`from/to` bo'lmasa — oxirgi 30 kun). `type`: `report` (umumiy ko'rsatkichlar + kunlar + top mahsulotlar), `sales`, `expenses`, `debts` (ochiq qarzlar), `inventory` (ombor qoldig'i va qiymati). Excel — `openspout/openspout`, PDF — `dompdf/dompdf` (DejaVu Sans: lotin va kirill); sarlavhalar `Accept-Language` bo'yicha uz/ru. Talab: `ext-zip`, `ext-xmlreader`, `ext-gd` (PDF uchun `ext-mbstring`, `ext-dom`).
+
 ### Ochiq sayt (`/`)
 
 Minimalist, bir sahifali sayt (uz/ru, `?lang=ru`): xizmat imkoniyatlari, qanday boshlash, **tariflar (bazadagi joriy narxlar)**, referal dasturi, savol-javob va **ariza formasi**. Yuklab olish tugmalari `SITE_APP_ANDROID_URL` / `SITE_APP_IOS_URL` berilganda chiqadi; aloqa ma'lumotlari `SUPPORT_*` dan olinadi.

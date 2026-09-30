@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\V1\CustomerController;
 use App\Http\Controllers\Api\V1\DebtController;
 use App\Http\Controllers\Api\V1\DeviceController;
 use App\Http\Controllers\Api\V1\ExpenseController;
+use App\Http\Controllers\Api\V1\ExportController;
 use App\Http\Controllers\Api\V1\InfoController;
 use App\Http\Controllers\Api\V1\InventoryController;
 use App\Http\Controllers\Api\V1\NotificationController;
@@ -87,6 +88,7 @@ Route::middleware(['auth:sanctum', 'not_blocked'])->group(function () {
 
     // Pro: ovozli boshqaruv / AI yordamchi
     Route::post('ai/voice', [AiController::class, 'voice'])->middleware(['plan:pro', 'throttle:30,1']);
+    Route::get('exports/{type}', [ExportController::class, 'download'])->middleware(['plan:pro', 'throttle:20,1']);
     Route::post('ai/assistant', [AiController::class, 'assistant'])->middleware(['plan:pro', 'throttle:20,1']);
     Route::post('ai/ocr-import', [AiController::class, 'ocr'])->middleware(['plan:pro', 'throttle:10,1']);
     Route::post('ai/ocr-import/confirm', [AiController::class, 'ocrConfirm'])->middleware(['plan:pro', 'throttle:20,1']);

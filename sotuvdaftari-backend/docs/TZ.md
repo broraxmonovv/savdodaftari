@@ -458,3 +458,7 @@ Ochiq sayt (`/`, uz/ru): xizmat haqida ma'lumot, tariflar (bazadan), referal das
 ### 41.2 AI biznes yordamchi
 
 `POST /ai/assistant` (Pro): savol-javob ("Bugun qancha foyda qildim?", "Kimlarning qarzi muddati o'tgan?", "Qaysi mahsulot eng ko'p foyda berdi?", "10 dona kam qolgan mahsulotlarni ko'rsat"). Javoblar faqat foydalanuvchining haqiqiy ma'lumotlariga asoslanadi (Claude tool use, faqat o'qish).
+
+### 41.3 Excel/PDF eksport (Pro)
+
+`GET /exports/{type}` — hisobot, savdolar, xarajatlar, qarzlar va ombor ro'yxatini Excel (.xlsx) yoki PDF ko'rinishida yuklab olish; davr `from/to` bilan tanlanadi.
