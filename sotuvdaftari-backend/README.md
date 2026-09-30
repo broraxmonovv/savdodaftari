@@ -233,6 +233,22 @@ Yangi foydalanuvchi ro'yxatdan o'tganda **14 kunlik bepul Standart** (savdo va o
 
 **Zaxira va tiklash (Pro):** `GET/POST /backups`, `GET /backups/{id}` (payload), `DELETE /backups/{id}` va **`POST /backups/{id}/restore {confirm: true}`** — ma'lumotlar (mijoz, qarz, mahsulot, savdo, qaytarish, harakat, xarajat) zaxiradagi holatga qaytariladi, asl ID'lar saqlanadi. Xavfsizlik: checksum tekshiriladi, avval joriy holatning avtomatik zaxirasi olinadi (qaytish nuqtasi), almashtirish bitta tranzaksiyada, boshqa foydalanuvchilarga tegilmaydi.
 
+### Reklama bannerlari, profil rasmi, qarz SMS eslatmalari
+
+- **Reklama karuseli** (`/admin/banners`): sarlavha, havola (faqat http/https), rasm (tavsiya 1200×500), necha kun ko'rsatilishi (bo'sh = cheksiz), o'chirib qo'yish / yoqish, muddatni uzaytirish va o'chirish. Ilova `GET /api/v1/banners` orqali faqat faol va muddati tugamaganlarini oladi, bosilganda `POST /api/v1/banners/{id}/click` statistikasi yuboriladi.
+- **Profil rasmi**: `POST /api/v1/auth/avatar` (multipart `avatar`, rasm, ≤3 MB) va `DELETE /api/v1/auth/avatar`; `GET /auth/me` da `avatar_url`.
+- **Rasmlar ko'rinishi uchun** bir marta `php artisan storage:link` bajaring va `.env` da `APP_URL` ni haqiqiy manzilga sozlang (rasm URL'lari shundan yasaladi).
+- **Qarz SMS eslatmalari** (`php artisan debts:sms-reminders`, har kuni 10:00): muddatiga 1 kun qolganda (bir marta) va muddati o'tgach (birinchi kuni, so'ng har `SMS_OVERDUE_REPEAT_DAYS`=7 kunda). Bir mijozning bir nechta qarzi bitta SMS'da jamlanadi. Matn do'kon egasi tilida (uz/ru): *"Assalomu alaykum {Ism}, Sizning {Do'kon} do'kondan, {Egasi} dan {summa} so'm qarzingiz bor va berish muddati o'tib ketti. Tezroq to'lashingizni so'raymiz."* Do'kon egasi sozlamalardan o'chirib qo'yishi mumkin (`users.sms_reminders`). Sinash: `php artisan debts:sms-reminders --dry-run`.
+  Haqiqiy SMS uchun `.env`: `SMS_DRIVER=eskiz` va Eskiz kalitlari; serverda scheduler ishlab turishi shart (`* * * * * php artisan schedule:run`).
+
+### Payme / Click sinovi
+
+- Payme kabinetida "account" maydoni kaliti `order_id` (ilovada foydalanuvchiga uz: **Buyurtma ID** / ru: **ID заказа** deb ko'rsatiladi). Kabinetda boshqa nom (`byurtma_id` yoki `zakaz_id`) qo'yilgan bo'lsa `.env` ga `PAYME_ACCOUNT_FIELD=byurtma_id` yozing — webhook uchala kalitni ham qabul qiladi.
+- `.env`: `PAYME_MERCHANT_ID`, `PAYME_KEY` (kassa kaliti; sinov uchun test kaliti), sinov muhiti uchun `PAYME_CHECKOUT_URL=https://test.paycom.uz`. Webhook manzili: `https://<domen>/api/v1/webhooks/payme` (Basic auth: `Paycom:<kalit>`).
+- Amalga oshirilgan: CheckPerformTransaction, CreateTransaction (12 soatlik timeout), PerformTransaction, CancelTransaction, CheckTransaction, GetStatement; xatolar `ru/uz/en` ko'rinishida. Payme "Sandbox"da "Test" tugmasi shu endpoint'ni chaqiradi.
+- Click: `CLICK_SERVICE_ID`, `CLICK_MERCHANT_ID`, `CLICK_SECRET_KEY`; Prepare/Complete manzili `https://<domen>/api/v1/webhooks/click`.
+- Lokal tekshirish: `vendor/bin/phpunit --filter BillingTest`.
+
 ### Ochiq sayt (`/`)
 
 Minimalist, bir sahifali sayt (uz/ru, `?lang=ru`): xizmat imkoniyatlari, qanday boshlash, **tariflar (bazadagi joriy narxlar)**, referal dasturi, savol-javob va **ariza formasi**. Yuklab olish tugmalari `SITE_APP_ANDROID_URL` / `SITE_APP_IOS_URL` berilganda chiqadi; aloqa ma'lumotlari `SUPPORT_*` dan olinadi.
