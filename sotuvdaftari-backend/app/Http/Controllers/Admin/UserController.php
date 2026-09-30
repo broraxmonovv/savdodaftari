@@ -84,7 +84,8 @@ class UserController extends Controller
         $user = User::where('is_admin', false)->findOrFail($id);
 
         $user->forceFill(['blocked_at' => now(), 'block_reason' => $data['reason'] ?? null])->save();
-        $user->tokens()->delete(); // barcha qurilmalardan chiqarib yuboriladi
+        // Tokenlar saqlanadi: har bir so'rov 403 `account_blocked` (sabab bilan) qaytaradi va
+        // ilova bloklanganlik ekranini ko'rsatadi. EnsureNotBlocked barcha himoyalangan yo'llarda ishlaydi.
 
         return back()->with('status', 'Foydalanuvchi bloklandi.');
     }

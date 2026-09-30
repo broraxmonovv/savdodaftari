@@ -432,6 +432,6 @@ Pro tarifni faollashtirish to'liq backend API orqali, checkout sahifasiga o'tish
 
 ## 39. Admin panel
 
-Veb admin panel (`/admin`, sessiya orqali, faqat `is_admin`): dashboard, foydalanuvchilar ro'yxati va profili (bloklash, qo'lda tarif, ilovadagi ma'lumotlarni ko'rish), tariflar narxini yangilash (tariflar `plans` jadvalida), bonusni yechib olish so'rovlari, bildirishnomalar (hammaga / tarif bo'yicha / bitta foydalanuvchiga). Bloklangan foydalanuvchi tizimga kira olmaydi va barcha qurilmalardan chiqariladi.
+Veb admin panel (`/admin`, sessiya orqali, faqat `is_admin`): dashboard, foydalanuvchilar ro'yxati va profili (bloklash, qo'lda tarif, ilovadagi ma'lumotlarni ko'rish), tariflar narxini yangilash (tariflar `plans` jadvalida), bonusni yechib olish so'rovlari, bildirishnomalar (hammaga / tarif bo'yicha / bitta foydalanuvchiga). Bloklangan foydalanuvchi tizimga kira olmaydi; ilova unga *"Hisobingiz bloklangan"* ekranini (sabab va qo'llab-quvvatlash bilan) ko'rsatadi.
 
 **Jadvallar:** `plans(key, price, days, is_active, sort, features)`, `announcements`, `announcement_reads`; `users` (+`blocked_at`, `block_reason`, `admin_password`, `is_admin`).

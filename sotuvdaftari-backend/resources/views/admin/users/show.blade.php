@@ -40,7 +40,7 @@
         @if($user->isBlocked())
             <form method="post" action="{{ route('admin.users.unblock', $user->id) }}">@csrf<button type="submit">Blokdan chiqarish</button></form>
         @else
-            <form method="post" action="{{ route('admin.users.block', $user->id) }}" class="row" onsubmit="return confirm('Foydalanuvchi bloklansinmi? Barcha qurilmalardan chiqariladi.')">
+            <form method="post" action="{{ route('admin.users.block', $user->id) }}" class="row" onsubmit="return confirm('Foydalanuvchi bloklansinmi? Ilovadan foydalana olmaydi.')">
                 @csrf
                 <div style="flex:1"><label>Sabab (ixtiyoriy)</label><input name="reason" style="width:100%" maxlength="255"></div>
                 <button type="submit" class="red">Bloklash</button>

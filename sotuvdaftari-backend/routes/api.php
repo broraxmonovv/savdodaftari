@@ -19,6 +19,9 @@ use App\Http\Controllers\Api\V1\Webhooks\ClickWebhookController;
 use App\Http\Controllers\Api\V1\Webhooks\PaymeWebhookController;
 use Illuminate\Support\Facades\Route;
 
+// Ochiq: bloklangan foydalanuvchi ham qo'llab-quvvatlash kontaktlarini ko'ra olishi uchun
+Route::get('support', [InfoController::class, 'support']);
+
 Route::prefix('auth')->group(function () {
     Route::post('otp/send', [AuthController::class, 'sendOtp'])->middleware('throttle:otp');
     Route::post('otp/verify', [AuthController::class, 'verifyOtp'])->middleware('throttle:otp');
@@ -112,7 +115,6 @@ Route::middleware(['auth:sanctum', 'not_blocked'])->group(function () {
 
     // Valyuta kurslari (cbu.uz), qo'llab-quvvatlash va qo'llanma videolar
     Route::get('currencies', [InfoController::class, 'currencies']);
-    Route::get('support', [InfoController::class, 'support']);
     Route::get('guides', [InfoController::class, 'guides']);
 
     // Bulut zaxira (TZ 2, 23)

@@ -74,7 +74,7 @@ class AdminPanelTest extends TestCase
         $this->get('/admin/users')->assertDontSee('+998900000001');
     }
 
-    public function test_block_revokes_tokens_denies_api_and_login_then_unblock(): void
+    public function test_block_denies_api_keeps_support_open_then_unblock(): void
     {
         $user = User::factory()->create();
         $token = $user->createToken('mobile')->plainTextToken;
@@ -85,16 +85,17 @@ class AdminPanelTest extends TestCase
             ->assertSessionHas('status');
 
         $this->assertTrue($user->fresh()->isBlocked());
-        $this->assertSame(0, $user->tokens()->count());
 
-        // Eski token ishlamaydi
+        // Token saqlanadi, lekin har bir so'rov 403 account_blocked (sabab bilan) qaytaradi
         $this->app['auth']->forgetGuards();
-        $this->withHeader('Authorization', "Bearer {$token}")->getJson('/api/v1/auth/me')->assertStatus(401);
+        $this->withHeader('Authorization', "Bearer {$token}")->getJson('/api/v1/auth/me')
+            ->assertStatus(403)->assertJsonPath('code', 'account_blocked')->assertJsonPath('meta.reason', 'Spam');
+        $this->app['auth']->forgetGuards();
+        $this->withHeader('Authorization', "Bearer {$token}")->getJson('/api/v1/customers')->assertStatus(403);
 
-        // Bloklangan bo'lsa, tokeni bo'lsa ham (race) 403 account_blocked
-        Sanctum::actingAs($user->fresh());
-        $this->getJson('/api/v1/customers')->assertStatus(403)
-            ->assertJsonPath('code', 'account_blocked')->assertJsonPath('meta.reason', 'Spam');
+        // Qo'llab-quvvatlash kontaktlari bloklangan foydalanuvchiga ham (hatto tokensiz) ochiq
+        $this->app['auth']->forgetGuards();
+        $this->withHeaders([])->getJson('/api/v1/support')->assertOk();
 
         $this->actingAs($this->admin()->refresh())
             ->post("/admin/users/{$user->id}/unblock")->assertSessionHas('status');

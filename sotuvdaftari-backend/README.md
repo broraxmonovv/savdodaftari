@@ -199,7 +199,7 @@ Veb panel (Blade, qurilish bosqichisiz): **Dashboard** (foydalanuvchilar, faol t
 
 - Kirish: `php artisan admin:grant +998901234567 --password=...` (kamida 8 belgi) — keyin `/admin/login` da telefon + shu parol bilan. `SESSION_DRIVER=file` (yoki `database`) bo'lishi kerak (`array` sessiyani saqlamaydi).
 - **Tariflar bazada** (`plans` jadvali; boshlang'ich qiymatlar migratsiyada `STANDARD_PRICE/PRO_PRICE/..._DAYS` dan olinadi). Admin panelda o'zgartirilganda `GET /billing/plan` va yangi checkout'lar darhol yangi narxni oladi; faol bo'lmagan tarif sotilmaydi (`plan_unavailable`).
-- **Bloklash:** barcha tokenlar o'chiriladi, API `403 account_blocked` (`meta.reason`) qaytaradi, OTP bilan kirish ham rad etiladi.
+- **Bloklash:** API har bir so'rovga `403 account_blocked` (`meta.reason`) qaytaradi (ilova bloklanganlik ekranini ko'rsatadi), OTP bilan kirish ham rad etiladi. `GET /support` ochiq (tokensiz).
 - **Bildirishnomalar API:** `GET /announcements` (`is_read`, `meta.unread_count`), `POST /announcements/{id}/read`, `POST /announcements/read-all`.
 
 ### OTP xavfsizlik siyosati
