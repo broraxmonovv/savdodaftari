@@ -10,45 +10,75 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 /**
- * TZ 31, 35, 36: Pro tarif checkout va to'lovni tasdiqlash.
+ * TZ 31, 35, 36: Standart/Pro tarif checkout va to'lovni tasdiqlash.
  *
  * Asosiy tasdiqlash manbai — provayder webhook'i (TZ 36.1 5-band).
  * Barcha faollashtirish amallari idempotent (TZ 36.2).
  */
 class BillingService
 {
-    public function proPrice(): float
+    public function price(string $plan): float
     {
-        return (float) config('savdodaftar.billing.pro_price');
+        return (float) config("savdodaftar.billing.plans.{$plan}.price");
     }
 
-    public function proDays(): int
+    public function days(string $plan): int
     {
-        return (int) config('savdodaftar.billing.pro_days');
+        return (int) config("savdodaftar.billing.plans.{$plan}.days");
     }
 
-    /** Yangi pending to'lov yaratadi yoki mavjudini qayta ishlatadi (ikki marta to'lov oldini olish) */
-    public function checkout(User $user, string $provider): Payment
+    /** Tariflar ro'yxati (mobil ilova tarif tanlash ekrani uchun) */
+    public function plans(): array
     {
-        if ($user->isPro()) {
-            throw new ApiException(__('messages.billing.already_pro'), 422, 'already_pro');
+        return [
+            [
+                'id' => Subscription::PLAN_STANDARD,
+                'price' => $this->price(Subscription::PLAN_STANDARD),
+                'days' => $this->days(Subscription::PLAN_STANDARD),
+                'features' => ['sales', 'inventory'],
+            ],
+            [
+                'id' => Subscription::PLAN_PRO,
+                'price' => $this->price(Subscription::PLAN_PRO),
+                'days' => $this->days(Subscription::PLAN_PRO),
+                'features' => ['sales', 'inventory', 'voice', 'ai_assistant', 'ocr_import', 'advanced_reports'],
+            ],
+        ];
+    }
+
+    /**
+     * Yangi pending to'lov yaratadi yoki mavjudini qayta ishlatadi (ikki marta to'lov oldini olish).
+     * Joriy tarifga teng yoki past tarifni sotib olib bo'lmaydi; Standartdan Pro'ga o'tish mumkin.
+     */
+    public function checkout(User $user, string $plan, string $provider): Payment
+    {
+        if ($user->hasPlan($plan)) {
+            throw new ApiException(
+                __($plan === Subscription::PLAN_PRO ? 'messages.billing.already_pro' : 'messages.billing.already_standard'),
+                422,
+                $plan === Subscription::PLAN_PRO ? 'already_pro' : 'already_standard',
+            );
         }
 
+        $amount = $this->price($plan);
+
         $pending = Payment::forUser($user)
+            ->where('plan', $plan)
             ->where('provider', $provider)
             ->where('status', Payment::STATUS_PENDING)
             ->whereNull('transaction_id')
             ->latest('id')
             ->first();
 
-        if ($pending !== null && (float) $pending->amount === $this->proPrice()) {
+        if ($pending !== null && (float) $pending->amount === $amount) {
             return $pending;
         }
 
         return Payment::create([
             'user_id' => $user->id,
+            'plan' => $plan,
             'provider' => $provider,
-            'amount' => $this->proPrice(),
+            'amount' => $amount,
             'order_id' => $this->newOrderId(),
             'status' => Payment::STATUS_PENDING,
         ]);
@@ -97,7 +127,7 @@ class BillingService
                 return $payment;
             }
 
-            $subscription = $this->extendOrCreate($payment->user()->firstOrFail());
+            $subscription = $this->extendOrCreate($payment->user()->firstOrFail(), $payment->plan);
 
             $payment->update([
                 'status' => Payment::STATUS_PAID,
@@ -130,7 +160,7 @@ class BillingService
                 $subscription = Subscription::find($payment->subscription_id);
 
                 if ($subscription !== null && $subscription->isActive()) {
-                    $expiresAt = $subscription->expires_at->copy()->subDays($this->proDays());
+                    $expiresAt = $subscription->expires_at->copy()->subDays($this->days($payment->plan));
 
                     $subscription->update($expiresAt->isPast()
                         ? ['status' => Subscription::STATUS_CANCELED, 'expires_at' => now()]
@@ -162,22 +192,23 @@ class BillingService
         return $payment;
     }
 
-    private function extendOrCreate(User $user): Subscription
+    /** Shu tarifning faol obunasini uzaytiradi, bo'lmasa yangisini yaratadi */
+    private function extendOrCreate(User $user, string $plan): Subscription
     {
-        $active = $user->activeSubscription();
+        $active = $user->subscriptions()->active()->where('plan', $plan)->orderByDesc('expires_at')->first();
 
         if ($active !== null) {
-            $active->update(['expires_at' => $active->expires_at->copy()->addDays($this->proDays())]);
+            $active->update(['expires_at' => $active->expires_at->copy()->addDays($this->days($plan))]);
 
             return $active;
         }
 
         return Subscription::create([
             'user_id' => $user->id,
-            'plan' => Subscription::PLAN_PRO,
+            'plan' => $plan,
             'status' => Subscription::STATUS_ACTIVE,
             'started_at' => now(),
-            'expires_at' => now()->addDays($this->proDays()),
+            'expires_at' => now()->addDays($this->days($plan)),
         ]);
     }
 

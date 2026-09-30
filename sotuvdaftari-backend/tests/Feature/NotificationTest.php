@@ -16,7 +16,7 @@ class NotificationTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->user = User::factory()->create();
+        $this->user = User::factory()->standard()->create();
         Sanctum::actingAs($this->user);
     }
 
@@ -66,7 +66,7 @@ class NotificationTest extends TestCase
             'due_date' => today()->subDay()->toDateString(),
         ])->assertCreated();
 
-        Sanctum::actingAs(User::factory()->create());
+        Sanctum::actingAs(User::factory()->standard()->create());
         $this->getJson('/api/v1/notifications')->assertOk()->assertJsonPath('data.count', 0);
     }
 }

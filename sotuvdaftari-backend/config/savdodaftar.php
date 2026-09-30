@@ -41,9 +41,17 @@ return [
     ],
 
     'billing' => [
-        // TZ 31: Pro narxi (so'm) va obuna muddati (kun)
-        'pro_price' => (int) env('PRO_PRICE', 49000),
-        'pro_days' => (int) env('PRO_DAYS', 30),
+        // Tariflar: Standart (savdo + ombor) va Pro (hammasi + AI). Narx — so'm, muddat — kun.
+        'plans' => [
+            'standard' => [
+                'price' => (int) env('STANDARD_PRICE', 12000),
+                'days' => (int) env('STANDARD_DAYS', 30),
+            ],
+            'pro' => [
+                'price' => (int) env('PRO_PRICE', 49000),
+                'days' => (int) env('PRO_DAYS', 30),
+            ],
+        ],
 
         'payme' => [
             'merchant_id' => env('PAYME_MERCHANT_ID'),

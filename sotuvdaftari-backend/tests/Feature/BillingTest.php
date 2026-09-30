@@ -75,6 +75,85 @@ class BillingTest extends TestCase
             ->assertJsonPath('data.pro_price', 49000);
     }
 
+    public function test_plan_endpoint_lists_standard_and_pro(): void
+    {
+        $this->getJson('/api/v1/billing/plan')
+            ->assertOk()
+            ->assertJsonPath('data.plan', 'free')
+            ->assertJsonPath('data.plans.0.id', 'standard')
+            ->assertJsonPath('data.plans.0.price', 12000)
+            ->assertJsonPath('data.plans.0.features', ['sales', 'inventory'])
+            ->assertJsonPath('data.plans.1.id', 'pro')
+            ->assertJsonPath('data.plans.1.price', 49000);
+
+        $this->getJson('/api/v1/auth/me')
+            ->assertJsonPath('data.plan', 'free')
+            ->assertJsonPath('data.features.sales', false)
+            ->assertJsonPath('data.features.inventory', false)
+            ->assertJsonPath('data.features.pro', false);
+    }
+
+    public function test_sales_and_inventory_require_standard_plan(): void
+    {
+        $this->getJson('/api/v1/sales')
+            ->assertStatus(403)
+            ->assertJsonPath('code', 'plan_required')
+            ->assertJsonPath('meta.required_plan', 'standard');
+        $this->getJson('/api/v1/products')->assertStatus(403)->assertJsonPath('code', 'plan_required');
+        $this->postJson('/api/v1/inventory/count', [])->assertStatus(403);
+
+        // Mijoz, qarz va xarajat moduli Free tarifda ochiq
+        $this->getJson('/api/v1/customers')->assertOk();
+        $this->getJson('/api/v1/debts')->assertOk();
+        $this->getJson('/api/v1/expenses')->assertOk();
+    }
+
+    public function test_standard_payment_unlocks_sales_and_inventory(): void
+    {
+        $checkout = $this->postJson('/api/v1/billing/checkout', ['plan' => 'standard', 'provider' => 'payme'])
+            ->assertCreated()
+            ->assertJsonPath('data.payment.plan', 'standard')
+            ->assertJsonPath('data.payment.amount', 12000)
+            ->json('data');
+
+        // Tarif bo'yicha alohida pending to'lov
+        $pro = $this->postJson('/api/v1/billing/checkout', ['plan' => 'pro', 'provider' => 'payme'])->json('data');
+        $this->assertNotSame($checkout['payment']['order_id'], $pro['payment']['order_id']);
+        $this->assertSame(49000, (int) $pro['payment']['amount']);
+
+        $account = ['order_id' => $checkout['payment']['order_id']];
+        $this->paymeCall('CheckPerformTransaction', ['amount' => 1200000, 'account' => $account])
+            ->assertJsonPath('result.allow', true);
+        $this->paymeCall('CreateTransaction', ['id' => 'tr-std', 'time' => 1758000000000, 'amount' => 1200000, 'account' => $account]);
+        $this->paymeCall('PerformTransaction', ['id' => 'tr-std'])->assertJsonPath('result.state', 2);
+
+        $this->getJson('/api/v1/billing/plan')->assertJsonPath('data.plan', 'standard');
+        $this->getJson('/api/v1/auth/me')
+            ->assertJsonPath('data.plan', 'standard')
+            ->assertJsonPath('data.features.sales', true)
+            ->assertJsonPath('data.features.inventory', true)
+            ->assertJsonPath('data.features.pro', false);
+
+        $this->getJson('/api/v1/sales')->assertOk();
+        $this->getJson('/api/v1/products')->assertOk();
+
+        // Standart allaqachon faol — qayta sotib bo'lmaydi, Pro'ga o'tish mumkin
+        $this->postJson('/api/v1/billing/checkout', ['plan' => 'standard', 'provider' => 'click'])
+            ->assertStatus(422)->assertJsonPath('code', 'already_standard');
+        $this->postJson('/api/v1/billing/checkout', ['plan' => 'pro', 'provider' => 'click'])->assertCreated();
+    }
+
+    public function test_pro_includes_standard_and_blocks_standard_checkout(): void
+    {
+        $user = User::factory()->pro()->create();
+        Sanctum::actingAs($user);
+
+        $this->getJson('/api/v1/sales')->assertOk();
+        $this->getJson('/api/v1/auth/me')->assertJsonPath('data.plan', 'pro')->assertJsonPath('data.features.pro', true);
+        $this->postJson('/api/v1/billing/checkout', ['plan' => 'standard', 'provider' => 'payme'])
+            ->assertStatus(422)->assertJsonPath('code', 'already_standard');
+    }
+
     public function test_payme_webhook_flow_activates_pro(): void
     {
         $order = $this->postJson('/api/v1/billing/checkout', ['provider' => 'payme'])->json('data.payment.order_id');

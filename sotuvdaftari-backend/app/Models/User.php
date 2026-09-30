@@ -63,16 +63,36 @@ class User extends Authenticatable
         return $this->hasMany(Payment::class);
     }
 
-    /** Joriy faol Pro obuna (bo'lmasa null) */
+    /** Joriy faol (eng yuqori darajali, keyin eng uzoq muddatli) obuna; bo'lmasa null */
     public function activeSubscription(): ?Subscription
     {
-        return $this->subscriptions()->active()->orderByDesc('expires_at')->first();
+        return $this->subscriptions()->active()->get()
+            ->sortByDesc(fn (Subscription $s) => [Subscription::PLAN_LEVELS[$s->plan] ?? 0, $s->expires_at->getTimestamp()])
+            ->first();
+    }
+
+    /** Joriy tarif: free | standard | pro */
+    public function currentPlan(): string
+    {
+        return $this->activeSubscription()?->plan ?? Subscription::PLAN_FREE;
+    }
+
+    /** Joriy tarif berilgan darajadan past emasmi (Pro ⊇ Standart ⊇ Free) */
+    public function hasPlan(string $plan): bool
+    {
+        return (Subscription::PLAN_LEVELS[$this->currentPlan()] ?? 0) >= (Subscription::PLAN_LEVELS[$plan] ?? PHP_INT_MAX);
+    }
+
+    /** Savdo va ombor bo'limlari ochiqmi (Standart yoki Pro) */
+    public function hasSalesAndInventory(): bool
+    {
+        return $this->hasPlan(Subscription::PLAN_STANDARD);
     }
 
     /** TZ 31/35: Pro tarif faolmi */
     public function isPro(): bool
     {
-        return $this->subscriptions()->active()->exists();
+        return $this->hasPlan(Subscription::PLAN_PRO);
     }
 
     public function hasPin(): bool

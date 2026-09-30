@@ -18,7 +18,7 @@ class ReportTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->user = User::factory()->create(['shop_name' => 'Bozor Market']);
+        $this->user = User::factory()->standard()->create(['shop_name' => 'Bozor Market']);
         Sanctum::actingAs($this->user);
     }
 
@@ -181,7 +181,7 @@ class ReportTest extends TestCase
     {
         $this->seedData();
 
-        Sanctum::actingAs(User::factory()->create());
+        Sanctum::actingAs(User::factory()->standard()->create());
 
         $this->getJson('/api/v1/dashboard')
             ->assertOk()

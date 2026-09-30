@@ -41,30 +41,33 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('debts/{id}/audit', [DebtController::class, 'audit']);
     Route::apiResource('debts', DebtController::class)->parameters(['debts' => 'id']);
 
-    // Ombor: mahsulotlar
-    Route::get('products/summary', [ProductController::class, 'summary']);
-    Route::get('products/categories', [ProductController::class, 'categories']);
-    Route::get('products/barcode/{barcode}', [ProductController::class, 'byBarcode']);
-    Route::post('products/{id}/stock-in', [ProductController::class, 'stockIn']);
-    Route::post('products/{id}/stock-out', [ProductController::class, 'stockOut']);
-    Route::post('products/{id}/adjust', [ProductController::class, 'adjust']);
-    Route::get('products/{id}/movements', [ProductController::class, 'movements']);
-    Route::get('products/{id}/audit', [ProductController::class, 'audit']);
-    Route::post('products/{id}/image', [ProductController::class, 'uploadImage']);
-    Route::delete('products/{id}/image', [ProductController::class, 'deleteImage']);
-    Route::apiResource('products', ProductController::class)->parameters(['products' => 'id']);
+    // Ombor va savdo — Standart yoki Pro tarif kerak
+    Route::middleware('plan:standard')->group(function () {
+        // Ombor: mahsulotlar
+        Route::get('products/summary', [ProductController::class, 'summary']);
+        Route::get('products/categories', [ProductController::class, 'categories']);
+        Route::get('products/barcode/{barcode}', [ProductController::class, 'byBarcode']);
+        Route::post('products/{id}/stock-in', [ProductController::class, 'stockIn']);
+        Route::post('products/{id}/stock-out', [ProductController::class, 'stockOut']);
+        Route::post('products/{id}/adjust', [ProductController::class, 'adjust']);
+        Route::get('products/{id}/movements', [ProductController::class, 'movements']);
+        Route::get('products/{id}/audit', [ProductController::class, 'audit']);
+        Route::post('products/{id}/image', [ProductController::class, 'uploadImage']);
+        Route::delete('products/{id}/image', [ProductController::class, 'deleteImage']);
+        Route::apiResource('products', ProductController::class)->parameters(['products' => 'id']);
 
-    // Ombor: harakatlar va inventarizatsiya
-    Route::get('inventory/movements', [InventoryController::class, 'movements']);
-    Route::post('inventory/count', [InventoryController::class, 'count']);
+        // Ombor: harakatlar va inventarizatsiya
+        Route::get('inventory/movements', [InventoryController::class, 'movements']);
+        Route::post('inventory/count', [InventoryController::class, 'count']);
 
-    // Savdo
-    Route::get('sales/summary', [SaleController::class, 'summary']);
-    Route::get('sales/returns', [SaleController::class, 'returns']);
-    Route::post('sales/{id}/return', [SaleController::class, 'returnSale']);
-    Route::get('sales/{id}/receipt', [SaleController::class, 'receipt']);
-    Route::get('sales/{id}/audit', [SaleController::class, 'audit']);
-    Route::apiResource('sales', SaleController::class)->only(['index', 'store', 'show'])->parameters(['sales' => 'id']);
+        // Savdo
+        Route::get('sales/summary', [SaleController::class, 'summary']);
+        Route::get('sales/returns', [SaleController::class, 'returns']);
+        Route::post('sales/{id}/return', [SaleController::class, 'returnSale']);
+        Route::get('sales/{id}/receipt', [SaleController::class, 'receipt']);
+        Route::get('sales/{id}/audit', [SaleController::class, 'audit']);
+        Route::apiResource('sales', SaleController::class)->only(['index', 'store', 'show'])->parameters(['sales' => 'id']);
+    });
 
     // Xarajatlar (TZ 14)
     Route::get('expenses/summary', [ExpenseController::class, 'summary']);

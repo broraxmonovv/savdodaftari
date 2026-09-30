@@ -155,6 +155,27 @@ Qoidalar:
 
 Xatolik kodlari: `payment_mismatch`, `customer_required`, `discount_exceeds_total`, `product_not_found`, `insufficient_stock`, `sale_already_returned`, `return_exceeds_sold`, `nothing_to_return`, `refund_exceeds_debt`.
 
+### Tariflar va to'lov (Free / Standart / Pro)
+
+| Tarif | Narx | Imkoniyat |
+|---|---|---|
+| `free` | — | Mijozlar, qarzlar, xarajatlar. Savdo va ombor **yopiq** |
+| `standard` | 12 000 so'm / 30 kun | Free + **savdo** va **ombor** |
+| `pro` | 49 000 so'm / 30 kun | Standart + AI xizmatlari, backup, kengaytirilgan hisobot |
+
+Narx/muddat env orqali: `STANDARD_PRICE`, `STANDARD_DAYS`, `PRO_PRICE`, `PRO_DAYS`. Pro ⊇ Standart ⊇ Free.
+
+| Metod | Yo'l | Izoh |
+|---|---|---|
+| GET | `/billing/plan` | `{plan, expires_at, plans: [{id, price, days, features[]}], providers[]}` |
+| POST | `/billing/checkout` | `{plan: standard\|pro (default pro), provider: payme\|click}` → `{payment, checkout_url}` |
+| GET | `/billing/payments/{orderId}` | To'lov holati (polling): `{payment, plan}` |
+| POST | `/webhooks/payme`, `/webhooks/click` | Provayder webhook'lari (to'lov tasdig'i, idempotent) |
+
+- `GET /auth/me` da `plan` (`free\|standard\|pro`), `plan_expires_at` va `features: {sales, inventory, pro}` qaytadi.
+- `sales/*`, `products/*`, `inventory/*` faqat Standart yoki Pro'da ishlaydi; aks holda `403` va `code: plan_required`, `meta.required_plan: standard`.
+- Xatolik kodlari: `plan_required`, `already_standard`, `already_pro`. Standartdan Pro'ga o'tish mumkin (to'liq narx); mavjud yoki pastroq tarifni sotib olib bo'lmaydi.
+
 ### OTP xavfsizlik siyosati
 
 - Kod 6 xonali, `bcrypt` hash bilan saqlanadi, TTL **120 s**.

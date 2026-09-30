@@ -77,6 +77,8 @@ return [
 
     'billing' => [
         'already_pro' => 'Pro tarif allaqachon faol.',
+        'already_standard' => 'Standart tarif allaqachon faol.',
+        'plan_required' => 'Bu bo\'lim uchun :plan tarifni faollashtiring.',
         'checkout_created' => 'To\'lov yaratildi. To\'lov sahifasiga o\'ting.',
     ],
 

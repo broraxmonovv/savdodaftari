@@ -29,6 +29,7 @@ class Payment extends Model
     protected $fillable = [
         'user_id',
         'subscription_id',
+        'plan',
         'amount',
         'provider',
         'order_id',

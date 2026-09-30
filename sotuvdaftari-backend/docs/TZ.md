@@ -267,7 +267,7 @@ Ro'yxatdan o'tish telefon raqami orqali amalga oshiriladi. Tasdiqlash SMS kodi b
 - **suppliers**: id, user_id, name, phone, address, balance
 - **stock_movements**: id, product_id, type, qty, reference_id, created_at
 - **otp_codes**: id, phone, code_hash, attempts, expires_at, created_at *(yangi)*
-- **subscriptions**: id, user_id, plan (free/pro), status, started_at, expires_at *(yangi)*
+- **subscriptions**: id, user_id, plan (standard/pro), status, started_at, expires_at *(yangi)*
 - **payments**: id, user_id, subscription_id, amount, provider (payme/click), order_id, transaction_id, status, created_at *(yangi)*
 - **notifications, employees, audit_logs, backups** — V2.
 
@@ -291,11 +291,12 @@ Ro'yxatdan o'tish telefon raqami orqali amalga oshiriladi. Tasdiqlash SMS kodi b
 
 ## 31. Monetizatsiya
 
-Ilovada ikkita tarif mavjud: Free va Pro.
+Ilovada uchta daraja mavjud: Free, Standart va Pro.
 
-- **Free**: asosiy mijoz, qarz, savdo va cheklangan hisobot.
-- **Pro**: AI'ga oid barcha xizmatlar (ovozli boshqaruv, AI biznes yordamchi, eski daftar OCR/AI import) + cheksiz mijoz/mahsulot, backup, eksport, rivojlangan analitika.
-- **Pro narxi**: 49 000 so'm.
+- **Free**: mijozlar, qarz daftari va xarajatlar. Savdo va Ombor bo'limlari yopiq (API `403 plan_required`).
+- **Standart** (12 000 so'm / 30 kun): Free + Savdo va Ombor bo'limlari.
+- **Pro** (49 000 so'm / 30 kun): Standart + AI'ga oid barcha xizmatlar (ovozli boshqaruv, AI biznes yordamchi, eski daftar OCR/AI import) + cheksiz mijoz/mahsulot, backup, eksport, rivojlangan analitika.
+- Standartdan Pro'ga o'tish mumkin; Pro faol bo'lsa Standart sotib olinmaydi. Narx va muddat `STANDARD_PRICE/STANDARD_DAYS/PRO_PRICE/PRO_DAYS` env orqali sozlanadi.
 - Pro'ni yoqish taklifi uchta joyda ko'rsatiladi: bosh sahifada, bildirishnoma blokidan oldin, va Sozlamalar bo'limida.
 - Faollashtirish backend API orqali to'liq checkout oqimi bilan amalga oshiriladi: foydalanuvchi Payme yoki Click to'lov sahifasiga yo'naltiriladi, to'lov muvaffaqiyatli bo'lgach backend webhook orqali tasdiqlaydi va Pro tarifni faollashtiradi.
 
@@ -339,11 +340,19 @@ Ilovaning asosiy vazifasi ko'p funksiyali bo'lish emas, balki bozorchining kunda
 
 ### 35.1 Free tarif
 
-- Mijozlar, qarz daftari, savdo, ombor va xarajat modullariga to'liq kirish.
+- Mijozlar, qarz daftari va xarajat modullariga to'liq kirish.
+- Savdo va Ombor bo'limlari yopiq (`plan:standard` middleware, `403`, `code: plan_required`, `meta.required_plan`).
 - Cheklangan hisobot (Bugun, 7 kun).
 - Ovozli boshqaruv, AI yordamchi va eski daftar OCR import — yopiq, Pro taklif banneri ko'rsatiladi.
 
+### 35.1a Standart tarif — 12 000 so'm / 30 kun
+
+- Free'dagi hamma narsa + Savdo va Ombor bo'limlari.
+- Checkout: `POST /billing/checkout {plan: standard, provider: payme|click}`.
+
 ### 35.2 Pro tarif — 49 000 so'm
+
+- Standart tarifdagi barcha imkoniyatlar.
 
 - Ovozli boshqaruv (savdo/qarz/kirim ovoz orqali).
 - AI biznes yordamchi (savol-javob, hisobot tayyorlash).

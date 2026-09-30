@@ -13,7 +13,15 @@ class Subscription extends Model
 
     public const PLAN_FREE = 'free';
 
+    public const PLAN_STANDARD = 'standard';
+
     public const PLAN_PRO = 'pro';
+
+    /** To'lov orqali sotib olinadigan tariflar */
+    public const PAID_PLANS = [self::PLAN_STANDARD, self::PLAN_PRO];
+
+    /** Tarif darajasi: yuqori raqam — ko'proq imkoniyat */
+    public const PLAN_LEVELS = [self::PLAN_FREE => 0, self::PLAN_STANDARD => 1, self::PLAN_PRO => 2];
 
     public const STATUS_ACTIVE = 'active';
 

@@ -22,8 +22,14 @@ class UserResource extends JsonResource
             'locale' => $this->locale,
             'has_pin' => $this->hasPin(),
             'is_profile_complete' => $this->isProfileComplete(),
-            'plan' => $this->isPro() ? 'pro' : 'free',
-            'pro_expires_at' => $this->activeSubscription()?->expires_at?->toIso8601String(),
+            'plan' => $this->currentPlan(),
+            'plan_expires_at' => $this->activeSubscription()?->expires_at?->toIso8601String(),
+            'pro_expires_at' => $this->isPro() ? $this->activeSubscription()?->expires_at?->toIso8601String() : null,
+            'features' => [
+                'sales' => $this->hasSalesAndInventory(),
+                'inventory' => $this->hasSalesAndInventory(),
+                'pro' => $this->isPro(),
+            ],
             'phone_verified_at' => $this->phone_verified_at?->toIso8601String(),
             'created_at' => $this->created_at?->toIso8601String(),
         ];

@@ -6,40 +6,49 @@ use App\Http\Concerns\RespondsWithJson;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\PaymentResource;
 use App\Models\Payment;
+use App\Models\Subscription;
 use App\Services\Billing\BillingService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
-/** TZ 31, 35, 36: tarif holati va Pro checkout */
+/** TZ 31, 35, 36: tarif holati va Standart/Pro checkout */
 class BillingController extends Controller
 {
     use RespondsWithJson;
 
     public function __construct(private readonly BillingService $billing) {}
 
-    /** GET /billing/plan — joriy tarif va Pro taklif ma'lumotlari (TZ 35) */
+    /** GET /billing/plan — joriy tarif va taklif qilinadigan tariflar (TZ 35) */
     public function plan(Request $request): JsonResponse
     {
-        $subscription = $request->user()->activeSubscription();
+        $user = $request->user();
+        $subscription = $user->activeSubscription();
 
         return $this->success([
-            'plan' => $subscription !== null ? 'pro' : 'free',
+            'plan' => $user->currentPlan(),
             'expires_at' => $subscription?->expires_at?->toIso8601String(),
-            'pro_price' => $this->billing->proPrice(),
-            'pro_days' => $this->billing->proDays(),
+            'plans' => $this->billing->plans(),
             'providers' => Payment::PROVIDERS,
+            // Eski mobil versiyalar bilan moslik
+            'pro_price' => $this->billing->price(Subscription::PLAN_PRO),
+            'pro_days' => $this->billing->days(Subscription::PLAN_PRO),
         ]);
     }
 
-    /** POST /billing/checkout {provider: payme|click} — pending to'lov va checkout URL (TZ 36.1) */
+    /** POST /billing/checkout {plan: standard|pro, provider: payme|click} — pending to'lov va checkout URL (TZ 36.1) */
     public function checkout(Request $request): JsonResponse
     {
         $data = $request->validate([
+            'plan' => ['nullable', Rule::in(Subscription::PAID_PLANS)],
             'provider' => ['required', Rule::in(Payment::PROVIDERS)],
         ]);
 
-        $payment = $this->billing->checkout($request->user(), $data['provider']);
+        $payment = $this->billing->checkout(
+            $request->user(),
+            $data['plan'] ?? Subscription::PLAN_PRO,
+            $data['provider'],
+        );
 
         return $this->success([
             'payment' => new PaymentResource($payment),
@@ -54,7 +63,7 @@ class BillingController extends Controller
 
         return $this->success([
             'payment' => new PaymentResource($payment),
-            'plan' => $request->user()->isPro() ? 'pro' : 'free',
+            'plan' => $request->user()->currentPlan(),
         ]);
     }
 }
