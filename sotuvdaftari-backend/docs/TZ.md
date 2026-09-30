@@ -454,3 +454,7 @@ Ochiq sayt (`/`, uz/ru): xizmat haqida ma'lumot, tariflar (bazadan), referal das
 ### 41.1 Eski daftar OCR importi
 
 `POST /ai/ocr-import` (Pro) rasmni Claude vision bilan tahlil qiladi, natijani foydalanuvchiga tekshirish uchun qaytaradi (yozmaydi). `POST /ai/ocr-import/confirm` tasdiqlangan qatorlarni yozadi. Aniq o'qilmagan qatorlar `uncertain:true` ("Tekshirish kerak").
+
+### 41.2 AI biznes yordamchi
+
+`POST /ai/assistant` (Pro): savol-javob ("Bugun qancha foyda qildim?", "Kimlarning qarzi muddati o'tgan?", "Qaysi mahsulot eng ko'p foyda berdi?", "10 dona kam qolgan mahsulotlarni ko'rsat"). Javoblar faqat foydalanuvchining haqiqiy ma'lumotlariga asoslanadi (Claude tool use, faqat o'qish).

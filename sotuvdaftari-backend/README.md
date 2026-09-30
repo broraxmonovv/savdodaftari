@@ -217,6 +217,8 @@ Veb panel (Blade, qurilish bosqichisiz): **Dashboard** (foydalanuvchilar, faol t
 
 **Eski daftar OCR importi (Pro):** `POST /ai/ocr-import` (multipart `image`, jpg/png/webp ≤ 8 MB) — Claude vision daftar rasmidan `{items: [{name, amount, phone, note, uncertain, existing_customer}]}` ajratadi va **hech narsa yozmaydi**; foydalanuvchi tekshirgach `POST /ai/ocr-import/confirm {items}` mijoz va qarzlarni bitta tranzaksiyada yozadi (mavjud mijozga — qarz qo'shiladi). `.env`: `ANTHROPIC_API_KEY` (shart), `ANTHROPIC_MODEL` (standart `claude-sonnet-5-5`).
 
+**AI biznes yordamchi (Pro):** `POST /ai/assistant {message, history?}` → `{reply, tools_used}`. Claude foydalanuvchining haqiqiy ma'lumotlarini faqat-o'qish vositalari orqali so'raydi (`sales_summary`, `top_products`, `overdue_debts`, `low_stock`, `customer_debt`, `expenses_summary`), hisobni o'zi o'ylab topmaydi; boshqa foydalanuvchilar ma'lumotiga kira olmaydi va hech narsani o'zgartirmaydi (yozuvchi amallar — ovozli boshqaruvda tasdiq bilan). Sikl 5 qadam bilan cheklangan; 20 so'rov/daqiqa.
+
 ### Ochiq sayt (`/`)
 
 Minimalist, bir sahifali sayt (uz/ru, `?lang=ru`): xizmat imkoniyatlari, qanday boshlash, **tariflar (bazadagi joriy narxlar)**, referal dasturi, savol-javob va **ariza formasi**. Yuklab olish tugmalari `SITE_APP_ANDROID_URL` / `SITE_APP_IOS_URL` berilganda chiqadi; aloqa ma'lumotlari `SUPPORT_*` dan olinadi.

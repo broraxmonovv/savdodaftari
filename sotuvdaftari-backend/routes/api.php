@@ -87,6 +87,7 @@ Route::middleware(['auth:sanctum', 'not_blocked'])->group(function () {
 
     // Pro: ovozli boshqaruv / AI yordamchi
     Route::post('ai/voice', [AiController::class, 'voice'])->middleware(['plan:pro', 'throttle:30,1']);
+    Route::post('ai/assistant', [AiController::class, 'assistant'])->middleware(['plan:pro', 'throttle:20,1']);
     Route::post('ai/ocr-import', [AiController::class, 'ocr'])->middleware(['plan:pro', 'throttle:10,1']);
     Route::post('ai/ocr-import/confirm', [AiController::class, 'ocrConfirm'])->middleware(['plan:pro', 'throttle:20,1']);
 
