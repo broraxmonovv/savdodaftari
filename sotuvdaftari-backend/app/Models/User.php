@@ -31,6 +31,7 @@ class User extends Authenticatable
 
     protected $hidden = [
         'pin',
+        'admin_password',
         'remember_token',
     ];
 
@@ -40,6 +41,8 @@ class User extends Authenticatable
             'pin' => 'hashed',
             'bonus_balance' => 'decimal:2',
             'is_admin' => 'boolean',
+            'blocked_at' => 'datetime',
+            'admin_password' => 'hashed',
             'phone_verified_at' => 'datetime',
             'last_login_at' => 'datetime',
         ];
@@ -58,6 +61,11 @@ class User extends Authenticatable
     public function bonusTransactions(): HasMany
     {
         return $this->hasMany(BonusTransaction::class);
+    }
+
+    public function isBlocked(): bool
+    {
+        return $this->blocked_at !== null;
     }
 
     public function withdrawals(): HasMany

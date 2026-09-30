@@ -429,3 +429,9 @@ Pro tarifni faollashtirish to'liq backend API orqali, checkout sahifasiga o'tish
 
 - **Tarif to'lovi:** bonus balansi tarif narxiga yetsa (Standart 12 000 / Pro 49 000), Sozlamalar → Bonuslar yoki Tariflar ekranidan bonus bilan to'lanadi; tarif darhol faollashadi.
 - **Kartaga yechib olish:** summa + 16 xonali karta raqami (Luhn) kiritiladi; summa balansdan ushlab qolinadi, so'rov adminga yuboriladi (*"so'rov adminga yuborildi"*). Admin pulni kartaga o'tkazib `paid` deb belgilaydi yoki `reject` qiladi (summa balansga qaytadi). Minimal summa 10 000 so'm.
+
+## 39. Admin panel
+
+Veb admin panel (`/admin`, sessiya orqali, faqat `is_admin`): dashboard, foydalanuvchilar ro'yxati va profili (bloklash, qo'lda tarif, ilovadagi ma'lumotlarni ko'rish), tariflar narxini yangilash (tariflar `plans` jadvalida), bonusni yechib olish so'rovlari, bildirishnomalar (hammaga / tarif bo'yicha / bitta foydalanuvchiga). Bloklangan foydalanuvchi tizimga kira olmaydi va barcha qurilmalardan chiqariladi.
+
+**Jadvallar:** `plans(key, price, days, is_active, sort, features)`, `announcements`, `announcement_reads`; `users` (+`blocked_at`, `block_reason`, `admin_password`, `is_admin`).

@@ -2,6 +2,7 @@
 
 namespace App\Services\Auth;
 
+use App\Exceptions\ApiException;
 use App\Models\OtpCode;
 use App\Models\User;
 
@@ -23,6 +24,12 @@ class AuthService
         // aks holda `phone` unique cheklovi tufayli 500 xato qaytadi.
         if ($user->trashed()) {
             $user->restore();
+        }
+
+        if ($user->isBlocked()) {
+            throw new ApiException(__('messages.account_blocked'), 403, 'account_blocked', [
+                'reason' => $user->block_reason,
+            ]);
         }
 
         $user->forceFill([

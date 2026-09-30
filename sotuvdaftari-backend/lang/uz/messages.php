@@ -75,8 +75,11 @@ return [
         'deleted' => 'Xarajat o\'chirildi.',
     ],
 
+    'account_blocked' => 'Hisobingiz bloklangan. Qo\'llab-quvvatlashga murojaat qiling.',
+
     'billing' => [
         'already_pro' => 'Pro tarif allaqachon faol.',
+        'plan_unavailable' => 'Bu tarif hozircha sotuvda emas.',
         'already_standard' => 'Standart tarif allaqachon faol.',
         'plan_required' => 'Bu bo\'lim uchun :plan tarifni faollashtiring.',
         'checkout_created' => 'To\'lov yaratildi. To\'lov sahifasiga o\'ting.',

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\V1\AdminWithdrawalController;
+use App\Http\Controllers\Api\V1\AnnouncementController;
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\BackupController;
 use App\Http\Controllers\Api\V1\BillingController;
@@ -22,7 +23,7 @@ Route::prefix('auth')->group(function () {
     Route::post('otp/send', [AuthController::class, 'sendOtp'])->middleware('throttle:otp');
     Route::post('otp/verify', [AuthController::class, 'verifyOtp'])->middleware('throttle:otp');
 
-    Route::middleware('auth:sanctum')->group(function () {
+    Route::middleware(['auth:sanctum', 'not_blocked'])->group(function () {
         Route::get('me', [AuthController::class, 'me']);
         Route::put('profile', [AuthController::class, 'updateProfile']);
         Route::put('pin', [AuthController::class, 'setPin']);
@@ -32,7 +33,7 @@ Route::prefix('auth')->group(function () {
     });
 });
 
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware(['auth:sanctum', 'not_blocked'])->group(function () {
     // Mijozlar
     Route::get('customers/{id}/history', [CustomerController::class, 'history']);
     Route::post('customers/{id}/payments', [CustomerController::class, 'pay']);
@@ -78,6 +79,11 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Bildirishnomalar (TZ 22)
     Route::get('notifications', [NotificationController::class, 'index']);
+
+    // Admin yuborgan e'lonlar (bildirishnomalar)
+    Route::get('announcements', [AnnouncementController::class, 'index']);
+    Route::post('announcements/{id}/read', [AnnouncementController::class, 'read']);
+    Route::post('announcements/read-all', [AnnouncementController::class, 'readAll']);
 
     // Bosh sahifa va hisobotlar (TZ 5, 17, 18)
     Route::get('dashboard', [ReportController::class, 'dashboard']);

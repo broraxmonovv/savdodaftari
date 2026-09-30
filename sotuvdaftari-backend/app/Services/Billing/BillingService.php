@@ -4,6 +4,7 @@ namespace App\Services\Billing;
 
 use App\Exceptions\ApiException;
 use App\Models\Payment;
+use App\Models\Plan;
 use App\Models\Subscription;
 use App\Models\User;
 use App\Services\Referral\ReferralService;
@@ -20,33 +21,32 @@ class BillingService
 {
     public function __construct(private readonly ReferralService $referrals) {}
 
+    /** Tarif qatori (admin panelda tahrirlanadi); bazada bo'lmasa config'dagi qiymatlar ishlatiladi */
+    private function row(string $plan): ?Plan
+    {
+        return Plan::where('key', $plan)->first();
+    }
+
     public function price(string $plan): float
     {
-        return (float) config("savdodaftar.billing.plans.{$plan}.price");
+        return (float) ($this->row($plan)?->price ?? config("savdodaftar.billing.plans.{$plan}.price"));
     }
 
     public function days(string $plan): int
     {
-        return (int) config("savdodaftar.billing.plans.{$plan}.days");
+        return (int) ($this->row($plan)?->days ?? config("savdodaftar.billing.plans.{$plan}.days"));
     }
 
-    /** Tariflar ro'yxati (mobil ilova tarif tanlash ekrani uchun) */
+    /** Faol tariflar ro'yxati (mobil ilova tarif tanlash ekrani uchun) */
     public function plans(): array
     {
-        return [
-            [
-                'id' => Subscription::PLAN_STANDARD,
-                'price' => $this->price(Subscription::PLAN_STANDARD),
-                'days' => $this->days(Subscription::PLAN_STANDARD),
-                'features' => ['sales', 'inventory'],
-            ],
-            [
-                'id' => Subscription::PLAN_PRO,
-                'price' => $this->price(Subscription::PLAN_PRO),
-                'days' => $this->days(Subscription::PLAN_PRO),
-                'features' => ['sales', 'inventory', 'voice', 'ai_assistant', 'ocr_import', 'advanced_reports'],
-            ],
-        ];
+        return Plan::where('is_active', true)->orderBy('sort')->get()
+            ->map(fn (Plan $plan) => [
+                'id' => $plan->key,
+                'price' => $plan->price,
+                'days' => $plan->days,
+                'features' => $plan->features ?? [],
+            ])->values()->all();
     }
 
     /**
@@ -84,6 +84,10 @@ class BillingService
     /** Joriy tarifga teng yoki past tarifni sotib olib bo'lmaydi */
     public function assertCanBuy(User $user, string $plan): void
     {
+        if (! Plan::where('key', $plan)->where('is_active', true)->exists()) {
+            throw new ApiException(__('messages.billing.plan_unavailable'), 422, 'plan_unavailable');
+        }
+
         if ($user->hasPlan($plan)) {
             throw new ApiException(
                 __($plan === Subscription::PLAN_PRO ? 'messages.billing.already_pro' : 'messages.billing.already_standard'),

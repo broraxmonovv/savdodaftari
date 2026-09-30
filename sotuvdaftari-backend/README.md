@@ -193,6 +193,15 @@ Narx/muddat env orqali: `STANDARD_PRICE`, `STANDARD_DAYS`, `PRO_PRICE`, `PRO_DAY
 - Kurslar `CBU_RATES_TTL` (1 soat) keshlanadi, `php artisan rates:refresh` har soatda scheduler orqali yangilaydi; CBU ishlamasa oxirgi saqlangan kurs qaytadi. `php artisan schedule:work` (yoki cron) kerak.
 - Havola: `REFERRAL_LINK`; aloqa: `SUPPORT_PHONE/TELEGRAM/EMAIL/HOURS`; videolar: `GUIDES_JSON` (JSON massiv).
 
+### Admin panel (`/admin`)
+
+Veb panel (Blade, qurilish bosqichisiz): **Dashboard** (foydalanuvchilar, faol tariflar, tushum, yechib olish, ilova bo'yicha umumiy ma'lumotlar, 14 kunlik grafik), **Foydalanuvchilar** (qidiruv/filtr, bloklash/blokdan chiqarish, qo'lda tarif berish, har bir foydalanuvchining ilovadagi ma'lumotlari: mijozlar, qarzlar, mahsulotlar, savdolar, xarajatlar, to'lovlar, obunalar, bonus, referallar, qurilmalar), **Tariflar** (narx/muddat/faollik), **Yechib olish** (to'landi / rad etish), **Bildirishnomalar** (hammaga / tarif bo'yicha / bitta foydalanuvchiga).
+
+- Kirish: `php artisan admin:grant +998901234567 --password=...` (kamida 8 belgi) — keyin `/admin/login` da telefon + shu parol bilan. `SESSION_DRIVER=file` (yoki `database`) bo'lishi kerak (`array` sessiyani saqlamaydi).
+- **Tariflar bazada** (`plans` jadvali; boshlang'ich qiymatlar migratsiyada `STANDARD_PRICE/PRO_PRICE/..._DAYS` dan olinadi). Admin panelda o'zgartirilganda `GET /billing/plan` va yangi checkout'lar darhol yangi narxni oladi; faol bo'lmagan tarif sotilmaydi (`plan_unavailable`).
+- **Bloklash:** barcha tokenlar o'chiriladi, API `403 account_blocked` (`meta.reason`) qaytaradi, OTP bilan kirish ham rad etiladi.
+- **Bildirishnomalar API:** `GET /announcements` (`is_read`, `meta.unread_count`), `POST /announcements/{id}/read`, `POST /announcements/read-all`.
+
 ### OTP xavfsizlik siyosati
 
 - Kod 6 xonali, `bcrypt` hash bilan saqlanadi, TTL **120 s**.
