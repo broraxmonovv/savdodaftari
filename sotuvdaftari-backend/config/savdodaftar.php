@@ -55,6 +55,8 @@ return [
             'merchant_id' => env('PAYME_MERCHANT_ID'),
             // Webhook Basic auth paroli (Payme kassa kaliti)
             'key' => env('PAYME_KEY'),
+            // Payme kabinetidagi "account" maydoni kaliti (order_id | byurtma_id | zakaz_id — uchalasi ham qabul qilinadi)
+            'account_field' => env('PAYME_ACCOUNT_FIELD', 'order_id'),
             'checkout_url' => env('PAYME_CHECKOUT_URL', 'https://checkout.paycom.uz'),
         ],
 

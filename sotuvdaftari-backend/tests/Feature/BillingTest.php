@@ -241,6 +241,54 @@ class BillingTest extends TestCase
             ->assertJsonPath('result.transactions.0.state', 2);
     }
 
+    public function test_payme_accepts_uz_and_ru_account_fields_and_localized_errors(): void
+    {
+        $order = $this->postJson('/api/v1/billing/checkout', ['provider' => 'payme'])->json('data.payment.order_id');
+
+        // byurtma_id (uz) va zakaz_id (ru) kalitlari ham qabul qilinadi
+        $this->paymeCall('CheckPerformTransaction', ['amount' => 4900000, 'account' => ['byurtma_id' => $order]])
+            ->assertJsonPath('result.allow', true);
+        $this->paymeCall('CheckPerformTransaction', ['amount' => 4900000, 'account' => ['zakaz_id' => $order]])
+            ->assertJsonPath('result.allow', true);
+
+        // Xatolar ru/uz/en ko'rinishida; account xatosida maydon kaliti data'da
+        $this->paymeCall('CheckPerformTransaction', ['amount' => 4900000, 'account' => ['zakaz_id' => 'YOQ']])
+            ->assertJsonPath('error.code', -31050)
+            ->assertJsonPath('error.data', 'order_id')
+            ->assertJsonStructure(['error' => ['message' => ['ru', 'uz', 'en']]]);
+    }
+
+    public function test_payme_transaction_expires_after_12_hours(): void
+    {
+        $order = $this->postJson('/api/v1/billing/checkout', ['provider' => 'payme'])->json('data.payment.order_id');
+        $account = ['order_id' => $order];
+
+        $this->paymeCall('CreateTransaction', ['id' => 'tr-old', 'time' => 1758000000000, 'amount' => 4900000, 'account' => $account])
+            ->assertJsonPath('result.state', 1);
+
+        $payment = \App\Models\Payment::where('order_id', $order)->first();
+        $payment->update(['meta' => array_merge($payment->meta, ['server_time' => (int) (microtime(true) * 1000) - 43_200_001])]);
+
+        $this->paymeCall('PerformTransaction', ['id' => 'tr-old'])->assertJsonPath('error.code', -31008);
+        $this->paymeCall('CheckTransaction', ['id' => 'tr-old'])
+            ->assertJsonPath('result.state', -1)
+            ->assertJsonPath('result.reason', 4);
+        $this->assertFalse($this->user->fresh()->isPro());
+    }
+
+    public function test_payme_checkout_url_uses_account_field(): void
+    {
+        config()->set('savdodaftar.billing.payme.account_field', 'zakaz_id');
+
+        $url = $this->postJson('/api/v1/billing/checkout', ['provider' => 'payme'])->json('data.checkout_url');
+        $order = \App\Models\Payment::first()->order_id;
+
+        $this->assertSame(base64_encode("m=merchant123;ac.zakaz_id={$order};a=4900000"), basename($url));
+
+        $this->paymeCall('CheckPerformTransaction', ['amount' => 4900000, 'account' => ['zakaz_id' => $order]])
+            ->assertJsonPath('result.allow', true);
+    }
+
     public function test_payme_cancel_after_perform_revokes_subscription(): void
     {
         $order = $this->postJson('/api/v1/billing/checkout', ['provider' => 'payme'])->json('data.payment.order_id');

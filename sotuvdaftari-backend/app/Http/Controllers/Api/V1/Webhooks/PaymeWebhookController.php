@@ -38,12 +38,21 @@ class PaymeWebhookController extends Controller
         };
     }
 
+    private const TIMEOUT_MS = 43_200_000;
+
+    private function expired(Payment $payment): bool
+    {
+        $created = (int) data_get($payment->meta, 'server_time', 0);
+
+        return $created > 0 && ((int) (microtime(true) * 1000) - $created) > self::TIMEOUT_MS;
+    }
+
     private function checkPerform(mixed $id, array $params): JsonResponse
     {
         $payment = $this->findByOrder($params);
 
         if ($payment === null) {
-            return $this->error($id, -31050, 'Buyurtma topilmadi.', 'order_id');
+            return $this->error($id, -31050, 'Buyurtma topilmadi.', $this->accountField());
         }
 
         if ((int) ($params['amount'] ?? 0) !== $payment->amountInTiyin()) {
@@ -51,7 +60,7 @@ class PaymeWebhookController extends Controller
         }
 
         if (! $payment->isPending()) {
-            return $this->error($id, -31051, 'Buyurtma holati to\'lovga ruxsat bermaydi.', 'order_id');
+            return $this->error($id, -31051, 'Buyurtma holati to\'lovga ruxsat bermaydi.', $this->accountField());
         }
 
         return $this->result($id, ['allow' => true]);
@@ -82,7 +91,7 @@ class PaymeWebhookController extends Controller
         $payment = $this->findByOrder($params);
 
         if ($payment === null) {
-            return $this->error($id, -31050, 'Buyurtma topilmadi.', 'order_id');
+            return $this->error($id, -31050, 'Buyurtma topilmadi.', $this->accountField());
         }
 
         if ((int) ($params['amount'] ?? 0) !== $payment->amountInTiyin()) {
@@ -99,7 +108,7 @@ class PaymeWebhookController extends Controller
         $payment->update([
             'transaction_id' => $transactionId,
             'provider_state' => 1,
-            'meta' => array_merge($payment->meta ?? [], ['create_time' => $createTime]),
+            'meta' => array_merge($payment->meta ?? [], ['create_time' => $createTime, 'server_time' => (int) (microtime(true) * 1000)]),
         ]);
 
         return $this->result($id, [
@@ -115,6 +124,13 @@ class PaymeWebhookController extends Controller
 
         if ($payment === null) {
             return $this->error($id, -31003, 'Tranzaksiya topilmadi.');
+        }
+
+        // Payme: yaratilgandan 12 soat o'tgan tranzaksiya bajarilmaydi — bekor qilinadi (sabab 4)
+        if ((int) $payment->provider_state === 1 && $this->expired($payment)) {
+            $billing->cancelPayme($payment, 4, (int) (microtime(true) * 1000));
+
+            return $this->error($id, -31008, 'Tranzaksiya holati amalga ruxsat bermaydi.');
         }
 
         // Idempotent: allaqachon bajarilgan bo'lsa o'sha natija qaytadi
@@ -193,7 +209,7 @@ class PaymeWebhookController extends Controller
                 'id' => $payment->transaction_id,
                 'time' => (int) data_get($payment->meta, 'create_time', 0),
                 'amount' => $payment->amountInTiyin(),
-                'account' => ['order_id' => $payment->order_id],
+                'account' => [$this->accountField() => $payment->order_id],
                 'create_time' => (int) data_get($payment->meta, 'create_time', 0),
                 'perform_time' => (int) data_get($payment->meta, 'perform_time', 0),
                 'cancel_time' => (int) data_get($payment->meta, 'cancel_time', 0),
@@ -226,9 +242,23 @@ class PaymeWebhookController extends Controller
         return $login === 'Paycom' && hash_equals($key, $password);
     }
 
+    /** Payme kabinetidagi "account" maydoni kaliti (uz: byurtma_id, ru: zakaz_id nomi bilan ko'rsatiladi) */
+    private function accountField(): string
+    {
+        return (string) config('savdodaftar.billing.payme.account_field', 'order_id');
+    }
+
     private function findByOrder(array $params): ?Payment
     {
-        $orderId = (string) data_get($params, 'account.order_id', '');
+        $orderId = '';
+
+        foreach (array_unique([$this->accountField(), 'order_id', 'byurtma_id', 'zakaz_id']) as $key) {
+            $orderId = (string) data_get($params, "account.{$key}", '');
+
+            if ($orderId !== '') {
+                break;
+            }
+        }
 
         return $orderId === '' ? null : Payment::query()
             ->where('provider', Payment::PROVIDER_PAYME)
@@ -251,9 +281,20 @@ class PaymeWebhookController extends Controller
         return response()->json(['result' => $result, 'id' => $id]);
     }
 
+    /** Payme xabarlarni ru/uz/en ko'rinishida kutadi */
+    private const MESSAGES = [
+        -32504 => ['ru' => 'Недостаточно привилегий для выполнения метода.', 'uz' => 'Avtorizatsiya xato.', 'en' => 'Insufficient privileges to perform this method.'],
+        -32601 => ['ru' => 'Метод не найден.', 'uz' => 'Metod topilmadi.', 'en' => 'Method not found.'],
+        -31050 => ['ru' => 'Заказ не найден.', 'uz' => 'Buyurtma topilmadi.', 'en' => 'Order not found.'],
+        -31051 => ['ru' => 'Состояние заказа не позволяет оплату.', 'uz' => 'Buyurtma holati to\'lovga ruxsat bermaydi.', 'en' => 'Order state does not allow payment.'],
+        -31001 => ['ru' => 'Неверная сумма платежа.', 'uz' => 'To\'lov summasi noto\'g\'ri.', 'en' => 'Incorrect amount.'],
+        -31003 => ['ru' => 'Транзакция не найдена.', 'uz' => 'Tranzaksiya topilmadi.', 'en' => 'Transaction not found.'],
+        -31008 => ['ru' => 'Невозможно выполнить операцию.', 'uz' => 'Tranzaksiya holati amalga ruxsat bermaydi.', 'en' => 'Unable to perform the operation.'],
+    ];
+
     private function error(mixed $id, int $code, string $message, ?string $data = null): JsonResponse
     {
-        $error = ['code' => $code, 'message' => $message];
+        $error = ['code' => $code, 'message' => self::MESSAGES[$code] ?? ['ru' => $message, 'uz' => $message, 'en' => $message]];
 
         if ($data !== null) {
             $error['data'] = $data;

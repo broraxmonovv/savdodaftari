@@ -173,7 +173,8 @@ class BillingService
                 return null;
             }
 
-            $params = "m={$merchantId};ac.order_id={$payment->order_id};a={$payment->amountInTiyin()}";
+            $field = (string) config('savdodaftar.billing.payme.account_field', 'order_id');
+            $params = "m={$merchantId};ac.{$field}={$payment->order_id};a={$payment->amountInTiyin()}";
 
             return rtrim((string) config('savdodaftar.billing.payme.checkout_url'), '/').'/'.base64_encode($params);
         }
