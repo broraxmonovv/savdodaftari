@@ -416,3 +416,11 @@ Pro tarifni faollashtirish to'liq backend API orqali, checkout sahifasiga o'tish
 - Eskiz'da SMS jo'natuvchi nom (sender name) oldindan ro'yxatdan o'tkazilishi kerak — development boshlanishidan oldin ariza topshirish tavsiya etiladi.
 - Eskiz API'ning kunlik/oylik limiti va narxi loyihaning kutilayotgan foydalanuvchi soniga qarab oldindan hisoblab chiqilishi kerak.
 
+
+## 38. Referal dasturi, bonus, valyuta kurslari, yordam va qo'llanma
+
+- **Referal:** har bir foydalanuvchida noyob `referral_code` va havola. Yangi foydalanuvchi profilni to'ldirishda `referral_code` yuboradi (`PUT /auth/profile`, bir marta; o'z kodi yaroqsiz).
+- **Bonus:** taklif qilingan foydalanuvchining har bir muvaffaqiyatli to'lovidan `REFERRAL_PERCENT` (10%) taklif qilganning `bonus_balance` iga yoziladi (idempotent); Payme storno qilsa `reversal` yoziladi. `GET /referral`, `GET /bonuses`.
+- **Valyuta kurslari:** `GET /currencies` — cbu.uz rasmiy kurslari, keshlanadi, `rates:refresh` har soatda yangilaydi, manba ishlamasa oxirgi saqlangan kurs.
+- **Yordam va qo'llanma:** `GET /support`, `GET /guides` (env orqali sozlanadi).
+- **Jadvallar:** `users` (+`referral_code`, `referred_by_id`, `bonus_balance`), `bonus_transactions`.
