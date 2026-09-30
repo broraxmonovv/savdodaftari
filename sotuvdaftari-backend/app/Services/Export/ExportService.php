@@ -58,7 +58,7 @@ class ExportService
         $writer = new Writer;
         $writer->openToFile($path);
 
-        $bold = (new Style)->withFontBold(true);
+        $bold = (new Style)->setFontBold();
         $first = true;
 
         foreach ($document['sections'] as $section) {
