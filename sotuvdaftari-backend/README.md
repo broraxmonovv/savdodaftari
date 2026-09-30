@@ -176,6 +176,21 @@ Narx/muddat env orqali: `STANDARD_PRICE`, `STANDARD_DAYS`, `PRO_PRICE`, `PRO_DAY
 - `sales/*`, `products/*`, `inventory/*` faqat Standart yoki Pro'da ishlaydi; aks holda `403` va `code: plan_required`, `meta.required_plan: standard`.
 - Xatolik kodlari: `plan_required`, `already_standard`, `already_pro`. Standartdan Pro'ga o'tish mumkin (to'liq narx); mavjud yoki pastroq tarifni sotib olib bo'lmaydi.
 
+### Referal, bonus, valyuta kurslari, yordam va qo'llanma
+
+| Metod | Yo'l | Izoh |
+|---|---|---|
+| GET | `/referral` | `{code, link, percent, invited_count, paying_count, earned_total}` |
+| GET | `/bonuses` | Bonus tarixi (`meta.balance` — joriy balans); `type`: `referral` \| `reversal` |
+| PUT | `/auth/profile` | `referral_code?` — taklif qilgan foydalanuvchi kodi (bir marta; `referral_invalid`, `referral_self`, `referral_already_attached`) |
+| GET | `/currencies` | cbu.uz rasmiy kurslari: `{updated_at, source, rates: [{code, name, nominal, rate, diff, date}]}` |
+| GET | `/support` | `{phone, telegram, email, working_hours}` |
+| GET | `/guides` | Qo'llanma videolar `[{id, title, url}]` (Accept-Language bo'yicha) |
+
+- Taklif qilingan foydalanuvchining **har bir** muvaffaqiyatli to'lovidan `REFERRAL_PERCENT` (10%) taklif qilganning `bonus_balance` iga yoziladi (idempotent). Payme storno bo'lsa bonus `reversal` bilan qaytariladi.
+- Kurslar `CBU_RATES_TTL` (1 soat) keshlanadi, `php artisan rates:refresh` har soatda scheduler orqali yangilaydi; CBU ishlamasa oxirgi saqlangan kurs qaytadi. `php artisan schedule:work` (yoki cron) kerak.
+- Havola: `REFERRAL_LINK`; aloqa: `SUPPORT_PHONE/TELEGRAM/EMAIL/HOURS`; videolar: `GUIDES_JSON` (JSON massiv).
+
 ### OTP xavfsizlik siyosati
 
 - Kod 6 xonali, `bcrypt` hash bilan saqlanadi, TTL **120 s**.

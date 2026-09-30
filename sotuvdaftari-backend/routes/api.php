@@ -6,9 +6,11 @@ use App\Http\Controllers\Api\V1\BillingController;
 use App\Http\Controllers\Api\V1\CustomerController;
 use App\Http\Controllers\Api\V1\DebtController;
 use App\Http\Controllers\Api\V1\ExpenseController;
+use App\Http\Controllers\Api\V1\InfoController;
 use App\Http\Controllers\Api\V1\InventoryController;
 use App\Http\Controllers\Api\V1\NotificationController;
 use App\Http\Controllers\Api\V1\ProductController;
+use App\Http\Controllers\Api\V1\ReferralController;
 use App\Http\Controllers\Api\V1\ReportController;
 use App\Http\Controllers\Api\V1\SaleController;
 use App\Http\Controllers\Api\V1\Webhooks\ClickWebhookController;
@@ -86,6 +88,15 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('billing/plan', [BillingController::class, 'plan']);
     Route::post('billing/checkout', [BillingController::class, 'checkout']);
     Route::get('billing/payments/{orderId}', [BillingController::class, 'payment']);
+
+    // Referal dasturi va bonus balansi
+    Route::get('referral', [ReferralController::class, 'show']);
+    Route::get('bonuses', [ReferralController::class, 'bonuses']);
+
+    // Valyuta kurslari (cbu.uz), qo'llab-quvvatlash va qo'llanma videolar
+    Route::get('currencies', [InfoController::class, 'currencies']);
+    Route::get('support', [InfoController::class, 'support']);
+    Route::get('guides', [InfoController::class, 'guides']);
 
     // Bulut zaxira (TZ 2, 23)
     Route::get('backups', [BackupController::class, 'index']);

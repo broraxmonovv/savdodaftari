@@ -22,6 +22,8 @@ class UserResource extends JsonResource
             'locale' => $this->locale,
             'has_pin' => $this->hasPin(),
             'is_profile_complete' => $this->isProfileComplete(),
+            'bonus_balance' => (float) $this->bonus_balance,
+            'has_referrer' => $this->referred_by_id !== null,
             'plan' => $this->currentPlan(),
             'plan_expires_at' => $this->activeSubscription()?->expires_at?->toIso8601String(),
             'pro_expires_at' => $this->isPro() ? $this->activeSubscription()?->expires_at?->toIso8601String() : null,

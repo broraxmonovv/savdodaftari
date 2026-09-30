@@ -68,6 +68,37 @@ return [
         ],
     ],
 
+    'referral' => [
+        // Taklif qilingan foydalanuvchining har bir to'lovidan beriladigan ulush (%)
+        'percent' => (float) env('REFERRAL_PERCENT', 10),
+        // Ulashiladigan havola; {code} referal kod bilan almashtiriladi
+        'link' => env('REFERRAL_LINK', 'https://abdullohinfo.uz/invite/{code}'),
+    ],
+
+    'currency' => [
+        'url' => env('CBU_RATES_URL', 'https://cbu.uz/uz/arkhiv-kursov-valyut/json/'),
+        // Ko'rsatiladigan valyutalar (tartib shu bo'yicha)
+        'codes' => ['USD', 'EUR', 'RUB', 'KZT', 'GBP', 'CNY', 'TRY'],
+        // Kesh muddati (soniya); soatlik `rates:refresh` ham yangilab turadi
+        'ttl' => (int) env('CBU_RATES_TTL', 3600),
+    ],
+
+    'support' => [
+        'phone' => env('SUPPORT_PHONE', '+998900000000'),
+        'telegram' => env('SUPPORT_TELEGRAM', 'https://t.me/bozorpro_support'),
+        'email' => env('SUPPORT_EMAIL', 'support@abdullohinfo.uz'),
+        'working_hours' => env('SUPPORT_HOURS', '09:00 - 18:00'),
+    ],
+
+    // Qo'llanma videolari (url — YouTube yoki boshqa video havola). Kodni o'zgartirmasdan
+    // yangilash uchun GUIDES_JSON env'ga JSON massiv berish mumkin.
+    'guides' => json_decode((string) env('GUIDES_JSON', ''), true) ?: [
+        ['id' => 'start', 'title_uz' => 'Ilovadan foydalanishni boshlash', 'title_ru' => 'Начало работы с приложением', 'url' => 'https://www.youtube.com/@bozorpro'],
+        ['id' => 'debts', 'title_uz' => 'Qarz daftari bilan ishlash', 'title_ru' => 'Работа с долговой тетрадью', 'url' => 'https://www.youtube.com/@bozorpro'],
+        ['id' => 'sales', 'title_uz' => 'Savdo va ombor', 'title_ru' => 'Продажи и склад', 'url' => 'https://www.youtube.com/@bozorpro'],
+        ['id' => 'pro', 'title_uz' => 'Tariflar va to\'lov', 'title_ru' => 'Тарифы и оплата', 'url' => 'https://www.youtube.com/@bozorpro'],
+    ],
+
     'backup' => [
         // Zaxira fayllari saqlanadigan disk (production'da s3 tavsiya etiladi)
         'disk' => env('BACKUP_DISK', 'local'),

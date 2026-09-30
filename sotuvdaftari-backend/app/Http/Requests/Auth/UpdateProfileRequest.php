@@ -18,6 +18,7 @@ class UpdateProfileRequest extends FormRequest
             'name' => ['required', 'string', 'max:100'],
             'shop_name' => ['nullable', 'string', 'max:150'],
             'business_type' => ['nullable', 'string', 'max:50'],
+            'referral_code' => ['nullable', 'string', 'max:12'],
             'locale' => ['nullable', 'string', Rule::in(config('savdodaftar.locales', ['uz', 'ru']))],
         ];
     }

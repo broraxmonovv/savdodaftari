@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -16,6 +17,8 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'phone',
+        'referral_code',
+        'referred_by_id',
         'pin',
         'shop_name',
         'business_type',
@@ -33,9 +36,25 @@ class User extends Authenticatable
     {
         return [
             'pin' => 'hashed',
+            'bonus_balance' => 'decimal:2',
             'phone_verified_at' => 'datetime',
             'last_login_at' => 'datetime',
         ];
+    }
+
+    public function referrer(): BelongsTo
+    {
+        return $this->belongsTo(self::class, 'referred_by_id');
+    }
+
+    public function referrals(): HasMany
+    {
+        return $this->hasMany(self::class, 'referred_by_id');
+    }
+
+    public function bonusTransactions(): HasMany
+    {
+        return $this->hasMany(BonusTransaction::class);
     }
 
     public function customers(): HasMany

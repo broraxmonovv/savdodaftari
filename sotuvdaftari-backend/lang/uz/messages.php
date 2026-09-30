@@ -82,6 +82,12 @@ return [
         'checkout_created' => 'To\'lov yaratildi. To\'lov sahifasiga o\'ting.',
     ],
 
+    'referral' => [
+        'invalid' => 'Referal kod topilmadi.',
+        'self' => 'O\'zingizning kodingizni kiritib bo\'lmaydi.',
+        'already_attached' => 'Referal kod allaqachon kiritilgan.',
+    ],
+
     'backup' => [
         'created' => 'Zaxira nusxa yaratildi.',
         'deleted' => 'Zaxira nusxa o\'chirildi.',

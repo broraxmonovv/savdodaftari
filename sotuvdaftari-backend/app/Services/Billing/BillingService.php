@@ -6,6 +6,7 @@ use App\Exceptions\ApiException;
 use App\Models\Payment;
 use App\Models\Subscription;
 use App\Models\User;
+use App\Services\Referral\ReferralService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -17,6 +18,8 @@ use Illuminate\Support\Str;
  */
 class BillingService
 {
+    public function __construct(private readonly ReferralService $referrals) {}
+
     public function price(string $plan): float
     {
         return (float) config("savdodaftar.billing.plans.{$plan}.price");
@@ -137,6 +140,9 @@ class BillingService
                 'meta' => array_merge($payment->meta ?? [], $meta),
             ]);
 
+            // Taklif qilganga ulush (idempotent)
+            $this->referrals->creditForPayment($payment);
+
             return $payment;
         });
     }
@@ -174,6 +180,10 @@ class BillingService
                 'provider_state' => $newState,
                 'meta' => array_merge($payment->meta ?? [], ['cancel_time' => $cancelTime, 'cancel_reason' => $reason]),
             ]);
+
+            if ($newState === -2) {
+                $this->referrals->reverseForPayment($payment);
+            }
 
             return $payment;
         });

@@ -16,6 +16,8 @@ use App\Models\User;
 use App\Services\Auth\AuthService;
 use App\Services\Auth\OtpService;
 use App\Services\Auth\PinService;
+use App\Services\Referral\ReferralService;
+use Illuminate\Support\Arr;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -27,6 +29,7 @@ class AuthController extends Controller
         private readonly OtpService $otp,
         private readonly AuthService $auth,
         private readonly PinService $pins,
+        private readonly ReferralService $referrals,
     ) {}
 
     /** POST /auth/otp/send */
@@ -74,7 +77,14 @@ class AuthController extends Controller
     public function updateProfile(UpdateProfileRequest $request): JsonResponse
     {
         $user = $request->user();
-        $user->fill($request->validated())->save();
+        $data = $request->validated();
+
+        // Referal kod faqat bir marta biriktiriladi; noto'g'ri bo'lsa profil saqlanmaydi
+        if (filled($data['referral_code'] ?? null) && $user->referred_by_id === null) {
+            $this->referrals->attach($user, $data['referral_code']);
+        }
+
+        $user->fill(Arr::except($data, ['referral_code']))->save();
 
         return $this->success(new UserResource($user->fresh()), __('auth.profile_updated'));
     }
