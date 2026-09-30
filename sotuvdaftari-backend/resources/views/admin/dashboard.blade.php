@@ -8,6 +8,7 @@
     <div class="card stat"><div class="l">Foydalanuvchilar</div><div class="v">{{ $stats['users_total'] }}</div><div class="muted">bugun +{{ $stats['users_today'] }} · 7 kun +{{ $stats['users_week'] }}</div></div>
     <div class="card stat"><div class="l">Faol (7 kun)</div><div class="v">{{ $stats['users_active_week'] }}</div><div class="muted">bloklangan: {{ $stats['users_blocked'] }}</div></div>
     <div class="card stat"><div class="l">Standart tarif (faol)</div><div class="v">{{ $stats['standard_active'] }}</div></div>
+    <div class="card stat"><div class="l">Bepul sinovda</div><div class="v">{{ $stats['trial_active'] }}</div></div>
     <div class="card stat"><div class="l">Pro tarif (faol)</div><div class="v">{{ $stats['pro_active'] }}</div></div>
     <div class="card stat"><div class="l">Tushum (bugun)</div><div class="v">{{ $m($stats['revenue_today']) }}</div></div>
     <div class="card stat"><div class="l">Tushum (shu oy)</div><div class="v">{{ $m($stats['revenue_month']) }}</div><div class="muted">jami: {{ $m($stats['revenue_total']) }}</div></div>

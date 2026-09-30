@@ -25,6 +25,7 @@ class UserResource extends JsonResource
             'bonus_balance' => (float) $this->bonus_balance,
             'has_referrer' => $this->referred_by_id !== null,
             'plan' => $this->currentPlan(),
+            'plan_is_trial' => (bool) $this->activeSubscription()?->is_trial,
             'plan_expires_at' => $this->activeSubscription()?->expires_at?->toIso8601String(),
             'pro_expires_at' => $this->isPro() ? $this->activeSubscription()?->expires_at?->toIso8601String() : null,
             'features' => [

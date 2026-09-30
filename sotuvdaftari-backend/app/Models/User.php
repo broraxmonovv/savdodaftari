@@ -41,6 +41,7 @@ class User extends Authenticatable
             'pin' => 'hashed',
             'bonus_balance' => 'decimal:2',
             'is_admin' => 'boolean',
+            'trial_started_at' => 'datetime',
             'blocked_at' => 'datetime',
             'admin_password' => 'hashed',
             'phone_verified_at' => 'datetime',

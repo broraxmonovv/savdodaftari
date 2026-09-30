@@ -71,6 +71,11 @@ return [
         'free_customers' => (int) env('FREE_MAX_CUSTOMERS', 30),
     ],
 
+    // Yangi foydalanuvchiga bepul Standart sinov (kun). 0 — sinov o'chiq.
+    'trial' => [
+        'days' => (int) env('TRIAL_DAYS', 14),
+    ],
+
     'referral' => [
         // Taklif qilingan foydalanuvchining har bir to'lovidan beriladigan ulush (%)
         'percent' => (float) env('REFERRAL_PERCENT', 10),

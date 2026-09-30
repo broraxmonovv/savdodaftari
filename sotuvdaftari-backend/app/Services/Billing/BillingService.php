@@ -3,6 +3,7 @@
 namespace App\Services\Billing;
 
 use App\Exceptions\ApiException;
+use App\Models\Announcement;
 use App\Models\Payment;
 use App\Models\Plan;
 use App\Models\Subscription;
@@ -82,9 +83,60 @@ class BillingService
         ]);
     }
 
+    /** Foydalanuvchi hozir bepul sinov Standartida (pullik tarifsiz) */
+    public function isOnTrial(User $user): bool
+    {
+        $active = $user->activeSubscription();
+
+        return $active !== null && $active->is_trial && $active->plan === Subscription::PLAN_STANDARD;
+    }
+
+    /**
+     * Yangi foydalanuvchiga bepul Standart sinov beradi (`TRIAL_DAYS`, standart 14 kun). Faqat bir marta:
+     * `trial_started_at` belgilanadi, shuning uchun o'chirib qayta ro'yxatdan o'tish ham qayta bermaydi.
+     */
+    public function grantTrial(User $user): ?Subscription
+    {
+        $days = (int) config('savdodaftar.trial.days');
+
+        if ($days <= 0 || $user->trial_started_at !== null) {
+            return null;
+        }
+
+        $subscription = Subscription::create([
+            'user_id' => $user->id,
+            'plan' => Subscription::PLAN_STANDARD,
+            'is_trial' => true,
+            'status' => Subscription::STATUS_ACTIVE,
+            'started_at' => now(),
+            'expires_at' => now()->addDays($days),
+        ]);
+
+        $user->forceFill(['trial_started_at' => now()])->save();
+
+        $locale = $user->locale ?: 'uz';
+
+        Announcement::create([
+            'title' => __('messages.trial.welcome_title', [], $locale),
+            'body' => __('messages.trial.welcome_body', [
+                'days' => $days,
+                'date' => $subscription->expires_at->format('d.m.Y'),
+            ], $locale),
+            'audience' => Announcement::AUDIENCE_USER,
+            'user_id' => $user->id,
+        ]);
+
+        return $subscription;
+    }
+
     /** Joriy tarifga teng yoki past tarifni sotib olib bo'lmaydi */
     public function assertCanBuy(User $user, string $plan): void
     {
+        // Bepul sinovdagi Standartni pullik qilib 30 kunga cho'zish mumkin
+        if ($plan === Subscription::PLAN_STANDARD && $this->isOnTrial($user)) {
+            return;
+        }
+
         if (! Plan::where('key', $plan)->where('is_active', true)->exists()) {
             throw new ApiException(__('messages.billing.plan_unavailable'), 422, 'plan_unavailable');
         }
@@ -234,7 +286,11 @@ class BillingService
         $active = $user->subscriptions()->active()->where('plan', $plan)->orderByDesc('expires_at')->first();
 
         if ($active !== null) {
-            $active->update(['expires_at' => $active->expires_at->copy()->addDays($this->days($plan))]);
+            // Sinov muddati tugashidan boshlab 30 kun qo'shiladi; obuna endi pullik
+            $active->update([
+                'expires_at' => $active->expires_at->copy()->addDays($this->days($plan)),
+                'is_trial' => false,
+            ]);
 
             return $active;
         }

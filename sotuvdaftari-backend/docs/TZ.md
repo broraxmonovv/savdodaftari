@@ -470,3 +470,7 @@ Zaxira ro'yxati, qo'lda zaxira yaratish, o'chirish va **tiklash** (`POST /backup
 ### 41.5 Limitlar
 
 Bepul: 30 mijoz (`FREE_MAX_CUSTOMERS`); Standart: `plans.max_customers/max_products` (admin panelda, boshlang'ich 300/500, bo'sh = cheksiz); Pro: cheksiz. `403 limit_reached`.
+
+## 42. Bepul sinov (14 kun Standart)
+
+Yangi foydalanuvchiga 14 kunlik bepul Standart (savdo + ombor) beriladi (bir marta). Tugashiga 2 kun qolganda va tugaganda bildirishnoma (ilova + push): Standartga to'lab tarifni 30 kunga cho'zish taklif qilinadi. To'lanmasa Standart/Pro funksiyalari o'chadi, qolganlari (mijozlar, qarz, xarajat, 7 kunlik hisobot) ishlaydi. Sinovdagi Standartga to'lov tarifni sinov tugashidan boshlab 30 kunga uzaytiradi.

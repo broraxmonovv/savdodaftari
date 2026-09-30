@@ -28,6 +28,15 @@ class BillingController extends Controller
         return $this->success([
             'plan' => $user->currentPlan(),
             'expires_at' => $subscription?->expires_at?->toIso8601String(),
+            // Bepul sinov: active — hozir sinovda, used — sinov berilgan (qayta berilmaydi)
+            'is_trial' => (bool) $subscription?->is_trial,
+            'trial' => [
+                'days' => (int) config('savdodaftar.trial.days'),
+                'active' => (bool) $subscription?->is_trial,
+                'used' => $user->trial_started_at !== null,
+                'expires_at' => $subscription?->is_trial ? $subscription->expires_at->toIso8601String() : null,
+            ],
+            'free' => ['limits' => ['customers' => (int) config('savdodaftar.limits.free_customers'), 'products' => 0]],
             'plans' => $this->billing->plans(),
             'providers' => Payment::PROVIDERS,
             // Eski mobil versiyalar bilan moslik

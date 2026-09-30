@@ -28,6 +28,7 @@ class DashboardController extends Controller
             'users_active_week' => User::where('last_login_at', '>=', now()->subDays(7))->count(),
             'users_blocked' => User::whereNotNull('blocked_at')->count(),
             'standard_active' => Subscription::active()->where('plan', Subscription::PLAN_STANDARD)->distinct('user_id')->count('user_id'),
+            'trial_active' => Subscription::active()->where('is_trial', true)->count(),
             'pro_active' => Subscription::active()->where('plan', Subscription::PLAN_PRO)->distinct('user_id')->count('user_id'),
             'revenue_today' => (float) $paid()->where('paid_at', '>=', $today)->sum('amount'),
             'revenue_month' => (float) $paid()->where('paid_at', '>=', now()->startOfMonth())->sum('amount'),

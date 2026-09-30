@@ -85,6 +85,15 @@ return [
         'checkout_created' => 'To\'lov yaratildi. To\'lov sahifasiga o\'ting.',
     ],
 
+    'trial' => [
+        'welcome_title' => 'Xush kelibsiz! 🎁',
+        'welcome_body' => 'Sizga :days kunlik bepul Standart tarif sovg\'a qilindi: savdo va ombor bo\'limlari :date gacha ochiq.',
+        'ending_title' => 'Bepul sinov tugayapti',
+        'ending_body' => 'Standart tarifning :days kunlik bepul bonus muddati :date da tugaydi. Savdo va ombor bo\'limlari yopilib qolmasligi uchun Standartga (:price so\'m) to\'lov qiling — tarif 30 kunga cho\'ziladi.',
+        'ended_title' => 'Bepul sinov tugadi',
+        'ended_body' => 'Standart tarifning bonus muddati tugadi, savdo va ombor bo\'limlari yopildi. Qolgan bo\'limlar (mijozlar, qarz daftari, xarajatlar) ishlashda davom etadi. Qayta yoqish uchun Standartga (:price so\'m) to\'lov qiling — 30 kun.',
+    ],
+
     'limits' => [
         'customers' => 'Mijozlar soni limitiga yetdingiz (:limit ta). Ko\'proq qo\'shish uchun :plan tarifiga o\'ting.',
         'products' => 'Mahsulotlar soni limitiga yetdingiz (:limit ta). Ko\'proq qo\'shish uchun :plan tarifiga o\'ting.',

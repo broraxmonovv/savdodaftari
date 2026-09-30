@@ -25,7 +25,7 @@ class SendPushReminders extends Command
                 app()->setLocale($user->locale ?: 'uz');
 
                 // Tarif 2-3 kundan keyin tugaydi (kuniga bir marta: 2..3 kun oralig'i)
-                $expiring = $user->subscriptions()->active()
+                $expiring = $user->subscriptions()->active()->where('is_trial', false)
                     ->whereBetween('expires_at', [now()->addDays(2), now()->addDays(3)])->first();
 
                 if ($expiring !== null) {

@@ -40,6 +40,7 @@ class NotificationController extends Controller
             $items[] = [
                 'type' => 'subscription_expiring',
                 'plan' => $subscription->plan,
+                'is_trial' => (bool) $subscription->is_trial,
                 'expires_at' => $subscription->expires_at->toIso8601String(),
                 'days_left' => (int) now()->startOfDay()->diffInDays($subscription->expires_at->copy()->startOfDay()),
             ];

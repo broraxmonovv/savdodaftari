@@ -27,7 +27,7 @@
     <div class="card">
         <h2 style="margin-top:0">Tarif va amallar</h2>
         <p>Joriy tarif: <span class="badge {{ $plan === 'pro' ? 'b-blue' : ($plan === 'standard' ? 'b-green' : '') }}">{{ $plan }}</span>
-            @if($subscription)<span class="muted">— {{ $subscription->expires_at->format('d.m.Y H:i') }} gacha</span>@endif</p>
+            @if($subscription)@if($subscription->is_trial)<span class="badge b-amb">bepul sinov</span>@endif <span class="muted">— {{ $subscription->expires_at->format('d.m.Y H:i') }} gacha</span>@endif</p>
 
         <form method="post" action="{{ route('admin.users.grant', $user->id) }}" class="row">
             @csrf
@@ -71,8 +71,8 @@
         @forelse($expenses as $e)<tr><td>{{ $e->spent_at?->format('d.m.Y') }}</td><td>{{ $e->category }}</td><td>{{ $m($e->amount) }}</td></tr>@empty<tr><td colspan="3" class="muted">Yo'q</td></tr>@endforelse</table></div></div>
     <div><h2>To'lovlar</h2><div class="scroll"><table><tr><th>Sana</th><th>Tarif</th><th>Summa</th><th>Usul</th><th>Holat</th></tr>
         @forelse($payments as $p)<tr><td>{{ $p->created_at->format('d.m.Y H:i') }}</td><td>{{ $p->plan }}</td><td>{{ $m($p->amount) }}</td><td>{{ $p->provider }}</td><td><span class="badge {{ $p->status === 'paid' ? 'b-green' : ($p->status === 'pending' ? 'b-amb' : 'b-red') }}">{{ $p->status }}</span></td></tr>@empty<tr><td colspan="5" class="muted">Yo'q</td></tr>@endforelse</table></div></div>
-    <div><h2>Obunalar</h2><div class="scroll"><table><tr><th>Tarif</th><th>Boshlangan</th><th>Tugaydi</th><th>Holat</th></tr>
-        @forelse($subscriptions as $s)<tr><td>{{ $s->plan }}</td><td>{{ $s->started_at?->format('d.m.Y') }}</td><td>{{ $s->expires_at?->format('d.m.Y') }}</td><td><span class="badge {{ $s->isActive() ? 'b-green' : '' }}">{{ $s->isActive() ? 'faol' : $s->status }}</span></td></tr>@empty<tr><td colspan="4" class="muted">Yo'q</td></tr>@endforelse</table></div></div>
+    <div><h2>Obunalar</h2><div class="scroll"><table><tr><th>Tarif</th><th>Turi</th><th>Boshlangan</th><th>Tugaydi</th><th>Holat</th></tr>
+        @forelse($subscriptions as $s)<tr><td>{{ $s->plan }}</td><td>{{ $s->is_trial ? 'sinov' : 'pullik' }}</td><td>{{ $s->started_at?->format('d.m.Y') }}</td><td>{{ $s->expires_at?->format('d.m.Y') }}</td><td><span class="badge {{ $s->isActive() ? 'b-green' : '' }}">{{ $s->isActive() ? 'faol' : $s->status }}</span></td></tr>@empty<tr><td colspan="5" class="muted">Yo'q</td></tr>@endforelse</table></div></div>
     <div><h2>Bonuslar</h2><div class="scroll"><table><tr><th>Sana</th><th>Tur</th><th>Summa</th></tr>
         @forelse($bonuses as $b)<tr><td>{{ $b->created_at->format('d.m.Y H:i') }}</td><td>{{ $b->type }}</td><td>{{ $m($b->amount) }}</td></tr>@empty<tr><td colspan="3" class="muted">Yo'q</td></tr>@endforelse</table></div></div>
     <div><h2>Yechib olish so'rovlari</h2><div class="scroll"><table><tr><th>Sana</th><th>Summa</th><th>Karta</th><th>Holat</th></tr>

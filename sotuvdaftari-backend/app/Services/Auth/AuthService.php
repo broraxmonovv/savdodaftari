@@ -42,6 +42,11 @@ class AuthService
             $user->tokens()->delete();
         }
 
+        // Yangi foydalanuvchiga bepul Standart sinov (bir marta)
+        if ($user->trial_started_at === null && $user->wasRecentlyCreated) {
+            app(\App\Services\Billing\BillingService::class)->grantTrial($user);
+        }
+
         $token = $user->createToken($deviceName)->plainTextToken;
 
         return [$user, $token, ! $user->isProfileComplete()];

@@ -202,6 +202,10 @@ Veb panel (Blade, qurilish bosqichisiz): **Dashboard** (foydalanuvchilar, faol t
 - **Bloklash:** API har bir so'rovga `403 account_blocked` (`meta.reason`) qaytaradi (ilova bloklanganlik ekranini ko'rsatadi), OTP bilan kirish ham rad etiladi. `GET /support` ochiq (tokensiz).
 - **Bildirishnomalar API:** `GET /announcements` (`is_read`, `meta.unread_count`), `POST /announcements/{id}/read`, `POST /announcements/read-all`.
 
+### Bepul sinov (14 kun Standart)
+
+Yangi foydalanuvchi ro'yxatdan o'tganda **14 kunlik bepul Standart** (savdo va ombor) avtomatik beriladi (`TRIAL_DAYS`, standart 14; 0 — o'chiq; bir marta — o'chirib qayta ro'yxatdan o'tish ham qayta bermaydi). Xush kelibsiz e'loni yuboriladi. `php artisan trial:notify` (har soatda, scheduler): tugashiga 2 kun qolganda *"sinov tugayapti, Standartga to'lab 30 kunga cho'zing"* va tugaganda *"sinov tugadi"* e'loni (ilova ichida + push, foydalanuvchi tilida, har biri bir marta). Tugagach obuna o'z-o'zidan bekor bo'ladi: Standart/Pro funksiyalari (savdo, ombor, AI va h.k.) yopiladi, mijozlar/qarz/xarajat/7 kunlik hisobot ishlashda davom etadi. Sinovda turib Standartga to'langanda tarif sinov tugashidan boshlab **30 kunga** cho'ziladi (`is_trial=false`). `GET /billing/plan` va `/auth/me` da `is_trial`/`plan_is_trial`, `trial {days, active, used}`.
+
 ### Pro tarif imkoniyatlari
 
 | Imkoniyat | Bepul | Standart | Pro |

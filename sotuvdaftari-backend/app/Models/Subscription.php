@@ -32,9 +32,12 @@ class Subscription extends Model
     protected $fillable = [
         'user_id',
         'plan',
+        'is_trial',
         'status',
         'started_at',
         'expires_at',
+        'ending_notified_at',
+        'ended_notified_at',
     ];
 
     protected function casts(): array
@@ -42,6 +45,9 @@ class Subscription extends Model
         return [
             'started_at' => 'datetime',
             'expires_at' => 'datetime',
+            'is_trial' => 'boolean',
+            'ending_notified_at' => 'datetime',
+            'ended_notified_at' => 'datetime',
         ];
     }
 
