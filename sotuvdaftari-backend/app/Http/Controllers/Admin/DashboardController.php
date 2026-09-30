@@ -35,6 +35,7 @@ class DashboardController extends Controller
             'withdrawals_pending' => Withdrawal::where('status', Withdrawal::STATUS_PENDING)->count(),
             'withdrawals_pending_sum' => (float) Withdrawal::where('status', Withdrawal::STATUS_PENDING)->sum('amount'),
             'bonus_liability' => (float) User::sum('bonus_balance'),
+            'leads_new' => \App\Models\Lead::where('status', 'new')->count(),
             'customers' => Customer::count(),
             'products' => Product::count(),
             'sales_count' => Sale::count(),

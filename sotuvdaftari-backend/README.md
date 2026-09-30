@@ -202,6 +202,13 @@ Veb panel (Blade, qurilish bosqichisiz): **Dashboard** (foydalanuvchilar, faol t
 - **Bloklash:** API har bir so'rovga `403 account_blocked` (`meta.reason`) qaytaradi (ilova bloklanganlik ekranini ko'rsatadi), OTP bilan kirish ham rad etiladi. `GET /support` ochiq (tokensiz).
 - **Bildirishnomalar API:** `GET /announcements` (`is_read`, `meta.unread_count`), `POST /announcements/{id}/read`, `POST /announcements/read-all`.
 
+### Ochiq sayt (`/`)
+
+Minimalist, bir sahifali sayt (uz/ru, `?lang=ru`): xizmat imkoniyatlari, qanday boshlash, **tariflar (bazadagi joriy narxlar)**, referal dasturi, savol-javob va **ariza formasi**. Yuklab olish tugmalari `SITE_APP_ANDROID_URL` / `SITE_APP_IOS_URL` berilganda chiqadi; aloqa ma'lumotlari `SUPPORT_*` dan olinadi.
+
+- Ariza (`POST /lead`): ism, telefon (`+998XXXXXXXXX` ga normallashtiriladi), savdo turi, izoh, rozilik. Spamdan himoya: IP bo'yicha 5/daqiqa, yashirin honeypot maydon, bir raqamdan 10 daqiqada takroriy ariza saqlanmaydi.
+- **Admin panel → Arizalar:** ro'yxat (qidiruv, holat filtri), holat (*Yangi / Bog'lanildi / Yakunlandi / Spam*) va izoh, ilovada ro'yxatdan o'tgan raqamlarga belgi, o'chirish, CSV eksport; dashboardda yangi arizalar soni. Arizalar `leads` jadvalida saqlanadi.
+
 ### Push-bildirishnomalar (FCM)
 
 - Mobil ilova `POST /devices {token, platform?}` bilan FCM tokenini ro'yxatdan o'tkazadi, chiqishda `DELETE /devices {token}`.

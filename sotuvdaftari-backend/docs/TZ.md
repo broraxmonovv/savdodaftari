@@ -439,3 +439,9 @@ Veb admin panel (`/admin`, sessiya orqali, faqat `is_admin`): dashboard, foydala
 ### 39.1 Push-bildirishnomalar
 
 FCM (HTTP v1): qurilma tokenlari `device_tokens` jadvalida. Admin e'loni va kunlik eslatmalar (tarif tugashi, muddati o'tgan qarzlar, kam qoldiq — TZ 22) push sifatida ham yuboriladi. `FCM_PROJECT_ID` / `FCM_CREDENTIALS` sozlanmasa push o'chiq.
+
+## 40. Ochiq sayt va arizalar
+
+Ochiq sayt (`/`, uz/ru): xizmat haqida ma'lumot, tariflar (bazadan), referal dasturi, FAQ va **ariza formasi** (ism, telefon, savdo turi, izoh, rozilik). Arizalar `leads` jadvaliga yoziladi va admin panelda (*Arizalar*) boshqariladi: holat, izoh, CSV eksport, o'chirish. Spamdan himoya: rate limit, honeypot, takroriy arizani filtrlash.
+
+**Jadval:** `leads(id, name, phone, business_type, message, source, status new|contacted|done|spam, admin_note, locale, ip, user_agent, processed_at)`.

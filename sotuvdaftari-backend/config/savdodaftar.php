@@ -98,6 +98,12 @@ return [
         'ttl' => (int) env('CBU_RATES_TTL', 3600),
     ],
 
+    // Ochiq sayt: ilovani yuklab olish havolalari (bo'sh bo'lsa tugma yashiriladi)
+    'site' => [
+        'android_url' => env('SITE_APP_ANDROID_URL'),
+        'ios_url' => env('SITE_APP_IOS_URL'),
+    ],
+
     'support' => [
         'phone' => env('SUPPORT_PHONE', '+998900000000'),
         'telegram' => env('SUPPORT_TELEGRAM', 'https://t.me/bozorpro_support'),

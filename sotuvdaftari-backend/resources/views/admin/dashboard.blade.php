@@ -12,6 +12,7 @@
     <div class="card stat"><div class="l">Tushum (bugun)</div><div class="v">{{ $m($stats['revenue_today']) }}</div></div>
     <div class="card stat"><div class="l">Tushum (shu oy)</div><div class="v">{{ $m($stats['revenue_month']) }}</div><div class="muted">jami: {{ $m($stats['revenue_total']) }}</div></div>
     <div class="card stat"><div class="l">Yechib olish (kutilmoqda)</div><div class="v"><a href="{{ route('admin.withdrawals') }}">{{ $stats['withdrawals_pending'] }}</a></div><div class="muted">{{ $m($stats['withdrawals_pending_sum']) }}</div></div>
+    <div class="card stat"><div class="l">Yangi arizalar (sayt)</div><div class="v"><a href="{{ route('admin.leads', ['status' => 'new']) }}">{{ $stats['leads_new'] }}</a></div></div>
     <div class="card stat"><div class="l">Bonus majburiyati</div><div class="v">{{ $m($stats['bonus_liability']) }}</div><div class="muted">foydalanuvchilar balansi</div></div>
 </div>
 

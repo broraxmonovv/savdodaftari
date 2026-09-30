@@ -47,7 +47,7 @@
     </style>
 </head>
 <body>
-@php($menu = ['admin.dashboard' => 'Dashboard', 'admin.users' => 'Foydalanuvchilar', 'admin.plans' => 'Tariflar', 'admin.withdrawals' => 'Yechib olish', 'admin.announcements' => 'Bildirishnomalar'])
+@php($menu = ['admin.dashboard' => 'Dashboard', 'admin.users' => 'Foydalanuvchilar', 'admin.plans' => 'Tariflar', 'admin.withdrawals' => 'Yechib olish', 'admin.leads' => 'Arizalar', 'admin.announcements' => 'Bildirishnomalar'])
 <div class="wrap">
     <nav>
         <div class="brand">BozorPro Admin</div>
