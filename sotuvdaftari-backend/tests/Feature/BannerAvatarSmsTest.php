@@ -170,4 +170,26 @@ class BannerAvatarSmsTest extends TestCase
         $this->assertCount(1, ArraySmsSender::all());
         $this->assertStringContainsString('Здравствуйте', ArraySmsSender::last()['message']);
     }
+
+    public function test_uploaded_images_are_served_even_without_storage_link(): void
+    {
+        Storage::fake('public');
+        config()->set('app.url', 'http://localhost'); // noto'g'ri APP_URL ta'sir qilmasligi kerak
+
+        $file = UploadedFile::fake()->image('b.jpg', 600, 250);
+        $path = $file->store('banners', 'public');
+        $banner = Banner::create(['title' => 'T', 'url' => 'https://a.uz', 'image_path' => $path, 'is_active' => true]);
+
+        // URL joriy so'rov manzilidan yasaladi (host va port bilan)
+        $url = $banner->image_url;
+        $this->assertStringEndsWith('/media/'.$path, $url);
+
+        $response = $this->get('/media/'.$path)->assertOk();
+        $this->assertStringStartsWith('image/', $response->headers->get('Content-Type'));
+
+        // Faqat rasm papkalari ochiq; boshqa yo'llar va yo'q fayllar 404
+        $this->get('/media/backups/secret.json')->assertNotFound();
+        $this->get('/media/banners/yoq.jpg')->assertNotFound();
+        $this->get('/media/banners/../../.env')->assertNotFound();
+    }
 }

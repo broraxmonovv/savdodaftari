@@ -90,9 +90,7 @@ class Product extends Model
 
     protected function imageUrl(): Attribute
     {
-        return Attribute::get(fn () => $this->image_path
-            ? Storage::disk(config('savdodaftar.inventory.image_disk'))->url($this->image_path)
-            : null);
+        return Attribute::get(fn () => \App\Support\PublicUrl::for((string) config('savdodaftar.inventory.image_disk'), $this->image_path));
     }
 
     public function stockStatus(): string

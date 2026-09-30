@@ -10,6 +10,17 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\WithdrawalController;
 use App\Http\Controllers\Site\HomeController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
+
+// Yuklangan rasmlar. `php artisan storage:link` bajarilgan bo'lsa URL `/storage/...` bo'ladi va web-server
+// faylni o'zi beradi; bajarilmagan bo'lsa URL `/media/...` bo'ladi va shu marshrut `public` diskdan beradi
+// (faqat rasm papkalari).
+Route::get('media/{path}', function (string $path) {
+    abort_unless(preg_match('#^(banners|avatars|products)/#', $path) === 1 && ! str_contains($path, '..') && ! str_contains($path, '\\'), 404);
+    abort_unless(Storage::disk('public')->exists($path), 404);
+
+    return Storage::disk('public')->response($path, null, ['Cache-Control' => 'public, max-age=86400']);
+})->where('path', '.*');
 
 // Ochiq sayt
 Route::get('/', [HomeController::class, 'index'])->name('site.home');

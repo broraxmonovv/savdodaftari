@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\PublicUrl;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
@@ -27,7 +28,7 @@ class Banner extends Model
 
     public function getImageUrlAttribute(): string
     {
-        return Storage::disk(self::disk())->url($this->image_path);
+        return (string) PublicUrl::for(self::disk(), $this->image_path);
     }
 
     /** Faol, boshlangan va muddati tugamagan bannerlar */

@@ -154,8 +154,6 @@ class User extends Authenticatable
 
     public function getAvatarUrlAttribute(): ?string
     {
-        return $this->avatar_path
-            ? \Illuminate\Support\Facades\Storage::disk(config('savdodaftar.avatar.disk'))->url($this->avatar_path)
-            : null;
+        return \App\Support\PublicUrl::for((string) config('savdodaftar.avatar.disk'), $this->avatar_path);
     }
 }
