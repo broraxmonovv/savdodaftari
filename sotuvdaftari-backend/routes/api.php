@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\V1\AdminWithdrawalController;
+use App\Http\Controllers\Api\V1\AiController;
 use App\Http\Controllers\Api\V1\AnnouncementController;
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\BackupController;
@@ -69,7 +70,7 @@ Route::middleware(['auth:sanctum', 'not_blocked'])->group(function () {
         Route::post('inventory/count', [InventoryController::class, 'count']);
 
         // Savdo
-        Route::get('sales/summary', [SaleController::class, 'summary']);
+        Route::get('sales/summary', [SaleController::class, 'summary'])->middleware('report_range');
         Route::get('sales/returns', [SaleController::class, 'returns']);
         Route::post('sales/{id}/return', [SaleController::class, 'returnSale']);
         Route::get('sales/{id}/receipt', [SaleController::class, 'receipt']);
@@ -78,11 +79,14 @@ Route::middleware(['auth:sanctum', 'not_blocked'])->group(function () {
     });
 
     // Xarajatlar (TZ 14)
-    Route::get('expenses/summary', [ExpenseController::class, 'summary']);
+    Route::get('expenses/summary', [ExpenseController::class, 'summary'])->middleware('report_range');
     Route::apiResource('expenses', ExpenseController::class)->only(['index', 'store', 'destroy'])->parameters(['expenses' => 'id']);
 
     // Bildirishnomalar (TZ 22)
     Route::get('notifications', [NotificationController::class, 'index']);
+
+    // Pro: ovozli boshqaruv / AI yordamchi
+    Route::post('ai/voice', [AiController::class, 'voice'])->middleware(['plan:pro', 'throttle:30,1']);
 
     // Push-bildirishnomalar uchun qurilma tokeni
     Route::post('devices', [DeviceController::class, 'store']);
@@ -95,9 +99,11 @@ Route::middleware(['auth:sanctum', 'not_blocked'])->group(function () {
 
     // Bosh sahifa va hisobotlar (TZ 5, 17, 18)
     Route::get('dashboard', [ReportController::class, 'dashboard']);
-    Route::get('reports/overview', [ReportController::class, 'overview']);
-    Route::get('reports/daily', [ReportController::class, 'daily']);
-    Route::get('reports/top-products', [ReportController::class, 'topProducts']);
+    Route::middleware('report_range')->group(function () {
+        Route::get('reports/overview', [ReportController::class, 'overview']);
+        Route::get('reports/daily', [ReportController::class, 'daily']);
+        Route::get('reports/top-products', [ReportController::class, 'topProducts']);
+    });
 
     // Tarif va Pro checkout (TZ 31, 35, 36)
     Route::get('billing/plan', [BillingController::class, 'plan']);
@@ -122,11 +128,13 @@ Route::middleware(['auth:sanctum', 'not_blocked'])->group(function () {
     Route::get('currencies', [InfoController::class, 'currencies']);
     Route::get('guides', [InfoController::class, 'guides']);
 
-    // Bulut zaxira (TZ 2, 23)
-    Route::get('backups', [BackupController::class, 'index']);
-    Route::post('backups', [BackupController::class, 'store'])->middleware('throttle:6,1');
-    Route::get('backups/{id}', [BackupController::class, 'show']);
-    Route::delete('backups/{id}', [BackupController::class, 'destroy']);
+    // Bulut zaxira (TZ 2, 23) — Pro tarif
+    Route::middleware('plan:pro')->group(function () {
+        Route::get('backups', [BackupController::class, 'index']);
+        Route::post('backups', [BackupController::class, 'store'])->middleware('throttle:6,1');
+        Route::get('backups/{id}', [BackupController::class, 'show']);
+        Route::delete('backups/{id}', [BackupController::class, 'destroy']);
+    });
 });
 
 // To'lov provayderlari webhook'lari — Basic auth / MD5 imzo bilan himoyalanadi (TZ 36)

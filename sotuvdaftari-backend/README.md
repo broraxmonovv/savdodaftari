@@ -202,6 +202,19 @@ Veb panel (Blade, qurilish bosqichisiz): **Dashboard** (foydalanuvchilar, faol t
 - **Bloklash:** API har bir so'rovga `403 account_blocked` (`meta.reason`) qaytaradi (ilova bloklanganlik ekranini ko'rsatadi), OTP bilan kirish ham rad etiladi. `GET /support` ochiq (tokensiz).
 - **Bildirishnomalar API:** `GET /announcements` (`is_read`, `meta.unread_count`), `POST /announcements/{id}/read`, `POST /announcements/read-all`.
 
+### Pro tarif imkoniyatlari
+
+| Imkoniyat | Bepul | Standart | Pro |
+|---|---|---|---|
+| Mijozlar, qarz, xarajat | ✓ | ✓ | ✓ |
+| Savdo va ombor (barcode, chek) | — | ✓ | ✓ |
+| Hisobot: bugun va 7 kun | ✓ | ✓ | ✓ |
+| Hisobot: 30 kun, barchasi, ixtiyoriy sana (`403 plan_required`, `meta.feature=advanced_reports`) | — | — | ✓ |
+| Bulutga zaxira (`/backups`) | — | — | ✓ |
+| Ovozli boshqaruv `POST /ai/voice` | — | — | ✓ |
+
+**`POST /ai/voice {text}`** (Pro): ovozdan olingan matnni (o'zbek lotin / rus) tahlil qiladi. Niyatlar: `debt_add`, `debt_payment`, `stock_in` (yozuvchi — `needs_confirmation: true`, `params.customer/product/amount/quantity`, noaniq bo'lsa `params.candidates` va `params.missing`; **hech narsa yozilmaydi**, ilova tasdiqlagach mavjud API'lar bilan bajaradi) va `show_sales`, `show_profit`, `show_debts`, `show_low_stock` (javob darhol `result` va `message` bilan). Tahlil qoidalarga asoslangan (son so'zlari: "yuz ellik ming", "150 ming", "1.5 million"; ism kirill/lotin), LLM ishlatilmaydi.
+
 ### Ochiq sayt (`/`)
 
 Minimalist, bir sahifali sayt (uz/ru, `?lang=ru`): xizmat imkoniyatlari, qanday boshlash, **tariflar (bazadagi joriy narxlar)**, referal dasturi, savol-javob va **ariza formasi**. Yuklab olish tugmalari `SITE_APP_ANDROID_URL` / `SITE_APP_IOS_URL` berilganda chiqadi; aloqa ma'lumotlari `SUPPORT_*` dan olinadi.

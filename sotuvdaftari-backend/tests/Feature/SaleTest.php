@@ -19,7 +19,7 @@ class SaleTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->user = User::factory()->standard()->create(['shop_name' => 'Bozor Market']);
+        $this->user = User::factory()->pro()->create(['shop_name' => 'Bozor Market']);
         Sanctum::actingAs($this->user);
     }
 
@@ -391,7 +391,7 @@ class SaleTest extends TestCase
             'items' => [['name' => 'Paket', 'qty' => 1, 'price' => 1000]],
         ])->assertNotFound();
 
-        Sanctum::actingAs(User::factory()->standard()->create());
+        Sanctum::actingAs(User::factory()->pro()->create());
         $this->getJson('/api/v1/sales')->assertOk()->assertJsonPath('meta.total', 0);
     }
 }

@@ -194,7 +194,7 @@ class ReportController extends Controller
             'limit' => ['nullable', 'integer', 'min:1', 'max:50'],
         ]);
 
-        [$from, $to] = $this->range($data, defaultPeriod: 'month');
+        [$from, $to] = $this->range($data, defaultPeriod: $request->user()->isPro() ? 'month' : 'week');
         $by = $data['by'] ?? 'revenue';
 
         $items = SaleItem::query()

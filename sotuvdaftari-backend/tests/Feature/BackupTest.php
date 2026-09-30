@@ -24,7 +24,7 @@ class BackupTest extends TestCase
         Storage::fake('local');
         config()->set('savdodaftar.backup.disk', 'local');
 
-        $this->user = User::factory()->standard()->create(['shop_name' => 'Bozor Market']);
+        $this->user = User::factory()->pro()->create(['shop_name' => 'Bozor Market']);
         Sanctum::actingAs($this->user);
     }
 
@@ -108,7 +108,7 @@ class BackupTest extends TestCase
         $this->seedData();
         $id = $this->postJson('/api/v1/backups')->assertCreated()->json('data.id');
 
-        Sanctum::actingAs(User::factory()->standard()->create());
+        Sanctum::actingAs(User::factory()->pro()->create());
 
         $this->getJson('/api/v1/backups')->assertOk()->assertJsonPath('data.count', 0);
         $this->getJson("/api/v1/backups/{$id}")->assertNotFound();

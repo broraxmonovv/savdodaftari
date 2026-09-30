@@ -85,6 +85,24 @@ return [
         'checkout_created' => 'To\'lov yaratildi. To\'lov sahifasiga o\'ting.',
     ],
 
+    'ai' => [
+        'unknown' => 'Buyruqni tushunmadim. Masalan: "Ali akaga 150 ming qarz yoz".',
+        'debt_add' => ':name ga :amount qarz yozilsinmi?',
+        'debt_payment' => ':name :amount qarzini qaytardi — qabul qilinsinmi?',
+        'stock_in' => ':product — :qty :unit kirim qilinsinmi?',
+        'product_not_found' => '":name" nomli mahsulot topilmadi.',
+        'customer_not_found' => '":name" nomli mijoz topilmadi.',
+        'choose_customer' => '":name" bo\'yicha bir nechta mijoz topildi — birini tanlang.',
+        'need_amount' => 'Summani aniq ayting. Masalan: "150 ming".',
+        'sales' => 'Bugun :count ta savdo, jami :total, yalpi foyda :profit.',
+        'profit' => 'Bugungi yalpi foyda :profit, xarajat :expenses, sof foyda :net.',
+        'overdue' => 'Muddati o\'tgan qarzlar: :count ta, jami :total.',
+        'no_overdue' => 'Muddati o\'tgan qarz yo\'q.',
+        'low_stock' => ':count ta mahsulot kam qolgan.',
+        'no_low_stock' => 'Kam qolgan mahsulot yo\'q.',
+        'currency' => 'so\'m',
+    ],
+
     'push' => [
         'subscription_title' => 'Tarif tugamoqda',
         'subscription_body' => 'Sizning :plan tarifingiz :date kuni tugaydi. Uzluksiz foydalanish uchun uzaytiring.',

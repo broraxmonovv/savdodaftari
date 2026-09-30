@@ -445,3 +445,8 @@ FCM (HTTP v1): qurilma tokenlari `device_tokens` jadvalida. Admin e'loni va kunl
 Ochiq sayt (`/`, uz/ru): xizmat haqida ma'lumot, tariflar (bazadan), referal dasturi, FAQ va **ariza formasi** (ism, telefon, savdo turi, izoh, rozilik). Arizalar `leads` jadvaliga yoziladi va admin panelda (*Arizalar*) boshqariladi: holat, izoh, CSV eksport, o'chirish. Spamdan himoya: rate limit, honeypot, takroriy arizani filtrlash.
 
 **Jadval:** `leads(id, name, phone, business_type, message, source, status new|contacted|done|spam, admin_note, locale, ip, user_agent, processed_at)`.
+
+## 41. Tariflar bo'yicha imkoniyatlar (amalga oshirilgan)
+
+- **Standart = Pro savdo bo'limi:** savdo, barcode, ombor va chek funksiyalari Standart va Pro'da bir xil ishlaydi.
+- **Pro:** ovozli boshqaruv (`/ai/voice`), 30 kunlik/ixtiyoriy oraliq hisobot, bulut zaxira. Bepul va Standartda hisobot faqat bugun va 7 kun.

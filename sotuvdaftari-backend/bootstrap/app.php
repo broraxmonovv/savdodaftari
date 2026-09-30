@@ -3,6 +3,7 @@
 use App\Exceptions\ApiException;
 use App\Http\Middleware\EnsureAdmin;
 use App\Http\Middleware\EnsureNotBlocked;
+use App\Http\Middleware\EnsureReportRange;
 use App\Http\Middleware\EnsurePlan;
 use App\Http\Middleware\SetLocale;
 use Illuminate\Auth\AuthenticationException;
@@ -26,7 +27,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->api(prepend: [SetLocale::class]);
-        $middleware->alias(['plan' => EnsurePlan::class, 'admin' => EnsureAdmin::class, 'not_blocked' => EnsureNotBlocked::class]
+        $middleware->alias(['plan' => EnsurePlan::class, 'admin' => EnsureAdmin::class, 'not_blocked' => EnsureNotBlocked::class, 'report_range' => EnsureReportRange::class]
         );
         // Admin panel: kirmagan foydalanuvchi login sahifasiga yo'naltiriladi
         $middleware->redirectGuestsTo(fn (Request $request) => $request->is('admin*') ? route('admin.login') : null);

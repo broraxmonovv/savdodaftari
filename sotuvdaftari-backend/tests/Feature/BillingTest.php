@@ -154,6 +154,33 @@ class BillingTest extends TestCase
             ->assertStatus(422)->assertJsonPath('code', 'already_standard');
     }
 
+    public function test_extended_reports_and_backups_are_pro_only(): void
+    {
+        $standard = User::factory()->standard()->create();
+        Sanctum::actingAs($standard);
+
+        // Bugun va 7 kun — Standartda ochiq
+        $this->getJson('/api/v1/reports/overview?period=week')->assertOk();
+        $this->getJson('/api/v1/sales/summary?from='.today()->subDays(6)->toDateString().'&to='.today()->toDateString())->assertOk();
+        $this->getJson('/api/v1/reports/top-products')->assertOk(); // standart davr — hafta
+
+        // 30 kun, barchasi va 7 kundan uzun oraliq — Pro
+        foreach (['reports/overview?period=month', 'reports/daily?period=month', 'reports/top-products?period=all',
+            'sales/summary?from=2020-01-01&to=2020-01-31', 'expenses/summary?period=month'] as $url) {
+            $this->getJson("/api/v1/{$url}")->assertStatus(403)
+                ->assertJsonPath('code', 'plan_required')->assertJsonPath('meta.required_plan', 'pro');
+        }
+
+        // Backup — Pro
+        $this->getJson('/api/v1/backups')->assertStatus(403)->assertJsonPath('meta.required_plan', 'pro');
+
+        $pro = User::factory()->pro()->create();
+        Sanctum::actingAs($pro);
+        $this->getJson('/api/v1/reports/overview?period=month')->assertOk();
+        $this->getJson('/api/v1/sales/summary?from=2020-01-01&to=2020-01-31')->assertOk();
+        $this->getJson('/api/v1/backups')->assertOk();
+    }
+
     public function test_payme_webhook_flow_activates_pro(): void
     {
         $order = $this->postJson('/api/v1/billing/checkout', ['provider' => 'payme'])->json('data.payment.order_id');
