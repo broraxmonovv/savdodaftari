@@ -31,6 +31,21 @@ return [
         'reset_window' => (int) env('PIN_RESET_WINDOW', 600),
     ],
 
+    'banners' => [
+        'disk' => env('BANNER_DISK', 'public'),
+        'image_max_kb' => (int) env('BANNER_IMAGE_MAX_KB', 4096),
+    ],
+
+    'avatar' => [
+        'disk' => env('AVATAR_DISK', 'public'),
+        'max_kb' => (int) env('AVATAR_MAX_KB', 3072),
+    ],
+
+    'sms_reminders' => [
+        // Muddati o'tgan qarz bo'yicha SMS necha kunda bir takrorlanadi
+        'overdue_repeat_days' => (int) env('SMS_OVERDUE_REPEAT_DAYS', 7),
+    ],
+
     'inventory' => [
         // Savdo/chiqimda qoldiq manfiyga tushishiga ruxsat (bozorchi omborni to'liq yuritmasa)
         'allow_negative_stock' => (bool) env('INVENTORY_ALLOW_NEGATIVE_STOCK', false),

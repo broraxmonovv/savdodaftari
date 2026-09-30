@@ -13,3 +13,6 @@ Schedule::command('push:reminders')->dailyAt('09:00');
 
 // Bepul sinov tugashi bildirishnomalari (har soatda)
 Schedule::command('trial:notify')->hourly();
+
+// Qarzdor mijozlarga SMS eslatma: muddatiga 1 kun qolganda va muddati o'tganda (har kuni 10:00)
+Schedule::command('debts:sms-reminders')->dailyAt('10:00');

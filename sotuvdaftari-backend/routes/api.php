@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\V1\AiController;
 use App\Http\Controllers\Api\V1\AnnouncementController;
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\BackupController;
+use App\Http\Controllers\Api\V1\BannerController;
 use App\Http\Controllers\Api\V1\BillingController;
 use App\Http\Controllers\Api\V1\CustomerController;
 use App\Http\Controllers\Api\V1\DebtController;
@@ -34,6 +35,8 @@ Route::prefix('auth')->group(function () {
         Route::put('profile', [AuthController::class, 'updateProfile']);
         Route::put('pin', [AuthController::class, 'setPin']);
         Route::post('pin/verify', [AuthController::class, 'verifyPin'])->middleware('throttle:pin');
+        Route::post('avatar', [AuthController::class, 'uploadAvatar']);
+        Route::delete('avatar', [AuthController::class, 'deleteAvatar']);
         Route::post('logout', [AuthController::class, 'logout']);
         Route::post('logout-all', [AuthController::class, 'logoutAll']);
     });
@@ -82,6 +85,10 @@ Route::middleware(['auth:sanctum', 'not_blocked'])->group(function () {
     // Xarajatlar (TZ 14)
     Route::get('expenses/summary', [ExpenseController::class, 'summary'])->middleware('report_range');
     Route::apiResource('expenses', ExpenseController::class)->only(['index', 'store', 'destroy'])->parameters(['expenses' => 'id']);
+
+    // Reklama karuseli
+    Route::get('banners', [BannerController::class, 'index']);
+    Route::post('banners/{id}/click', [BannerController::class, 'click']);
 
     // Bildirishnomalar (TZ 22)
     Route::get('notifications', [NotificationController::class, 'index']);

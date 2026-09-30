@@ -20,6 +20,8 @@ class UserResource extends JsonResource
             'shop_name' => $this->shop_name,
             'business_type' => $this->business_type,
             'locale' => $this->locale,
+            'avatar_url' => $this->avatar_url,
+            'sms_reminders' => (bool) $this->sms_reminders,
             'has_pin' => $this->hasPin(),
             'is_profile_complete' => $this->isProfileComplete(),
             'bonus_balance' => (float) $this->bonus_balance,

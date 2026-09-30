@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\AnnouncementController;
+use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\LeadController;
@@ -40,6 +41,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('leads/export', [LeadController::class, 'export'])->name('leads.export');
         Route::put('leads/{id}', [LeadController::class, 'update'])->name('leads.update');
         Route::delete('leads/{id}', [LeadController::class, 'destroy'])->name('leads.destroy');
+
+        Route::get('banners', [BannerController::class, 'index'])->name('banners');
+        Route::post('banners', [BannerController::class, 'store'])->name('banners.store');
+        Route::put('banners/{id}', [BannerController::class, 'update'])->name('banners.update');
+        Route::delete('banners/{id}', [BannerController::class, 'destroy'])->name('banners.destroy');
 
         Route::get('announcements', [AnnouncementController::class, 'index'])->name('announcements');
         Route::post('announcements', [AnnouncementController::class, 'store'])->name('announcements.store');

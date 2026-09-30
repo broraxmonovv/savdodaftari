@@ -123,6 +123,11 @@ return [
         'currency' => 'so\'m',
     ],
 
+    'sms' => [
+        'debt_overdue' => "Assalomu alaykum :name, Sizning :shop do'kondan, :owner dan :amount so'm qarzingiz bor va berish muddati o'tib ketti. Tezroq to'lashingizni so'raymiz.",
+        'debt_due_soon' => "Assalomu alaykum :name, Sizning :shop do'kondan, :owner dan :amount so'm qarzingiz bor va berish muddati ertaga tugaydi. Iltimos, o'z vaqtida to'lang.",
+    ],
+
     'push' => [
         'subscription_title' => 'Tarif tugamoqda',
         'subscription_body' => 'Sizning :plan tarifingiz :date kuni tugaydi. Uzluksiz foydalanish uchun uzaytiring.',

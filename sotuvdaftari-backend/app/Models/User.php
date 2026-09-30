@@ -23,6 +23,7 @@ class User extends Authenticatable
         'shop_name',
         'business_type',
         'locale',
+        'sms_reminders',
         'phone_verified_at',
         'last_login_at',
     ];
@@ -41,6 +42,7 @@ class User extends Authenticatable
             'pin' => 'hashed',
             'bonus_balance' => 'decimal:2',
             'is_admin' => 'boolean',
+            'sms_reminders' => 'boolean',
             'trial_started_at' => 'datetime',
             'blocked_at' => 'datetime',
             'admin_password' => 'hashed',
@@ -148,5 +150,12 @@ class User extends Authenticatable
     public function isProfileComplete(): bool
     {
         return filled($this->name);
+    }
+
+    public function getAvatarUrlAttribute(): ?string
+    {
+        return $this->avatar_path
+            ? \Illuminate\Support\Facades\Storage::disk(config('savdodaftar.avatar.disk'))->url($this->avatar_path)
+            : null;
     }
 }

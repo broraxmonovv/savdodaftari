@@ -18,6 +18,7 @@ use App\Services\Auth\OtpService;
 use App\Services\Auth\PinService;
 use App\Services\Referral\ReferralService;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -87,6 +88,38 @@ class AuthController extends Controller
         $user->fill(Arr::except($data, ['referral_code']))->save();
 
         return $this->success(new UserResource($user->fresh()), __('auth.profile_updated'));
+    }
+
+    /** POST /auth/avatar — multipart `avatar` (profil rasmi) */
+    public function uploadAvatar(Request $request): JsonResponse
+    {
+        $request->validate([
+            'avatar' => ['required', 'image', 'max:'.config('savdodaftar.avatar.max_kb')],
+        ]);
+
+        $user = $request->user();
+        $disk = config('savdodaftar.avatar.disk');
+
+        if ($user->avatar_path) {
+            Storage::disk($disk)->delete($user->avatar_path);
+        }
+
+        $user->forceFill(['avatar_path' => $request->file('avatar')->store('avatars', $disk)])->save();
+
+        return $this->success(new UserResource($user->fresh()), __('auth.avatar_saved'));
+    }
+
+    /** DELETE /auth/avatar */
+    public function deleteAvatar(Request $request): JsonResponse
+    {
+        $user = $request->user();
+
+        if ($user->avatar_path) {
+            Storage::disk(config('savdodaftar.avatar.disk'))->delete($user->avatar_path);
+            $user->forceFill(['avatar_path' => null])->save();
+        }
+
+        return $this->success(new UserResource($user->fresh()), __('auth.avatar_deleted'));
     }
 
     /** PUT /auth/pin */

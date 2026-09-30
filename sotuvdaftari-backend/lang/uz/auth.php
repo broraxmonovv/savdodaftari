@@ -4,6 +4,8 @@ return [
     'unauthenticated' => 'Avval tizimga kiring.',
     'user_not_found' => 'Bu raqam bilan foydalanuvchi topilmadi.',
     'profile_updated' => 'Profil saqlandi.',
+    'avatar_saved' => "Profil rasmi saqlandi.",
+    'avatar_deleted' => "Profil rasmi o'chirildi.",
     'logged_out' => 'Tizimdan chiqdingiz.',
 
     'otp' => [
