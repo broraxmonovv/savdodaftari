@@ -69,10 +69,10 @@ class ExportService
                 $writer->addNewSheetAndMakeItCurrent()->setName($this->sheetName($section['title']));
             }
 
-            $writer->addRow(Row::fromValuesWithStyles([$document['title'].' — '.$section['title']], [$bold]));
+            $writer->addRow(Row::fromValuesWithStyles([$document['title'].' — '.$section['title']], $bold));
             $writer->addRow(Row::fromValues([$document['subtitle']]));
             $writer->addRow(Row::fromValues([]));
-            $writer->addRow(Row::fromValuesWithStyles($section['headers'], array_fill(0, count($section['headers']), $bold)));
+            $writer->addRow(Row::fromValuesWithStyles($section['headers'], $bold));
 
             foreach ($section['rows'] as $row) {
                 $writer->addRow(Row::fromValues($row));

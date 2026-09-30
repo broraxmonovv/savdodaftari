@@ -77,7 +77,7 @@ class ExportTest extends TestCase
         $text = $this->xlsxText($sales);
         $this->assertStringContainsString('Ali Valiyev', $text);
         $this->assertStringContainsString('300000', $text);
-        $this->assertStringContainsString("O'tkir Market", str_replace('&apos;', "'", $text));
+        $this->assertStringContainsString("O'tkir Market", str_replace(['&apos;', '&#039;'], "'", $text));
 
         $report = $this->xlsxText($this->get('/api/v1/exports/report?format=xlsx')->assertOk());
         $this->assertStringContainsString('100000', $report);      // yalpi foyda
