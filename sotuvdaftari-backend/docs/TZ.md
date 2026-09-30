@@ -462,3 +462,7 @@ Ochiq sayt (`/`, uz/ru): xizmat haqida ma'lumot, tariflar (bazadan), referal das
 ### 41.3 Excel/PDF eksport (Pro)
 
 `GET /exports/{type}` — hisobot, savdolar, xarajatlar, qarzlar va ombor ro'yxatini Excel (.xlsx) yoki PDF ko'rinishida yuklab olish; davr `from/to` bilan tanlanadi.
+
+### 41.4 Zaxira va tiklash (Pro)
+
+Zaxira ro'yxati, qo'lda zaxira yaratish, o'chirish va **tiklash** (`POST /backups/{id}/restore`): tiklashdan oldin joriy holatning avtomatik zaxirasi olinadi, tiklash tranzaksiyada bajariladi.

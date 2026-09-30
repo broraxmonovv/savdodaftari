@@ -47,6 +47,20 @@ class BackupController extends Controller
         ]);
     }
 
+    /**
+     * POST /backups/{id}/restore {confirm: true} — ma'lumotlarni shu zaxiradagi holatga qaytaradi.
+     * Avval joriy holatning avtomatik zaxirasi olinadi.
+     */
+    public function restore(Request $request, int $id): JsonResponse
+    {
+        $request->validate(['confirm' => ['accepted']]);
+
+        $backup = Backup::forUser($request->user())->findOrFail($id);
+        $counts = $this->backups->restore($request->user(), $backup);
+
+        return $this->success(['restored' => $counts], __('messages.backup.restored'));
+    }
+
     /** DELETE /backups/{id} */
     public function destroy(Request $request, int $id): JsonResponse
     {

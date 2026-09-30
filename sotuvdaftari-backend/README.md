@@ -221,6 +221,8 @@ Veb panel (Blade, qurilish bosqichisiz): **Dashboard** (foydalanuvchilar, faol t
 
 **Excel/PDF eksport (Pro):** `GET /exports/{type}?format=xlsx|pdf&from=&to=` (`from/to` bo'lmasa — oxirgi 30 kun). `type`: `report` (umumiy ko'rsatkichlar + kunlar + top mahsulotlar), `sales`, `expenses`, `debts` (ochiq qarzlar), `inventory` (ombor qoldig'i va qiymati). Excel — `openspout/openspout`, PDF — `dompdf/dompdf` (DejaVu Sans: lotin va kirill); sarlavhalar `Accept-Language` bo'yicha uz/ru. Talab: `ext-zip`, `ext-xmlreader`, `ext-gd` (PDF uchun `ext-mbstring`, `ext-dom`).
 
+**Zaxira va tiklash (Pro):** `GET/POST /backups`, `GET /backups/{id}` (payload), `DELETE /backups/{id}` va **`POST /backups/{id}/restore {confirm: true}`** — ma'lumotlar (mijoz, qarz, mahsulot, savdo, qaytarish, harakat, xarajat) zaxiradagi holatga qaytariladi, asl ID'lar saqlanadi. Xavfsizlik: checksum tekshiriladi, avval joriy holatning avtomatik zaxirasi olinadi (qaytish nuqtasi), almashtirish bitta tranzaksiyada, boshqa foydalanuvchilarga tegilmaydi.
+
 ### Ochiq sayt (`/`)
 
 Minimalist, bir sahifali sayt (uz/ru, `?lang=ru`): xizmat imkoniyatlari, qanday boshlash, **tariflar (bazadagi joriy narxlar)**, referal dasturi, savol-javob va **ariza formasi**. Yuklab olish tugmalari `SITE_APP_ANDROID_URL` / `SITE_APP_IOS_URL` berilganda chiqadi; aloqa ma'lumotlari `SUPPORT_*` dan olinadi.

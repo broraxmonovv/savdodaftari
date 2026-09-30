@@ -138,6 +138,7 @@ Route::middleware(['auth:sanctum', 'not_blocked'])->group(function () {
         Route::get('backups', [BackupController::class, 'index']);
         Route::post('backups', [BackupController::class, 'store'])->middleware('throttle:6,1');
         Route::get('backups/{id}', [BackupController::class, 'show']);
+        Route::post('backups/{id}/restore', [BackupController::class, 'restore'])->middleware('throttle:3,1');
         Route::delete('backups/{id}', [BackupController::class, 'destroy']);
     });
 });

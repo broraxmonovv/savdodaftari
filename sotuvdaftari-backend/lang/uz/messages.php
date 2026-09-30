@@ -137,6 +137,9 @@ return [
     ],
 
     'backup' => [
+        'restored' => 'Ma\'lumotlar zaxiradagi holatga qaytarildi.',
+        'corrupted' => 'Zaxira fayli buzilgan.',
+        'invalid' => 'Zaxira fayli yaroqsiz.',
         'created' => 'Zaxira nusxa yaratildi.',
         'deleted' => 'Zaxira nusxa o\'chirildi.',
         'file_missing' => 'Zaxira fayli topilmadi.',

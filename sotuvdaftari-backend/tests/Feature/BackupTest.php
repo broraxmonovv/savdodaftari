@@ -116,4 +116,78 @@ class BackupTest extends TestCase
 
         $this->assertNotNull(Backup::find($id));
     }
+
+    public function test_restore_returns_data_to_backup_state_and_keeps_other_users_intact(): void
+    {
+        $this->seedData();
+
+        $other = User::factory()->pro()->create();
+        Customer::factory()->for($other)->create(['name' => 'Boshqa mijoz']);
+
+        $ids = [
+            'customers' => \DB::table('customers')->where('user_id', $this->user->id)->pluck('id')->all(),
+            'products' => \DB::table('products')->where('user_id', $this->user->id)->pluck('id')->all(),
+            'sales' => \DB::table('sales')->where('user_id', $this->user->id)->pluck('id')->all(),
+            'sale_items' => \DB::table('sale_items')->where('user_id', $this->user->id)->pluck('id')->all(),
+            'stock_movements' => \DB::table('stock_movements')->where('user_id', $this->user->id)->pluck('id')->all(),
+            'expenses' => \DB::table('expenses')->where('user_id', $this->user->id)->pluck('id')->all(),
+        ];
+        $stock = (float) \DB::table('products')->where('user_id', $this->user->id)->value('stock');
+        $saleTotal = (float) \DB::table('sales')->where('user_id', $this->user->id)->value('total');
+
+        $backupId = $this->postJson('/api/v1/backups')->assertCreated()->json('data.id');
+
+        // Zaxiradan keyin ma'lumotlar buziladi: mijoz o'chadi, yangi mahsulot/xarajat qo'shiladi, qoldiq o'zgaradi
+        \DB::table('customers')->where('user_id', $this->user->id)->delete();
+        \DB::table('products')->where('user_id', $this->user->id)->update(['stock' => 1]);
+        Product::factory()->for($this->user)->create(['name' => 'Keyin qo\'shilgan']);
+        $this->postJson('/api/v1/expenses', ['category' => 'rent', 'amount' => 10])->assertCreated();
+
+        // Tasdiqsiz tiklab bo'lmaydi
+        $this->postJson("/api/v1/backups/{$backupId}/restore")->assertStatus(422);
+
+        $response = $this->postJson("/api/v1/backups/{$backupId}/restore", ['confirm' => true])->assertOk()
+            ->assertJsonPath('data.restored.customers', 1)
+            ->assertJsonPath('data.restored.sales', 1);
+        unset($response);
+
+        foreach ($ids as $table => $expected) {
+            $this->assertEqualsCanonicalizing(
+                $expected,
+                \DB::table($table)->where('user_id', $this->user->id)->pluck('id')->all(),
+                "{$table}: asl ID'lar tiklanishi kerak",
+            );
+        }
+
+        $this->assertSame('Ali aka', \DB::table('customers')->where('user_id', $this->user->id)->value('name'));
+        $this->assertSame($stock, (float) \DB::table('products')->where('user_id', $this->user->id)->value('stock'));
+        $this->assertSame($saleTotal, (float) \DB::table('sales')->where('user_id', $this->user->id)->value('total'));
+        $this->assertSame(0, \DB::table('products')->where('name', 'Keyin qo\'shilgan')->count());
+
+        // Boshqa foydalanuvchi ma'lumotlariga tegilmagan
+        $this->assertSame(1, \DB::table('customers')->where('user_id', $other->id)->count());
+
+        // Tiklashdan oldingi holat avtomatik zaxira sifatida saqlangan (qaytish nuqtasi)
+        $this->assertSame(1, Backup::forUser($this->user)->where('source', 'auto')->count());
+
+        // Tiklangan ma'lumotlar bilan ilova qayta ishlaydi
+        $this->getJson('/api/v1/sales')->assertOk()->assertJsonPath('meta.total', 1);
+        $this->getJson('/api/v1/customers')->assertOk()->assertJsonPath('meta.total', 1);
+    }
+
+    public function test_restore_rejects_corrupted_backup_and_other_users_backup(): void
+    {
+        $this->seedData();
+        $backup = Backup::findOrFail($this->postJson('/api/v1/backups')->json('data.id'));
+
+        // Fayl buzilgan (checksum mos emas) — hech narsa o'zgarmaydi
+        Storage::disk('local')->put($backup->path, '{"version":1,"user":{"id":'.$this->user->id.'},"data":{}}');
+        $this->postJson("/api/v1/backups/{$backup->id}/restore", ['confirm' => true])
+            ->assertStatus(422)->assertJsonPath('code', 'backup_corrupted');
+        $this->assertSame(1, \DB::table('customers')->where('user_id', $this->user->id)->count());
+
+        // Boshqa foydalanuvchining zaxirasi ko'rinmaydi
+        Sanctum::actingAs(User::factory()->pro()->create());
+        $this->postJson("/api/v1/backups/{$backup->id}/restore", ['confirm' => true])->assertStatus(404);
+    }
 }
