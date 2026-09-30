@@ -127,13 +127,13 @@ class AdminPanelTest extends TestCase
         $this->getJson('/api/v1/billing/plan')->assertJsonPath('data.plans.0.price', 12000);
 
         $this->actingAs($this->admin())
-            ->put('/admin/plans/standard', ['price' => 15000, 'days' => 45, 'is_active' => 1])
+            ->put('/admin/plans/standard', ['price' => 15000, 'days' => 45, 'is_active' => 1]) // days e'tiborga olinmaydi
             ->assertSessionHas('status');
 
         Sanctum::actingAs($user);
         $this->getJson('/api/v1/billing/plan')
             ->assertJsonPath('data.plans.0.price', 15000)
-            ->assertJsonPath('data.plans.0.days', 45);
+            ->assertJsonPath('data.plans.0.days', 30);
         $this->postJson('/api/v1/billing/checkout', ['plan' => 'standard', 'provider' => 'payme'])
             ->assertCreated()->assertJsonPath('data.payment.amount', 15000);
 

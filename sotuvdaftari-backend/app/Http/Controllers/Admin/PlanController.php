@@ -19,14 +19,12 @@ class PlanController extends Controller
     {
         $data = $request->validate([
             'price' => ['required', 'integer', 'min:1000', 'max:100000000'],
-            'days' => ['required', 'integer', 'min:1', 'max:3650'],
             'is_active' => ['nullable', 'boolean'],
         ]);
 
         $plan = Plan::where('key', $key)->firstOrFail();
         $plan->update([
             'price' => $data['price'],
-            'days' => $data['days'],
             'is_active' => $request->boolean('is_active'),
         ]);
 

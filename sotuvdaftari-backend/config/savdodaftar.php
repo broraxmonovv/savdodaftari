@@ -41,15 +41,13 @@ return [
     ],
 
     'billing' => [
-        // Tariflar: Standart (savdo + ombor) va Pro (hammasi + AI). Narx — so'm, muddat — kun.
+        // Tariflar: Standart (savdo + ombor) va Pro (hammasi + AI). Narx — so'm. Muddat hammasi uchun 30 kun (App\Models\Plan::DAYS).
         'plans' => [
             'standard' => [
                 'price' => (int) env('STANDARD_PRICE', 12000),
-                'days' => (int) env('STANDARD_DAYS', 30),
             ],
             'pro' => [
                 'price' => (int) env('PRO_PRICE', 49000),
-                'days' => (int) env('PRO_DAYS', 30),
             ],
         ],
 

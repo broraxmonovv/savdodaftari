@@ -163,7 +163,7 @@ Xatolik kodlari: `payment_mismatch`, `customer_required`, `discount_exceeds_tota
 | `standard` | 12 000 so'm / 30 kun | Free + **savdo** va **ombor** |
 | `pro` | 49 000 so'm / 30 kun | Standart + AI xizmatlari, backup, kengaytirilgan hisobot |
 
-Narx/muddat env orqali: `STANDARD_PRICE`, `STANDARD_DAYS`, `PRO_PRICE`, `PRO_DAYS`. Pro ⊇ Standart ⊇ Free.
+Boshlang'ich narx env orqali: `STANDARD_PRICE`, `PRO_PRICE` (keyin admin panelda). **Barcha tariflar muddati qat'iy 30 kun.** Pro ⊇ Standart ⊇ Free.
 
 | Metod | Yo'l | Izoh |
 |---|---|---|
@@ -198,7 +198,7 @@ Narx/muddat env orqali: `STANDARD_PRICE`, `STANDARD_DAYS`, `PRO_PRICE`, `PRO_DAY
 Veb panel (Blade, qurilish bosqichisiz): **Dashboard** (foydalanuvchilar, faol tariflar, tushum, yechib olish, ilova bo'yicha umumiy ma'lumotlar, 14 kunlik grafik), **Foydalanuvchilar** (qidiruv/filtr, bloklash/blokdan chiqarish, qo'lda tarif berish, har bir foydalanuvchining ilovadagi ma'lumotlari: mijozlar, qarzlar, mahsulotlar, savdolar, xarajatlar, to'lovlar, obunalar, bonus, referallar, qurilmalar), **Tariflar** (narx/muddat/faollik), **Yechib olish** (to'landi / rad etish), **Bildirishnomalar** (hammaga / tarif bo'yicha / bitta foydalanuvchiga).
 
 - Kirish: `php artisan admin:grant +998901234567 --password=...` (kamida 8 belgi) — keyin `/admin/login` da telefon + shu parol bilan. `SESSION_DRIVER=file` (yoki `database`) bo'lishi kerak (`array` sessiyani saqlamaydi).
-- **Tariflar bazada** (`plans` jadvali; boshlang'ich qiymatlar migratsiyada `STANDARD_PRICE/PRO_PRICE/..._DAYS` dan olinadi). Admin panelda o'zgartirilganda `GET /billing/plan` va yangi checkout'lar darhol yangi narxni oladi; faol bo'lmagan tarif sotilmaydi (`plan_unavailable`).
+- **Tariflar bazada** (`plans` jadvali; boshlang'ich narxlar migratsiyada `STANDARD_PRICE/PRO_PRICE` dan olinadi, muddat hamma uchun 30 kun). Admin panelda o'zgartirilganda `GET /billing/plan` va yangi checkout'lar darhol yangi narxni oladi; faol bo'lmagan tarif sotilmaydi (`plan_unavailable`).
 - **Bloklash:** API har bir so'rovga `403 account_blocked` (`meta.reason`) qaytaradi (ilova bloklanganlik ekranini ko'rsatadi), OTP bilan kirish ham rad etiladi. `GET /support` ochiq (tokensiz).
 - **Bildirishnomalar API:** `GET /announcements` (`is_read`, `meta.unread_count`), `POST /announcements/{id}/read`, `POST /announcements/read-all`.
 

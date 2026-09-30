@@ -10,7 +10,7 @@
         <h2 style="margin-top:0">{{ $plan->key === 'pro' ? 'Pro' : 'Standart' }}
             <span class="badge {{ $plan->is_active ? 'b-green' : 'b-red' }}">{{ $plan->is_active ? 'sotuvda' : 'o\'chirilgan' }}</span></h2>
         <label>Narx (so'm)</label><input type="number" name="price" value="{{ old('price', $plan->price) }}" min="1000" max="100000000" step="1000" required>
-        <label>Muddat (kun)</label><input type="number" name="days" value="{{ old('days', $plan->days) }}" min="1" max="3650" required>
+        <label>Muddat</label><div><b>{{ \App\Models\Plan::DAYS }} kun</b> <span class="muted">(barcha tariflar uchun o'zgarmas)</span></div>
         <label><input type="checkbox" name="is_active" value="1" @checked($plan->is_active) style="width:auto"> Sotuvda (faol)</label>
         <p class="muted">Imkoniyatlar: {{ implode(', ', $plan->features ?? []) }}</p>
         <button type="submit">Saqlash</button>

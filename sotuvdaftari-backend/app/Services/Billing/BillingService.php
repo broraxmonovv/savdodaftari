@@ -34,7 +34,7 @@ class BillingService
 
     public function days(string $plan): int
     {
-        return (int) ($this->row($plan)?->days ?? config("savdodaftar.billing.plans.{$plan}.days"));
+        return Plan::DAYS;
     }
 
     /** Faol tariflar ro'yxati (mobil ilova tarif tanlash ekrani uchun) */
@@ -44,7 +44,7 @@ class BillingService
             ->map(fn (Plan $plan) => [
                 'id' => $plan->key,
                 'price' => $plan->price,
-                'days' => $plan->days,
+                'days' => Plan::DAYS,
                 'features' => $plan->features ?? [],
             ])->values()->all();
     }

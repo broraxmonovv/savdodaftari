@@ -296,7 +296,7 @@ Ilovada uchta daraja mavjud: Free, Standart va Pro.
 - **Free**: mijozlar, qarz daftari va xarajatlar. Savdo va Ombor bo'limlari yopiq (API `403 plan_required`).
 - **Standart** (12 000 so'm / 30 kun): Free + Savdo va Ombor bo'limlari.
 - **Pro** (49 000 so'm / 30 kun): Standart + AI'ga oid barcha xizmatlar (ovozli boshqaruv, AI biznes yordamchi, eski daftar OCR/AI import) + cheksiz mijoz/mahsulot, backup, eksport, rivojlangan analitika.
-- Standartdan Pro'ga o'tish mumkin; Pro faol bo'lsa Standart sotib olinmaydi. Narx va muddat `STANDARD_PRICE/STANDARD_DAYS/PRO_PRICE/PRO_DAYS` env orqali sozlanadi.
+- Standartdan Pro'ga o'tish mumkin; Pro faol bo'lsa Standart sotib olinmaydi. Narx admin panelda o'zgartiriladi; **muddat barcha tariflar uchun qat'iy 30 kun**.
 - Pro'ni yoqish taklifi uchta joyda ko'rsatiladi: bosh sahifada, bildirishnoma blokidan oldin, va Sozlamalar bo'limida.
 - Faollashtirish backend API orqali to'liq checkout oqimi bilan amalga oshiriladi: foydalanuvchi Payme yoki Click to'lov sahifasiga yo'naltiriladi, to'lov muvaffaqiyatli bo'lgach backend webhook orqali tasdiqlaydi va Pro tarifni faollashtiradi.
 
