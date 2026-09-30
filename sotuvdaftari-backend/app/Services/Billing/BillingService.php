@@ -45,6 +45,7 @@ class BillingService
                 'id' => $plan->key,
                 'price' => $plan->price,
                 'days' => Plan::DAYS,
+                'limits' => ['customers' => $plan->max_customers, 'products' => $plan->max_products],
                 'features' => $plan->features ?? [],
             ])->values()->all();
     }

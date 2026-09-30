@@ -85,6 +85,11 @@ return [
         'checkout_created' => 'To\'lov yaratildi. To\'lov sahifasiga o\'ting.',
     ],
 
+    'limits' => [
+        'customers' => 'Mijozlar soni limitiga yetdingiz (:limit ta). Ko\'proq qo\'shish uchun :plan tarifiga o\'ting.',
+        'products' => 'Mahsulotlar soni limitiga yetdingiz (:limit ta). Ko\'proq qo\'shish uchun :plan tarifiga o\'ting.',
+    ],
+
     'ai' => [
         'not_configured' => 'AI xizmati hali sozlanmagan.',
         'failed' => 'AI xizmati javob bermadi. Keyinroq qayta urinib ko\'ring.',

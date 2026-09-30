@@ -66,6 +66,11 @@ return [
         ],
     ],
 
+    // Bepul tarif limiti (Standart limitlari admin panelda — plans jadvali; Pro — cheksiz)
+    'limits' => [
+        'free_customers' => (int) env('FREE_MAX_CUSTOMERS', 30),
+    ],
+
     'referral' => [
         // Taklif qilingan foydalanuvchining har bir to'lovidan beriladigan ulush (%)
         'percent' => (float) env('REFERRAL_PERCENT', 10),

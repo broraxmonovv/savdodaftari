@@ -210,7 +210,13 @@ Veb panel (Blade, qurilish bosqichisiz): **Dashboard** (foydalanuvchilar, faol t
 | Savdo va ombor (barcode, chek) | — | ✓ | ✓ |
 | Hisobot: bugun va 7 kun | ✓ | ✓ | ✓ |
 | Hisobot: 30 kun, barchasi, ixtiyoriy sana (`403 plan_required`, `meta.feature=advanced_reports`) | — | — | ✓ |
-| Bulutga zaxira (`/backups`) | — | — | ✓ |
+| Bulutga zaxira va tiklash (`/backups`) | — | — | ✓ |
+| Excel/PDF eksport (`/exports/{type}`) | — | — | ✓ |
+| Eski daftar OCR importi, AI yordamchi | — | — | ✓ |
+| Mijozlar soni | 30 (`FREE_MAX_CUSTOMERS`) | 300* | cheksiz |
+| Mahsulotlar soni | (ombor yopiq) | 500* | cheksiz |
+
+\* Standart limitlari admin panelda (Tariflar) o'zgartiriladi; bo'sh = cheksiz. Limitga yetilganda `403 limit_reached` (`meta: resource, limit, required_plan`).
 | Ovozli boshqaruv `POST /ai/voice` | — | — | ✓ |
 
 **`POST /ai/voice {text}`** (Pro): ovozdan olingan matnni (o'zbek lotin / rus) tahlil qiladi. Niyatlar: `debt_add`, `debt_payment`, `stock_in` (yozuvchi — `needs_confirmation: true`, `params.customer/product/amount/quantity`, noaniq bo'lsa `params.candidates` va `params.missing`; **hech narsa yozilmaydi**, ilova tasdiqlagach mavjud API'lar bilan bajaradi) va `show_sales`, `show_profit`, `show_debts`, `show_low_stock` (javob darhol `result` va `message` bilan). Tahlil qoidalarga asoslangan (son so'zlari: "yuz ellik ming", "150 ming", "1.5 million"; ism kirill/lotin), LLM ishlatilmaydi.

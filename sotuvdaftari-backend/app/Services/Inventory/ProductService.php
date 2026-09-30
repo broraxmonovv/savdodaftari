@@ -32,6 +32,12 @@ class ProductService
                 }
             }
 
+            app(\App\Services\Billing\PlanLimits::class)->assertCanAdd(
+                $user,
+                \App\Services\Billing\PlanLimits::PRODUCTS,
+                Product::forUser($user)->count(),
+            );
+
             $barcode = $this->normalizeBarcode($data['barcode'] ?? null);
             $this->ensureBarcodeIsFree($user, $barcode);
 

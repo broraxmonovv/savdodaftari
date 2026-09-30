@@ -19,12 +19,17 @@ class PlanController extends Controller
     {
         $data = $request->validate([
             'price' => ['required', 'integer', 'min:1000', 'max:100000000'],
+            'max_customers' => ['nullable', 'integer', 'min:1', 'max:10000000'],
+            'max_products' => ['nullable', 'integer', 'min:1', 'max:10000000'],
             'is_active' => ['nullable', 'boolean'],
         ]);
 
         $plan = Plan::where('key', $key)->firstOrFail();
         $plan->update([
             'price' => $data['price'],
+            // Bo'sh qoldirilsa — cheksiz (NULL)
+            'max_customers' => $data['max_customers'] ?? null,
+            'max_products' => $data['max_products'] ?? null,
             'is_active' => $request->boolean('is_active'),
         ]);
 

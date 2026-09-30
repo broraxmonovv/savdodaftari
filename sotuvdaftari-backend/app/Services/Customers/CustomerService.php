@@ -22,6 +22,12 @@ class CustomerService
             }
         }
 
+        app(\App\Services\Billing\PlanLimits::class)->assertCanAdd(
+            $user,
+            \App\Services\Billing\PlanLimits::CUSTOMERS,
+            $user->customers()->count(),
+        );
+
         $customer = $user->customers()->create(Arr::only($data, ['name', 'phone', 'address', 'note', 'client_uuid']));
 
         $this->audit->record($customer, AuditService::ACTION_CREATED, [], $customer->only(['name', 'phone']));

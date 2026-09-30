@@ -466,3 +466,7 @@ Ochiq sayt (`/`, uz/ru): xizmat haqida ma'lumot, tariflar (bazadan), referal das
 ### 41.4 Zaxira va tiklash (Pro)
 
 Zaxira ro'yxati, qo'lda zaxira yaratish, o'chirish va **tiklash** (`POST /backups/{id}/restore`): tiklashdan oldin joriy holatning avtomatik zaxirasi olinadi, tiklash tranzaksiyada bajariladi.
+
+### 41.5 Limitlar
+
+Bepul: 30 mijoz (`FREE_MAX_CUSTOMERS`); Standart: `plans.max_customers/max_products` (admin panelda, boshlang'ich 300/500, bo'sh = cheksiz); Pro: cheksiz. `403 limit_reached`.
