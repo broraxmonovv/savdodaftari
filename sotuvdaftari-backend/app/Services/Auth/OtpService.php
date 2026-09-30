@@ -86,14 +86,6 @@ class OtpService
     {
         $maxAttempts = (int) config('savdodaftar.otp.max_attempts');
 
-        \Log::info('OTP DEBUG', [
-    'phone' => $phone,
-    'code' => $code,
-    'purpose' => $purpose,
-    'hash' => $otp->code_hash,
-    'check' => Hash::check($code, $otp->code_hash),
-]);
-
         $otp = OtpCode::where('phone', $phone)
             ->where('purpose', $purpose)
             ->whereNull('verified_at')

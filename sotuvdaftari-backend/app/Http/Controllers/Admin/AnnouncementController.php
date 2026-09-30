@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\SendAnnouncementPush;
 use App\Models\Announcement;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
@@ -42,7 +43,7 @@ class AnnouncementController extends Controller
             $userId = $user->id;
         }
 
-        Announcement::create([
+        $announcement = Announcement::create([
             'title' => $data['title'],
             'body' => $data['body'],
             'audience' => $data['audience'],
@@ -50,6 +51,10 @@ class AnnouncementController extends Controller
             'user_id' => $userId,
             'created_by' => $request->user()->id,
         ]);
+
+        if ($request->boolean('push', true)) {
+            SendAnnouncementPush::dispatchAfterResponse($announcement->id);
+        }
 
         return back()->with('status', 'Bildirishnoma yuborildi.');
     }

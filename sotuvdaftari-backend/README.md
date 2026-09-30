@@ -202,6 +202,13 @@ Veb panel (Blade, qurilish bosqichisiz): **Dashboard** (foydalanuvchilar, faol t
 - **Bloklash:** API har bir so'rovga `403 account_blocked` (`meta.reason`) qaytaradi (ilova bloklanganlik ekranini ko'rsatadi), OTP bilan kirish ham rad etiladi. `GET /support` ochiq (tokensiz).
 - **Bildirishnomalar API:** `GET /announcements` (`is_read`, `meta.unread_count`), `POST /announcements/{id}/read`, `POST /announcements/read-all`.
 
+### Push-bildirishnomalar (FCM)
+
+- Mobil ilova `POST /devices {token, platform?}` bilan FCM tokenini ro'yxatdan o'tkazadi, chiqishda `DELETE /devices {token}`.
+- **Sozlash:** Firebase loyihasida *Service account* kaliti (JSON) yarating, faylni serverga qo'ying va `.env` ga yozing: `FCM_PROJECT_ID=...`, `FCM_CREDENTIALS=/path/to/firebase.json`. Sozlanmasa push jim o'tkazib yuboriladi (hech narsa buzilmaydi).
+- Admin panelda bildirishnoma yuborilganda "push ham yuborish" belgisi bo'lsa, auditoriyaning barcha qurilmalariga javobdan keyin (`dispatchAfterResponse`) yuboriladi; bloklanganlarga yuborilmaydi; yaroqsiz tokenlar avtomatik o'chiriladi. Katta auditoriya uchun `QUEUE_CONNECTION=database` va `php artisan queue:work` tavsiya etiladi.
+- Kunlik eslatmalar (`php artisan push:reminders`, har kuni 09:00, scheduler kerak): tarif 2–3 kundan keyin tugashi, muddati o'tgan qarzlar, kam qoldiq (foydalanuvchi tilida).
+
 ### OTP xavfsizlik siyosati
 
 - Kod 6 xonali, `bcrypt` hash bilan saqlanadi, TTL **120 s**.

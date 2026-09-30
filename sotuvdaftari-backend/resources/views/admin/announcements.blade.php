@@ -17,6 +17,7 @@
             <select name="plan">@foreach(['free'=>'Bepul','standard'=>'Standart','pro'=>'Pro'] as $k=>$v)<option value="{{ $k }}" @selected(old('plan')===$k)>{{ $v }}</option>@endforeach</select></div>
         <div id="u" style="display:{{ old('audience')==='user' ? 'block' : 'none' }}"><label>Telefon</label><input name="phone" value="{{ old('phone') }}" placeholder="+998901234567"></div>
     </div>
+    <label style="display:flex;gap:6px;align-items:center"><input type="hidden" name="push" value="0"><input type="checkbox" name="push" value="1" checked style="width:auto"> Telefonga push-bildirishnoma ham yuborish</label>
     <p><button type="submit">Yuborish</button></p>
 </form>
 

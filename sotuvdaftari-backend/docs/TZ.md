@@ -435,3 +435,7 @@ Pro tarifni faollashtirish to'liq backend API orqali, checkout sahifasiga o'tish
 Veb admin panel (`/admin`, sessiya orqali, faqat `is_admin`): dashboard, foydalanuvchilar ro'yxati va profili (bloklash, qo'lda tarif, ilovadagi ma'lumotlarni ko'rish), tariflar narxini yangilash (tariflar `plans` jadvalida), bonusni yechib olish so'rovlari, bildirishnomalar (hammaga / tarif bo'yicha / bitta foydalanuvchiga). Bloklangan foydalanuvchi tizimga kira olmaydi; ilova unga *"Hisobingiz bloklangan"* ekranini (sabab va qo'llab-quvvatlash bilan) ko'rsatadi.
 
 **Jadvallar:** `plans(key, price, days, is_active, sort, features)`, `announcements`, `announcement_reads`; `users` (+`blocked_at`, `block_reason`, `admin_password`, `is_admin`).
+
+### 39.1 Push-bildirishnomalar
+
+FCM (HTTP v1): qurilma tokenlari `device_tokens` jadvalida. Admin e'loni va kunlik eslatmalar (tarif tugashi, muddati o'tgan qarzlar, kam qoldiq — TZ 22) push sifatida ham yuboriladi. `FCM_PROJECT_ID` / `FCM_CREDENTIALS` sozlanmasa push o'chiq.

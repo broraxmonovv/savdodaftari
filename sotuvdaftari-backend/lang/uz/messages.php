@@ -85,6 +85,15 @@ return [
         'checkout_created' => 'To\'lov yaratildi. To\'lov sahifasiga o\'ting.',
     ],
 
+    'push' => [
+        'subscription_title' => 'Tarif tugamoqda',
+        'subscription_body' => 'Sizning :plan tarifingiz :date kuni tugaydi. Uzluksiz foydalanish uchun uzaytiring.',
+        'low_stock_title' => 'Mahsulot kam qoldi',
+        'low_stock_body' => ':count ta mahsulot minimal qoldiqdan past.',
+        'debts_title' => 'Muddati o\'tgan qarzlar',
+        'debts_body' => ':count ta qarzning muddati o\'tgan.',
+    ],
+
     'bonus' => [
         'insufficient' => 'Bonus balansi yetarli emas.',
         'min_withdrawal' => 'Yechib olish uchun kamida :amount so\'m kerak.',

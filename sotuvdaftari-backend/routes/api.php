@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\V1\BackupController;
 use App\Http\Controllers\Api\V1\BillingController;
 use App\Http\Controllers\Api\V1\CustomerController;
 use App\Http\Controllers\Api\V1\DebtController;
+use App\Http\Controllers\Api\V1\DeviceController;
 use App\Http\Controllers\Api\V1\ExpenseController;
 use App\Http\Controllers\Api\V1\InfoController;
 use App\Http\Controllers\Api\V1\InventoryController;
@@ -82,6 +83,10 @@ Route::middleware(['auth:sanctum', 'not_blocked'])->group(function () {
 
     // Bildirishnomalar (TZ 22)
     Route::get('notifications', [NotificationController::class, 'index']);
+
+    // Push-bildirishnomalar uchun qurilma tokeni
+    Route::post('devices', [DeviceController::class, 'store']);
+    Route::delete('devices', [DeviceController::class, 'destroy']);
 
     // Admin yuborgan e'lonlar (bildirishnomalar)
     Route::get('announcements', [AnnouncementController::class, 'index']);

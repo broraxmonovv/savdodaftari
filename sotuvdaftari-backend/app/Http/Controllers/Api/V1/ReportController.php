@@ -206,9 +206,10 @@ class ReportController extends Controller
             ->selectRaw('sale_items.product_id, sale_items.name, MAX(sale_items.unit) as unit')
             ->selectRaw('COALESCE(SUM(sale_items.qty - sale_items.returned_qty), 0) as qty')
             ->selectRaw('COALESCE(SUM(sale_items.price * (sale_items.qty - sale_items.returned_qty)), 0) as revenue')
-            ->selectRaw('COALESCE(SUM(CASE WHEN sale_items.buy_price IS NULL THEN 0 ELSE (sale_items.price - sale_items.buy_price) * (sale_items.qty - sale_items.returned_qty) END), 0) as profit')
+            ->selectRaw('COALESCE(SUM(CASE WHEN sale_items.buy_price IS NULL THEN 0 ELSE (sale_items.price - sale_items.buy_price) * (sale_items.qty - sale_items.returned_qty) END), 0) as profit_sum')
             ->groupBy('sale_items.product_id', 'sale_items.name')
-            ->orderByDesc($by)
+            // `profit` nomi SaleItem::profit accessor'i bilan to'qnashadi — shuning uchun `profit_sum`
+            ->orderByDesc($by === 'profit' ? 'profit_sum' : $by)
             ->limit($data['limit'] ?? 10)
             ->get()
             ->map(fn ($row) => [
@@ -217,7 +218,7 @@ class ReportController extends Controller
                 'unit' => $row->unit,
                 'qty' => (float) $row->qty,
                 'revenue' => round((float) $row->revenue, 2),
-                'profit' => round((float) $row->profit, 2),
+                'profit' => round((float) $row->profit_sum, 2),
             ])
             ->values();
 

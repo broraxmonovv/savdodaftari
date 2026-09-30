@@ -78,6 +78,13 @@ return [
     ],
 
     // Admin xabarnomalari: yechib olish so'rovi kelganda Telegram botga yuboriladi (ixtiyoriy)
+    // Push-bildirishnomalar: Firebase Cloud Messaging (HTTP v1). Sozlanmasa push yuborilmaydi.
+    'push' => [
+        'fcm_project_id' => env('FCM_PROJECT_ID'),
+        // Firebase service account JSON fayli yo'li (storage/app/firebase.json)
+        'fcm_credentials' => env('FCM_CREDENTIALS'),
+    ],
+
     'admin' => [
         'telegram_bot_token' => env('ADMIN_TELEGRAM_BOT_TOKEN'),
         'telegram_chat_id' => env('ADMIN_TELEGRAM_CHAT_ID'),

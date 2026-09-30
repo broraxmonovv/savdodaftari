@@ -68,6 +68,11 @@ class User extends Authenticatable
         return $this->blocked_at !== null;
     }
 
+    public function deviceTokens(): HasMany
+    {
+        return $this->hasMany(DeviceToken::class);
+    }
+
     public function withdrawals(): HasMany
     {
         return $this->hasMany(Withdrawal::class);
