@@ -450,3 +450,7 @@ Ochiq sayt (`/`, uz/ru): xizmat haqida ma'lumot, tariflar (bazadan), referal das
 
 - **Standart = Pro savdo bo'limi:** savdo, barcode, ombor va chek funksiyalari Standart va Pro'da bir xil ishlaydi.
 - **Pro:** ovozli boshqaruv (`/ai/voice`), 30 kunlik/ixtiyoriy oraliq hisobot, bulut zaxira. Bepul va Standartda hisobot faqat bugun va 7 kun.
+
+### 41.1 Eski daftar OCR importi
+
+`POST /ai/ocr-import` (Pro) rasmni Claude vision bilan tahlil qiladi, natijani foydalanuvchiga tekshirish uchun qaytaradi (yozmaydi). `POST /ai/ocr-import/confirm` tasdiqlangan qatorlarni yozadi. Aniq o'qilmagan qatorlar `uncertain:true` ("Tekshirish kerak").

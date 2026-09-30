@@ -15,4 +15,11 @@ return [
         ],
     ],
 
+    // Claude API (Pro: eski daftar OCR importi va AI biznes yordamchi). Kalit yo'q bo'lsa bu funksiyalar o'chiq.
+    'anthropic' => [
+        'key' => env('ANTHROPIC_API_KEY'),
+        'model' => env('ANTHROPIC_MODEL', 'claude-sonnet-5-5'),
+        'base_url' => env('ANTHROPIC_BASE_URL', 'https://api.anthropic.com'),
+    ],
+
 ];

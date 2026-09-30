@@ -86,6 +86,12 @@ return [
     ],
 
     'ai' => [
+        'not_configured' => 'AI xizmati hali sozlanmagan.',
+        'failed' => 'AI xizmati javob bermadi. Keyinroq qayta urinib ko\'ring.',
+        'nothing_to_import' => 'Import qilinadigan qator yo\'q.',
+        'ocr_imported' => 'Daftardagi ma\'lumotlar qo\'shildi.',
+        'ocr_customer_note' => 'Eski daftardan ko\'chirilgan',
+        'ocr_debt_note' => 'Eski daftardan',
         'unknown' => 'Buyruqni tushunmadim. Masalan: "Ali akaga 150 ming qarz yoz".',
         'debt_add' => ':name ga :amount qarz yozilsinmi?',
         'debt_payment' => ':name :amount qarzini qaytardi — qabul qilinsinmi?',

@@ -215,6 +215,8 @@ Veb panel (Blade, qurilish bosqichisiz): **Dashboard** (foydalanuvchilar, faol t
 
 **`POST /ai/voice {text}`** (Pro): ovozdan olingan matnni (o'zbek lotin / rus) tahlil qiladi. Niyatlar: `debt_add`, `debt_payment`, `stock_in` (yozuvchi — `needs_confirmation: true`, `params.customer/product/amount/quantity`, noaniq bo'lsa `params.candidates` va `params.missing`; **hech narsa yozilmaydi**, ilova tasdiqlagach mavjud API'lar bilan bajaradi) va `show_sales`, `show_profit`, `show_debts`, `show_low_stock` (javob darhol `result` va `message` bilan). Tahlil qoidalarga asoslangan (son so'zlari: "yuz ellik ming", "150 ming", "1.5 million"; ism kirill/lotin), LLM ishlatilmaydi.
 
+**Eski daftar OCR importi (Pro):** `POST /ai/ocr-import` (multipart `image`, jpg/png/webp ≤ 8 MB) — Claude vision daftar rasmidan `{items: [{name, amount, phone, note, uncertain, existing_customer}]}` ajratadi va **hech narsa yozmaydi**; foydalanuvchi tekshirgach `POST /ai/ocr-import/confirm {items}` mijoz va qarzlarni bitta tranzaksiyada yozadi (mavjud mijozga — qarz qo'shiladi). `.env`: `ANTHROPIC_API_KEY` (shart), `ANTHROPIC_MODEL` (standart `claude-sonnet-5-5`).
+
 ### Ochiq sayt (`/`)
 
 Minimalist, bir sahifali sayt (uz/ru, `?lang=ru`): xizmat imkoniyatlari, qanday boshlash, **tariflar (bazadagi joriy narxlar)**, referal dasturi, savol-javob va **ariza formasi**. Yuklab olish tugmalari `SITE_APP_ANDROID_URL` / `SITE_APP_IOS_URL` berilganda chiqadi; aloqa ma'lumotlari `SUPPORT_*` dan olinadi.
