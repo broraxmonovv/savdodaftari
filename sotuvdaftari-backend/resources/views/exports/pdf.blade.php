@@ -15,7 +15,7 @@
     </style>
 </head>
 <body>
-<h1>BozorPro — {{ $document['title'] }}</h1>
+<h1>Savdo Up — {{ $document['title'] }}</h1>
 <div class="sub">{{ $document['subtitle'] }}</div>
 
 @foreach($document['sections'] as $section)
@@ -34,6 +34,6 @@
     @endif
 @endforeach
 
-<div class="footer">BozorPro · {{ now()->format('d.m.Y H:i') }}</div>
+<div class="footer">Savdo Up · {{ now()->format('d.m.Y H:i') }}</div>
 </body>
 </html>

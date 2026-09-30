@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>@yield('title', 'Admin') — BozorPro</title>
+    <title>@yield('title', 'Admin') — Savdo Up</title>
     <style>
         :root { --g:#00a86b; --gd:#006b45; --bg:#f4f6f8; --card:#fff; --tx:#1a1a1a; --mut:#7a828a; --bd:#e6eaed; --red:#e53935; --amb:#f5a623; --blue:#2f80ed; }
         * { box-sizing: border-box; }
@@ -50,7 +50,7 @@
 @php($menu = ['admin.dashboard' => 'Dashboard', 'admin.users' => 'Foydalanuvchilar', 'admin.plans' => 'Tariflar', 'admin.withdrawals' => 'Yechib olish', 'admin.leads' => 'Arizalar', 'admin.announcements' => 'Bildirishnomalar', 'admin.banners' => 'Reklama'])
 <div class="wrap">
     <nav>
-        <div class="brand">BozorPro Admin</div>
+        <div class="brand">Savdo Up Admin</div>
         @foreach($menu as $route => $label)
             <a href="{{ route($route) }}" class="{{ request()->routeIs($route.'*') ? 'on' : '' }}">{{ $label }}</a>
         @endforeach

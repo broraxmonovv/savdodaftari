@@ -73,7 +73,7 @@ class ExportTest extends TestCase
     {
         $sales = $this->get('/api/v1/exports/sales?format=xlsx')->assertOk();
         $this->assertStringContainsString('spreadsheetml.sheet', $sales->headers->get('Content-Type'));
-        $this->assertStringContainsString('bozorpro-sales-', $sales->headers->get('Content-Disposition'));
+        $this->assertStringContainsString('savdoup-sales-', $sales->headers->get('Content-Disposition'));
         $text = $this->xlsxText($sales);
         $this->assertStringContainsString('Ali Valiyev', $text);
         $this->assertStringContainsString('300000', $text);

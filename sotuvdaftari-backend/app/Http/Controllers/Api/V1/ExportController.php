@@ -30,7 +30,7 @@ class ExportController extends Controller
         $from = $data['from'] ?? today()->subDays(29)->toDateString();
 
         $document = $exports->build($request->user(), $type, $from, $to);
-        $name = "bozorpro-{$type}-{$from}_{$to}.{$data['format']}";
+        $name = "savdoup-{$type}-{$from}_{$to}.{$data['format']}";
 
         if ($data['format'] === 'pdf') {
             return response($exports->pdf($document), 200, [

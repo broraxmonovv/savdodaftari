@@ -2,7 +2,7 @@
 <html lang="uz">
 <head>
     <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Kirish — BozorPro Admin</title>
+    <title>Kirish — Savdo Up Admin</title>
     <style>
         body { margin:0; min-height:100vh; display:grid; place-items:center; background:#0f1f19; font:14px system-ui,sans-serif; }
         form { background:#fff; padding:28px; border-radius:16px; width:min(360px,92vw); }
@@ -15,7 +15,7 @@
 <body>
 <form method="post" action="{{ route('admin.login.submit') }}">
     @csrf
-    <h1>BozorPro Admin</h1>
+    <h1>Savdo Up Admin</h1>
     @if($errors->any())<div class="err">{{ $errors->first() }}</div>@endif
     <label>Telefon</label><input name="phone" value="{{ old('phone') }}" placeholder="+998901234567" autofocus required>
     <label>Parol</label><input type="password" name="password" required>

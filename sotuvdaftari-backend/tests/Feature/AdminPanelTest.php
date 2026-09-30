@@ -30,7 +30,7 @@ class AdminPanelTest extends TestCase
     public function test_login_is_required_and_only_admins_can_enter(): void
     {
         $this->get('/admin')->assertRedirect('/admin/login');
-        $this->get('/admin/login')->assertOk()->assertSee('BozorPro Admin');
+        $this->get('/admin/login')->assertOk()->assertSee('Savdo Up Admin');
 
         // Noto'g'ri parol
         $this->admin();

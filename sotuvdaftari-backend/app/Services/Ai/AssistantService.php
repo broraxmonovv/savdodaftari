@@ -87,7 +87,7 @@ class AssistantService
         $language = app()->getLocale() === 'ru' ? 'rus tilida' : "o'zbek tilida (lotin yozuvi)";
 
         return implode("\n", [
-            "Sen BozorPro ilovasining biznes yordamchisisan: bozorchi va kichik do'kon egalariga ularning savdo, qarz, ombor va xarajatlari bo'yicha savollarga javob berasan.",
+            "Sen Savdo Up ilovasining biznes yordamchisisan: bozorchi va kichik do'kon egalariga ularning savdo, qarz, ombor va xarajatlari bo'yicha savollarga javob berasan.",
             "Javobni {$language}, qisqa va sodda yoz. Pul summalarini \"150 000 so'm\" ko'rinishida yoz.",
             "Bugungi sana: ".today()->toDateString().'. "Bugun", "kecha", "bu hafta", "o\'tgan oy" kabi davrlarni shu sanadan hisobla va vositalarga Y-m-d sanalar ber.',
             "Raqamlarni FAQAT vositalar qaytargan ma'lumotdan ol; taxmin qilma va o'ylab topma. Ma'lumot bo'lmasa, shuni ayt.",

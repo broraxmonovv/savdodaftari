@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'brand' => 'BozorPro',
+    'brand' => 'Savdo Up',
     'nav' => ['features' => 'Возможности', 'plans' => 'Тарифы', 'faq' => 'Вопросы', 'contact' => 'Оставить заявку'],
     'hero' => [
         'title' => 'Умная тетрадь для торговца — в вашем телефоне',

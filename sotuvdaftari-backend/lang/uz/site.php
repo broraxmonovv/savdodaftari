@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'brand' => 'BozorPro',
+    'brand' => 'Savdo Up',
     'nav' => ['features' => 'Imkoniyatlar', 'plans' => 'Tariflar', 'faq' => 'Savol-javob', 'contact' => 'Ariza qoldirish'],
     'hero' => [
         'title' => 'Bozorchi uchun telefon ichidagi aqlli daftar',
