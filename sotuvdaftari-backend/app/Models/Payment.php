@@ -14,6 +14,9 @@ class Payment extends Model
 
     public const PROVIDER_CLICK = 'click';
 
+    /** Bonus balansi hisobidan to'lov (tashqi provayder emas, PROVIDERS ga kirmaydi) */
+    public const PROVIDER_BONUS = 'bonus';
+
     public const PROVIDERS = [self::PROVIDER_PAYME, self::PROVIDER_CLICK];
 
     public const STATUS_PENDING = 'pending';

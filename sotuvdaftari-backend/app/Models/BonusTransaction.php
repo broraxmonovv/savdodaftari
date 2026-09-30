@@ -14,7 +14,16 @@ class BonusTransaction extends Model
 
     public const TYPE_REVERSAL = 'reversal';
 
-    protected $fillable = ['user_id', 'from_user_id', 'payment_id', 'type', 'amount'];
+    /** Tarif to'lovi bonus balansidan (manfiy) */
+    public const TYPE_PLAN_PAYMENT = 'plan_payment';
+
+    /** Pul yechib olish so'rovi (manfiy) */
+    public const TYPE_WITHDRAWAL = 'withdrawal';
+
+    /** Yechib olish rad etildi — summa qaytdi (musbat) */
+    public const TYPE_WITHDRAWAL_REFUND = 'withdrawal_refund';
+
+    protected $fillable = ['user_id', 'from_user_id', 'payment_id', 'withdrawal_id', 'type', 'amount'];
 
     protected function casts(): array
     {

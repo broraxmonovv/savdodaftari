@@ -1,6 +1,7 @@
 <?php
 
 use App\Exceptions\ApiException;
+use App\Http\Middleware\EnsureAdmin;
 use App\Http\Middleware\EnsurePlan;
 use App\Http\Middleware\SetLocale;
 use Illuminate\Auth\AuthenticationException;
@@ -24,7 +25,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->api(prepend: [SetLocale::class]);
-        $middleware->alias(['plan' => EnsurePlan::class]);
+        $middleware->alias(['plan' => EnsurePlan::class, 'admin' => EnsureAdmin::class]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         $exceptions->dontReport([ApiException::class]);

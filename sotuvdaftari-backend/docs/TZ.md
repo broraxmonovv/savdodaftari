@@ -424,3 +424,8 @@ Pro tarifni faollashtirish to'liq backend API orqali, checkout sahifasiga o'tish
 - **Valyuta kurslari:** `GET /currencies` — cbu.uz rasmiy kurslari, keshlanadi, `rates:refresh` har soatda yangilaydi, manba ishlamasa oxirgi saqlangan kurs.
 - **Yordam va qo'llanma:** `GET /support`, `GET /guides` (env orqali sozlanadi).
 - **Jadvallar:** `users` (+`referral_code`, `referred_by_id`, `bonus_balance`), `bonus_transactions`.
+
+### 38.1 Bonusni sarflash
+
+- **Tarif to'lovi:** bonus balansi tarif narxiga yetsa (Standart 12 000 / Pro 49 000), Sozlamalar → Bonuslar yoki Tariflar ekranidan bonus bilan to'lanadi; tarif darhol faollashadi.
+- **Kartaga yechib olish:** summa + 16 xonali karta raqami (Luhn) kiritiladi; summa balansdan ushlab qolinadi, so'rov adminga yuboriladi (*"so'rov adminga yuborildi"*). Admin pulni kartaga o'tkazib `paid` deb belgilaydi yoki `reject` qiladi (summa balansga qaytadi). Minimal summa 10 000 so'm.

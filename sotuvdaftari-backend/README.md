@@ -188,6 +188,8 @@ Narx/muddat env orqali: `STANDARD_PRICE`, `STANDARD_DAYS`, `PRO_PRICE`, `PRO_DAY
 | GET | `/guides` | Qo'llanma videolar `[{id, title, url}]` (Accept-Language bo'yicha) |
 
 - Taklif qilingan foydalanuvchining **har bir** muvaffaqiyatli to'lovidan `REFERRAL_PERCENT` (10%) taklif qilganning `bonus_balance` iga yoziladi (idempotent). Payme storno bo'lsa bonus `reversal` bilan qaytariladi.
+- **Bonusni sarflash:** `POST /bonuses/pay-plan {plan}` — tarifni to'liq bonus balansidan to'laydi va darhol faollashtiradi (`insufficient_bonus`; bonus bilan to'langan to'lov taklif qilganga ulush bermaydi). `POST /withdrawals {amount, card_number, card_holder?}` — kartaga yechib olish so'rovi: karta Luhn bilan tekshiriladi, shifrlab saqlanadi, summa balansdan darhol ushlab qolinadi va admin Telegram'ga (`ADMIN_TELEGRAM_BOT_TOKEN`, `ADMIN_TELEGRAM_CHAT_ID`) xabar ketadi. `GET /withdrawals` — foydalanuvchi so'rovlari (karta maskalangan). Minimal summa `MIN_WITHDRAWAL` (10 000).
+- **Admin:** `php artisan admin:grant +998...` bilan admin tayinlanadi. `GET /admin/withdrawals?status=pending|paid|rejected` (to'liq karta bilan), `POST /admin/withdrawals/{id}/paid {note?}` (pul kartaga o'tkazildi), `POST /admin/withdrawals/{id}/reject {note?}` (summa balansga qaytariladi). Bir so'rov faqat bir marta yopiladi.
 - Kurslar `CBU_RATES_TTL` (1 soat) keshlanadi, `php artisan rates:refresh` har soatda scheduler orqali yangilaydi; CBU ishlamasa oxirgi saqlangan kurs qaytadi. `php artisan schedule:work` (yoki cron) kerak.
 - Havola: `REFERRAL_LINK`; aloqa: `SUPPORT_PHONE/TELEGRAM/EMAIL/HOURS`; videolar: `GUIDES_JSON` (JSON massiv).
 

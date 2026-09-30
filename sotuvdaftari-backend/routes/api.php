@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\V1\AdminWithdrawalController;
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\BackupController;
 use App\Http\Controllers\Api\V1\BillingController;
@@ -92,6 +93,16 @@ Route::middleware('auth:sanctum')->group(function () {
     // Referal dasturi va bonus balansi
     Route::get('referral', [ReferralController::class, 'show']);
     Route::get('bonuses', [ReferralController::class, 'bonuses']);
+    Route::post('bonuses/pay-plan', [ReferralController::class, 'payPlan']);
+    Route::get('withdrawals', [ReferralController::class, 'withdrawals']);
+    Route::post('withdrawals', [ReferralController::class, 'requestWithdrawal'])->middleware('throttle:10,1');
+
+    // Admin: yechib olish so'rovlari
+    Route::middleware('admin')->prefix('admin')->group(function () {
+        Route::get('withdrawals', [AdminWithdrawalController::class, 'index']);
+        Route::post('withdrawals/{id}/paid', [AdminWithdrawalController::class, 'paid']);
+        Route::post('withdrawals/{id}/reject', [AdminWithdrawalController::class, 'reject']);
+    });
 
     // Valyuta kurslari (cbu.uz), qo'llab-quvvatlash va qo'llanma videolar
     Route::get('currencies', [InfoController::class, 'currencies']);

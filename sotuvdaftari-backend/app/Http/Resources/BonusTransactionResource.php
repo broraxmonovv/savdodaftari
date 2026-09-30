@@ -16,7 +16,8 @@ class BonusTransactionResource extends JsonResource
             'type' => $this->type,
             'amount' => (float) $this->amount,
             // Maxfiylik: taklif qilingan foydalanuvchi telefonining oxirgi 4 raqami
-            'from' => $this->fromUser?->name ?: ('***'.substr((string) $this->fromUser?->phone, -4)),
+            'plan' => $this->payment?->plan,
+            'from' => $this->from_user_id === null ? null : ($this->fromUser?->name ?: ('***'.substr((string) $this->fromUser?->phone, -4))),
             'created_at' => $this->created_at?->toIso8601String(),
         ];
     }

@@ -82,6 +82,18 @@ return [
         'checkout_created' => 'To\'lov yaratildi. To\'lov sahifasiga o\'ting.',
     ],
 
+    'bonus' => [
+        'insufficient' => 'Bonus balansi yetarli emas.',
+        'min_withdrawal' => 'Yechib olish uchun kamida :amount so\'m kerak.',
+        'already_processed' => 'Bu so\'rov allaqachon ko\'rib chiqilgan.',
+        'withdrawal_sent' => 'So\'rov adminga yuborildi. Admin pulni kartangizga o\'tkazadi.',
+        'plan_paid' => 'Tarif bonus balansidan to\'landi va faollashtirildi.',
+        'marked_paid' => 'So\'rov to\'langan deb belgilandi.',
+        'rejected' => 'So\'rov rad etildi, summa balansga qaytarildi.',
+        'card_invalid' => 'Karta raqami noto\'g\'ri.',
+        'admin_only' => 'Bu amal faqat admin uchun.',
+    ],
+
     'referral' => [
         'invalid' => 'Referal kod topilmadi.',
         'self' => 'O\'zingizning kodingizni kiritib bo\'lmaydi.',

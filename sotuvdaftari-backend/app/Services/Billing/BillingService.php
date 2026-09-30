@@ -55,13 +55,7 @@ class BillingService
      */
     public function checkout(User $user, string $plan, string $provider): Payment
     {
-        if ($user->hasPlan($plan)) {
-            throw new ApiException(
-                __($plan === Subscription::PLAN_PRO ? 'messages.billing.already_pro' : 'messages.billing.already_standard'),
-                422,
-                $plan === Subscription::PLAN_PRO ? 'already_pro' : 'already_standard',
-            );
-        }
+        $this->assertCanBuy($user, $plan);
 
         $amount = $this->price($plan);
 
@@ -82,6 +76,31 @@ class BillingService
             'plan' => $plan,
             'provider' => $provider,
             'amount' => $amount,
+            'order_id' => $this->newOrderId(),
+            'status' => Payment::STATUS_PENDING,
+        ]);
+    }
+
+    /** Joriy tarifga teng yoki past tarifni sotib olib bo'lmaydi */
+    public function assertCanBuy(User $user, string $plan): void
+    {
+        if ($user->hasPlan($plan)) {
+            throw new ApiException(
+                __($plan === Subscription::PLAN_PRO ? 'messages.billing.already_pro' : 'messages.billing.already_standard'),
+                422,
+                $plan === Subscription::PLAN_PRO ? 'already_pro' : 'already_standard',
+            );
+        }
+    }
+
+    /** Bonus balansi hisobidan to'lov yozuvi (status: pending) — [BonusService] tasdiqlaydi */
+    public function createBonusPayment(User $user, string $plan): Payment
+    {
+        return Payment::create([
+            'user_id' => $user->id,
+            'plan' => $plan,
+            'provider' => Payment::PROVIDER_BONUS,
+            'amount' => $this->price($plan),
             'order_id' => $this->newOrderId(),
             'status' => Payment::STATUS_PENDING,
         ]);
@@ -140,8 +159,10 @@ class BillingService
                 'meta' => array_merge($payment->meta ?? [], $meta),
             ]);
 
-            // Taklif qilganga ulush (idempotent)
-            $this->referrals->creditForPayment($payment);
+            // Taklif qilganga ulush (idempotent). Bonus hisobidan to'langan to'lov ulush bermaydi.
+            if ($payment->provider !== Payment::PROVIDER_BONUS) {
+                $this->referrals->creditForPayment($payment);
+            }
 
             return $payment;
         });

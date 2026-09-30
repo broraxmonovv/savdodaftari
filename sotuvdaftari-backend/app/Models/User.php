@@ -27,6 +27,8 @@ class User extends Authenticatable
         'last_login_at',
     ];
 
+    // is_admin mass-assignment orqali o'zgartirilmaydi (faqat `admin:grant` buyrug'i)
+
     protected $hidden = [
         'pin',
         'remember_token',
@@ -37,6 +39,7 @@ class User extends Authenticatable
         return [
             'pin' => 'hashed',
             'bonus_balance' => 'decimal:2',
+            'is_admin' => 'boolean',
             'phone_verified_at' => 'datetime',
             'last_login_at' => 'datetime',
         ];
@@ -55,6 +58,11 @@ class User extends Authenticatable
     public function bonusTransactions(): HasMany
     {
         return $this->hasMany(BonusTransaction::class);
+    }
+
+    public function withdrawals(): HasMany
+    {
+        return $this->hasMany(Withdrawal::class);
     }
 
     public function customers(): HasMany

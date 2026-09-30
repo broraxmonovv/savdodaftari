@@ -73,6 +73,14 @@ return [
         'percent' => (float) env('REFERRAL_PERCENT', 10),
         // Ulashiladigan havola; {code} referal kod bilan almashtiriladi
         'link' => env('REFERRAL_LINK', 'https://abdullohinfo.uz/invite/{code}'),
+        // Bonusni kartaga yechib olishning minimal summasi (so'm)
+        'min_withdrawal' => (int) env('MIN_WITHDRAWAL', 10000),
+    ],
+
+    // Admin xabarnomalari: yechib olish so'rovi kelganda Telegram botga yuboriladi (ixtiyoriy)
+    'admin' => [
+        'telegram_bot_token' => env('ADMIN_TELEGRAM_BOT_TOKEN'),
+        'telegram_chat_id' => env('ADMIN_TELEGRAM_CHAT_ID'),
     ],
 
     'currency' => [
