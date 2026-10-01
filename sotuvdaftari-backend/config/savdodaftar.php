@@ -130,9 +130,9 @@ return [
     ],
 
     'support' => [
-        'phone' => env('SUPPORT_PHONE', '+998900000000'),
-        'telegram' => env('SUPPORT_TELEGRAM', 'https://t.me/bozorpro_support'),
-        'email' => env('SUPPORT_EMAIL', 'support@abdullohinfo.uz'),
+        'phone' => env('SUPPORT_PHONE', '+998905505284'),
+        'telegram' => env('SUPPORT_TELEGRAM', 'https://t.me/savdoup_support_bot'),
+        'email' => env('SUPPORT_EMAIL', 'bro.raxmonov@gmail.com'),
         'working_hours' => env('SUPPORT_HOURS', '09:00 - 18:00'),
     ],
 

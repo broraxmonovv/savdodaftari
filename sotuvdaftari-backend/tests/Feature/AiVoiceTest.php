@@ -135,4 +135,32 @@ class AiVoiceTest extends TestCase
         $this->say('salom qandaysiz')->assertOk()->assertJsonPath('data.intent', 'unknown');
         $this->say('')->assertStatus(422);
     }
+
+    public function test_uzbek_in_cyrillic_and_latin_variants(): void
+    {
+        $ali = $this->customer('Ali');
+
+        // Lotin: turli yozilishlar
+        foreach (['Ali akaga 150 ming qarz yoz', 'ali aka 150000 som qarz yozib qoy', 'Aliga bir yuz ellik ming qarz yozing'] as $text) {
+            $this->say($text)->assertOk()
+                ->assertJsonPath('data.intent', 'debt_add')
+                ->assertJsonPath('data.params.amount', 150000)
+                ->assertJsonPath('data.params.customer.id', $ali->id);
+        }
+
+        // Ovoz tanish xizmati kirillda qaytarsa ham
+        $this->say('Али акага 150 минг қарз ёз')->assertOk()
+            ->assertJsonPath('data.intent', 'debt_add')
+            ->assertJsonPath('data.params.amount', 150000)
+            ->assertJsonPath('data.params.customer.id', $ali->id);
+
+        $this->say('Али қарзини 50 минг тўлади')->assertOk()
+            ->assertJsonPath('data.intent', 'debt_payment')
+            ->assertJsonPath('data.params.amount', 50000);
+
+        // Rus tili buzilmaydi
+        $this->say('Запиши Али долг 150 тысяч')->assertOk()
+            ->assertJsonPath('data.intent', 'debt_add')
+            ->assertJsonPath('data.params.amount', 150000);
+    }
 }

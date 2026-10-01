@@ -52,7 +52,8 @@ class VoiceCommandParser
     private const STOP = [
         'aka', 'akaga', 'akadan', 'akaning', 'opa', 'opaga', 'opadan', 'amaki', 'amakiga', 'xola', 'xolaga',
         'ustoz', 'ustozga', 'mijoz', 'mijozga', 'ga', 'dan', 'ning', 'bugun', 'bugungi',
-        'qarz', 'qarzga', 'qarzini', 'qarzi', 'yoz', 'yozib', "qo'sh", 'qosh', 'berdi', 'qaytardi', "to'ladi",
+        'qarz', 'qarzga', 'qarzini', 'qarzi', 'yoz', 'yozib', 'yozing', 'yozdir', "qo'y", 'qoy', "qo'ying", 'qoying',
+        'bering', 'kiriting', 'kiritib', 'qiling', 'qilib', "qo'sh", 'qosh', 'berdi', 'qaytardi', "to'ladi",
         'toladi', 'kirim', 'qil', 'omborga', 'tovar', 'mahsulot', 'dona', 'ta', 'kg', 'metr', 'litr', "so'm", 'som',
         'долг', 'долга', 'запиши', 'запись', 'вернул', 'вернула', 'отдал', 'отдала', 'погасил', 'оплатил',
         'приход', 'оприходуй', 'штук', 'шт', 'сум', 'добавь', 'на', 'склад', 'товар', 'у', 'от', 'для',
@@ -62,6 +63,18 @@ class VoiceCommandParser
     public function parse(string $raw): array
     {
         $text = $this->normalize($raw);
+
+        // Ovoz tanish xizmati o'zbek gapini kirill harflarda qaytarishi mumkin ("Али акага 150 минг қарз ёз"):
+        // o'zbekcha belgilar bor yoki rus tilida buyruq topilmasa — lotinga o'tkazib qayta tahlil qilamiz.
+        if (preg_match('/[\x{0400}-\x{04FF}]/u', $text)
+            && (preg_match('/[ўқғҳ]/u', $text) || $this->intent($text) === self::UNKNOWN)) {
+            $latin = $this->normalize($this->transliterate($text));
+
+            if ($this->intent($latin) !== self::UNKNOWN) {
+                $text = $latin;
+            }
+        }
+
         $tokens = $text === '' ? [] : preg_split('/\s+/u', $text);
 
         [$number, $numberStart] = $this->firstNumber($tokens);
@@ -130,12 +143,12 @@ class VoiceCommandParser
         }
 
         // Qarz to'lovi (qarz yozishdan oldin: "qarzini berdi" ham "qarz" so'zini o'z ichiga oladi)
-        if ($has("/(qarzini (berdi|qaytardi|to'ladi|toladi)|qarzidan|qaytardi|to'ladi|toladi|berdi|to'lov oldim|вернул|отдал|погасил|оплатил)/")
+        if ($has("/(qarzini (berdi|qaytardi|to'ladi|toladi)|qarzidan|qaytardi|qaytarib|to'ladi|toladi|to'lab|tolab|berdi|to'lov oldim|to'lov qildi|вернул|отдал|погасил|оплатил)/")
             && ! $has('/(kirim|приход)/')) {
             return self::DEBT_PAYMENT;
         }
 
-        if ($has('/(kirim|omborga|оприходуй|приход|добавь на склад)/')) {
+        if ($has('/(kirim|omborga|ombor ga|оприходуй|приход|добавь на склад)/')) {
             return self::STOCK_IN;
         }
 
