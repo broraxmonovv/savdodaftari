@@ -247,6 +247,8 @@ Yangi foydalanuvchi ro'yxatdan o'tganda **14 kunlik bepul Standart** (savdo va o
 - `.env`: `PAYME_MERCHANT_ID`, `PAYME_KEY` (kassa kaliti; sinov uchun test kaliti), sinov muhiti uchun `PAYME_CHECKOUT_URL=https://test.paycom.uz`. Webhook manzili: `https://<domen>/api/v1/webhooks/payme` (Basic auth: `Paycom:<kalit>`).
 - Amalga oshirilgan: CheckPerformTransaction, CreateTransaction (12 soatlik timeout), PerformTransaction, CancelTransaction, CheckTransaction, GetStatement; xatolar `ru/uz/en` ko'rinishida. Payme "Sandbox"da "Test" tugmasi shu endpoint'ni chaqiradi.
 - Click: `CLICK_SERVICE_ID`, `CLICK_MERCHANT_ID`, `CLICK_SECRET_KEY`; Prepare/Complete manzili `https://<domen>/api/v1/webhooks/click`.
+- **Sandbox (test.paycom.uz) har sinovda yangi `order_id` kerak.** Oldingi sinovdan tranzaksiyasi qolgan buyurtmada `CreateTransaction` `-31099` (buyurtma boshqa tranzaksiyani kutmoqda) qaytaradi, bu spetsifikatsiyaga mos. Toza buyurtma: `php artisan payme:test-order` (order_id va tiyindagi summani chiqaradi) yoki ilovada "To'lash" ni qayta bosing.
+- `ChangePassword` qo'llab-quvvatlanadi: Payme parolni almashtirsa yangi kalit `storage/app/private/payme/password` (yoki `storage/app/payme/password`) fayliga saqlanadi va `.env` dagi `PAYME_KEY` o'rniga ishlatiladi. Qo'lda qaytarish: shu faylni o'chiring.
 - Lokal tekshirish: `vendor/bin/phpunit --filter BillingTest`.
 
 ### Ochiq sayt (`/`)

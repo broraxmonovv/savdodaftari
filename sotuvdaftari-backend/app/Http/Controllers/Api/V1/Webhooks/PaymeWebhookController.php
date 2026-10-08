@@ -7,6 +7,7 @@ use App\Models\Payment;
 use App\Services\Billing\BillingService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * TZ 36: Payme Merchant API (JSON-RPC 2.0) webhook.
@@ -29,11 +30,12 @@ class PaymeWebhookController extends Controller
 
         return match ((string) $request->input('method')) {
             'CheckPerformTransaction' => $this->checkPerform($id, $params),
-            'CreateTransaction' => $this->create($id, $params),
+            'CreateTransaction' => $this->create($id, $params, $billing),
             'PerformTransaction' => $this->perform($id, $params, $billing),
             'CancelTransaction' => $this->cancel($id, $params, $billing),
             'CheckTransaction' => $this->check($id, $params),
             'GetStatement' => $this->statement($id, $params),
+            'ChangePassword' => $this->changePassword($id, $params),
             default => $this->error($id, -32601, 'Metod topilmadi.'),
         };
     }
@@ -66,7 +68,7 @@ class PaymeWebhookController extends Controller
         return $this->result($id, ['allow' => true]);
     }
 
-    private function create(mixed $id, array $params): JsonResponse
+    private function create(mixed $id, array $params, BillingService $billing): JsonResponse
     {
         $transactionId = (string) ($params['id'] ?? '');
 
@@ -76,6 +78,13 @@ class PaymeWebhookController extends Controller
             ->first();
 
         if ($existing !== null) {
+            // 12 soatdan oshgan kutilayotgan tranzaksiya bekor qilinadi (sabab 4)
+            if ((int) $existing->provider_state === 1 && $this->expired($existing)) {
+                $billing->cancelPayme($existing, 4, (int) (microtime(true) * 1000));
+
+                return $this->error($id, -31008, 'Tranzaksiya holati amalga ruxsat bermaydi.');
+            }
+
             // Takroriy so'rov — idempotent javob (faqat faol holatda)
             if ((int) $existing->provider_state !== 1) {
                 return $this->error($id, -31008, 'Tranzaksiya holati amalga ruxsat bermaydi.');
@@ -98,9 +107,15 @@ class PaymeWebhookController extends Controller
             return $this->error($id, -31001, 'To\'lov summasi noto\'g\'ri.');
         }
 
-        // Bitta buyurtma bo'yicha faqat bitta faol tranzaksiya (TZ 36.2)
-        if (! $payment->isPending() || $payment->transaction_id !== null) {
-            return $this->error($id, -31008, 'Bu buyurtma bo\'yicha tranzaksiya allaqachon mavjud.');
+        // Buyurtma to'lovga yaroqsiz (to'langan/bekor qilingan) — account xatosi (-31050..-31099 oralig'i)
+        if (! $payment->isPending() && $payment->transaction_id === null) {
+            return $this->error($id, -31051, 'Buyurtma holati to\'lovga ruxsat bermaydi.', $this->accountField());
+        }
+
+        // Bitta buyurtma bo'yicha faqat bitta faol tranzaksiya (TZ 36.2). Payme spetsifikatsiyasi:
+        // buyurtma boshqa tranzaksiya to'lovini kutayotgan bo'lsa -31099 qaytariladi.
+        if ($payment->transaction_id !== null) {
+            return $this->error($id, -31099, 'Buyurtma boshqa tranzaksiya to\'lovini kutmoqda.', $this->accountField());
         }
 
         $createTime = (int) ($params['time'] ?? (int) (microtime(true) * 1000));
@@ -222,9 +237,45 @@ class PaymeWebhookController extends Controller
         return $this->result($id, ['transactions' => $transactions]);
     }
 
+    private const PASSWORD_FILE = 'payme/password';
+
+    /** Joriy kassa kaliti: ChangePassword orqali o'zgartirilgan bo'lsa fayldagi, aks holda `.env` dagi */
+    private function key(): string
+    {
+        $disk = Storage::disk('local');
+
+        if ($disk->exists(self::PASSWORD_FILE)) {
+            $stored = trim((string) $disk->get(self::PASSWORD_FILE));
+
+            if ($stored !== '') {
+                return $stored;
+            }
+        }
+
+        return (string) config('savdodaftar.billing.payme.key');
+    }
+
+    /** Payme "Песочница"/kabinet parolni almashtirganda: yangi kalit saqlanadi va keyingi so'rovlar shu bilan tekshiriladi */
+    private function changePassword(mixed $id, array $params): JsonResponse
+    {
+        $password = (string) ($params['password'] ?? '');
+
+        if ($password === '') {
+            return response()->json(['error' => [
+                'code' => -32400,
+                'message' => ['ru' => 'Недопустимый пароль.', 'uz' => 'Parol yaroqsiz.', 'en' => 'Invalid password.'],
+                'data' => 'password',
+            ], 'id' => $id]);
+        }
+
+        Storage::disk('local')->put(self::PASSWORD_FILE, $password);
+
+        return $this->result($id, ['success' => true]);
+    }
+
     private function authorized(Request $request): bool
     {
-        $key = (string) config('savdodaftar.billing.payme.key');
+        $key = $this->key();
 
         if ($key === '') {
             return false;
@@ -289,6 +340,7 @@ class PaymeWebhookController extends Controller
         -31051 => ['ru' => 'Состояние заказа не позволяет оплату.', 'uz' => 'Buyurtma holati to\'lovga ruxsat bermaydi.', 'en' => 'Order state does not allow payment.'],
         -31001 => ['ru' => 'Неверная сумма платежа.', 'uz' => 'To\'lov summasi noto\'g\'ri.', 'en' => 'Incorrect amount.'],
         -31003 => ['ru' => 'Транзакция не найдена.', 'uz' => 'Tranzaksiya topilmadi.', 'en' => 'Transaction not found.'],
+        -31099 => ['ru' => 'Заказ уже ожидает оплаты по другой транзакции.', 'uz' => 'Bu buyurtma bo\'yicha boshqa tranzaksiya to\'lov kutmoqda.', 'en' => 'The order is already waiting for payment in another transaction.'],
         -31008 => ['ru' => 'Невозможно выполнить операцию.', 'uz' => 'Tranzaksiya holati amalga ruxsat bermaydi.', 'en' => 'Unable to perform the operation.'],
     ];
 

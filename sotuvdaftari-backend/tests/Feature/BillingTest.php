@@ -208,9 +208,10 @@ class BillingTest extends TestCase
         $this->paymeCall('CreateTransaction', ['id' => 'tr-1', 'time' => 1758000000000, 'amount' => $tiyin, 'account' => $account])
             ->assertJsonPath('result.state', 1);
 
-        // Bitta buyurtmaga ikkinchi tranzaksiya — rad
+        // Bitta buyurtmaga ikkinchi tranzaksiya — rad (-31099, account xatosi)
         $this->paymeCall('CreateTransaction', ['id' => 'tr-2', 'time' => 1758000000001, 'amount' => $tiyin, 'account' => $account])
-            ->assertJsonPath('error.code', -31008);
+            ->assertJsonPath('error.code', -31099)
+            ->assertJsonPath('error.data', 'order_id');
 
         $this->paymeCall('PerformTransaction', ['id' => 'tr-1'])->assertJsonPath('result.state', 2);
 
@@ -287,6 +288,40 @@ class BillingTest extends TestCase
 
         $this->paymeCall('CheckPerformTransaction', ['amount' => 4900000, 'account' => ['zakaz_id' => $order]])
             ->assertJsonPath('result.allow', true);
+    }
+
+    public function test_payme_change_password_switches_the_webhook_key(): void
+    {
+        \Illuminate\Support\Facades\Storage::fake('local');
+        $order = $this->postJson('/api/v1/billing/checkout', ['provider' => 'payme'])->json('data.payment.order_id');
+
+        $this->paymeCall('ChangePassword', ['password' => ''])->assertJsonPath('error.code', -32400);
+
+        $this->paymeCall('ChangePassword', ['password' => 'yangi-parol-123'])
+            ->assertJsonPath('result.success', true);
+
+        // Eski parol endi yaroqsiz, yangisi ishlaydi
+        $this->paymeCall('CheckPerformTransaction', ['amount' => 4900000, 'account' => ['order_id' => $order]])
+            ->assertJsonPath('error.code', -32504);
+        $this->paymeCall('CheckPerformTransaction', ['amount' => 4900000, 'account' => ['order_id' => $order]], 'yangi-parol-123')
+            ->assertJsonPath('result.allow', true);
+    }
+
+    public function test_payme_order_with_unfinished_transaction_rejects_new_one_and_checkout_makes_new_order(): void
+    {
+        $first = $this->postJson('/api/v1/billing/checkout', ['provider' => 'payme'])->json('data.payment.order_id');
+        $this->paymeCall('CreateTransaction', ['id' => 'tr-a', 'time' => 1758000000000, 'amount' => 4900000, 'account' => ['order_id' => $first]])
+            ->assertJsonPath('result.state', 1);
+
+        // Sandbox'ni shu buyurtmada qayta yurgizish: yangi tranzaksiya rad etiladi
+        $this->paymeCall('CreateTransaction', ['id' => 'tr-b', 'time' => 1758000000500, 'amount' => 4900000, 'account' => ['order_id' => $first]])
+            ->assertJsonPath('error.code', -31099);
+
+        // Ilovada "To'lash" qayta bosilsa — yangi buyurtma (sandbox uchun toza order_id) beriladi
+        $second = $this->postJson('/api/v1/billing/checkout', ['provider' => 'payme'])->json('data.payment.order_id');
+        $this->assertNotSame($first, $second);
+        $this->paymeCall('CreateTransaction', ['id' => 'tr-b', 'time' => 1758000000500, 'amount' => 4900000, 'account' => ['order_id' => $second]])
+            ->assertJsonPath('result.state', 1);
     }
 
     public function test_payme_cancel_after_perform_revokes_subscription(): void
