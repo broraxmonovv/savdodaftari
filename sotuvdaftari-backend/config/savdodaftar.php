@@ -66,6 +66,9 @@ return [
             ],
         ],
 
+        // Tugallanmagan (pending) buyurtma shuncha daqiqa ichida qayta ishlatiladi, undan keyin yangisi yaratiladi
+        'checkout_reuse_minutes' => (int) env('CHECKOUT_REUSE_MINUTES', 30),
+
         'payme' => [
             'merchant_id' => env('PAYME_MERCHANT_ID'),
             // Webhook Basic auth paroli (Payme kassa kaliti)

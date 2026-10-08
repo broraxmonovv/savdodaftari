@@ -68,6 +68,8 @@ class BillingService
             ->where('provider', $provider)
             ->where('status', Payment::STATUS_PENDING)
             ->whereNull('transaction_id')
+            // Faqat yaqinda yaratilgan buyurtma qayta ishlatiladi; eskirgani uchun yangi buyurtma beriladi
+            ->where('created_at', '>=', now()->subMinutes((int) config('savdodaftar.billing.checkout_reuse_minutes', 30)))
             ->latest('id')
             ->first();
 

@@ -324,6 +324,21 @@ class BillingTest extends TestCase
             ->assertJsonPath('result.state', 1);
     }
 
+    public function test_stale_pending_order_is_not_reused(): void
+    {
+        $old = $this->postJson('/api/v1/billing/checkout', ['plan' => 'pro', 'provider' => 'payme'])->json('data.payment.order_id');
+
+        // Yaqinda yaratilgan — qayta ishlatiladi
+        $this->assertSame($old, $this->postJson('/api/v1/billing/checkout', ['plan' => 'pro', 'provider' => 'payme'])->json('data.payment.order_id'));
+
+        // Bir necha kun oldingi pending buyurtma — yangi qator yaratiladi
+        \App\Models\Payment::where('order_id', $old)->update(['created_at' => now()->subDays(3)]);
+        $new = $this->postJson('/api/v1/billing/checkout', ['plan' => 'pro', 'provider' => 'payme'])->json('data.payment.order_id');
+
+        $this->assertNotSame($old, $new);
+        $this->assertDatabaseCount('payments', 2);
+    }
+
     public function test_checkout_works_even_if_plans_table_is_empty(): void
     {
         \App\Models\Plan::query()->delete();
