@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Exceptions\ApiException;
 use App\Http\Concerns\RespondsWithJson;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\PaymentResource;
@@ -10,6 +11,7 @@ use App\Models\Subscription;
 use App\Services\Billing\BillingService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 
 /** TZ 31, 35, 36: tarif holati va Standart/Pro checkout */
@@ -53,11 +55,27 @@ class BillingController extends Controller
             'provider' => ['required', Rule::in(Payment::PROVIDERS)],
         ]);
 
-        $payment = $this->billing->checkout(
-            $request->user(),
-            $data['plan'] ?? Subscription::PLAN_PRO,
-            $data['provider'],
-        );
+        try {
+            $payment = $this->billing->checkout(
+                $request->user(),
+                $data['plan'] ?? Subscription::PLAN_PRO,
+                $data['provider'],
+            );
+        } catch (ApiException $e) {
+            // To'lov yaratilmagan holatlar (tarif faol emas, allaqachon Pro va h.k.) logda ko'rinsin
+            Log::warning('Checkout rad etildi', [
+                'user_id' => $request->user()->id,
+                'plan' => $data['plan'] ?? Subscription::PLAN_PRO,
+                'provider' => $data['provider'],
+                'code' => $e->errorCode(),
+                'message' => $e->getMessage(),
+            ]);
+
+            throw $e;
+        }
+
+        Log::info('Checkout yaratildi', ['order_id' => $payment->order_id, 'plan' => $payment->plan, 'provider' => $payment->provider]);
+
 
         return $this->success([
             'payment' => new PaymentResource($payment),

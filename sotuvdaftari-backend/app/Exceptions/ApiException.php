@@ -21,6 +21,11 @@ class ApiException extends Exception
         parent::__construct($message);
     }
 
+    public function errorCode(): ?string
+    {
+        return $this->errorCode;
+    }
+
     public function render(Request $request): JsonResponse
     {
         $payload = [

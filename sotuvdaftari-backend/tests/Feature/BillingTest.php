@@ -324,6 +324,35 @@ class BillingTest extends TestCase
             ->assertJsonPath('result.state', 1);
     }
 
+    public function test_checkout_works_even_if_plans_table_is_empty(): void
+    {
+        \App\Models\Plan::query()->delete();
+
+        $pro = $this->postJson('/api/v1/billing/checkout', ['plan' => 'pro', 'provider' => 'payme'])
+            ->assertStatus(201)
+            ->assertJsonPath('data.payment.plan', 'pro')
+            ->assertJsonPath('data.payment.amount', 49000)
+            ->json('data');
+
+        $this->assertDatabaseHas('payments', [
+            'user_id' => $this->user->id,
+            'order_id' => $pro['payment']['order_id'],
+            'plan' => 'pro',
+            'provider' => 'payme',
+            'status' => 'pending',
+        ]);
+        $this->assertSame(2, \App\Models\Plan::count()); // standart qatorlar qayta tiklandi
+    }
+
+    public function test_checkout_rejected_for_admin_disabled_plan_does_not_create_payment(): void
+    {
+        \App\Models\Plan::where('key', 'pro')->update(['is_active' => false]);
+
+        $this->postJson('/api/v1/billing/checkout', ['plan' => 'pro', 'provider' => 'payme'])
+            ->assertStatus(422)->assertJsonPath('code', 'plan_unavailable');
+        $this->assertDatabaseCount('payments', 0);
+    }
+
     public function test_payme_cancel_after_perform_revokes_subscription(): void
     {
         $order = $this->postJson('/api/v1/billing/checkout', ['provider' => 'payme'])->json('data.payment.order_id');

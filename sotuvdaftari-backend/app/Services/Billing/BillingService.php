@@ -41,6 +41,8 @@ class BillingService
     /** Faol tariflar ro'yxati (mobil ilova tarif tanlash ekrani uchun) */
     public function plans(): array
     {
+        Plan::ensureDefaults();
+
         return Plan::where('is_active', true)->orderBy('sort')->get()
             ->map(fn (Plan $plan) => [
                 'id' => $plan->key,
@@ -136,6 +138,8 @@ class BillingService
         if ($plan === Subscription::PLAN_STANDARD && $this->isOnTrial($user)) {
             return;
         }
+
+        Plan::ensureDefaults();
 
         if (! Plan::where('key', $plan)->where('is_active', true)->exists()) {
             throw new ApiException(__('messages.billing.plan_unavailable'), 422, 'plan_unavailable');
