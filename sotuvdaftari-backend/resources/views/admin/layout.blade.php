@@ -4,10 +4,11 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>@yield('title', 'Admin') — Savdo Up</title>
+    @include('partials.fonts')
     <style>
         :root { --g:#00a86b; --gd:#006b45; --bg:#f4f6f8; --card:#fff; --tx:#1a1a1a; --mut:#7a828a; --bd:#e6eaed; --red:#e53935; --amb:#f5a623; --blue:#2f80ed; }
         * { box-sizing: border-box; }
-        body { margin:0; font:14px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif; background:var(--bg); color:var(--tx); }
+        body { margin:0; font:14px/1.45 'Inter',system-ui,-apple-system,Segoe UI,Roboto,sans-serif; -webkit-font-smoothing:antialiased; background:var(--bg); color:var(--tx); }
         a { color:var(--gd); text-decoration:none; } a:hover { text-decoration:underline; }
         .wrap { display:flex; min-height:100vh; }
         nav { width:220px; background:#0f1f19; color:#cfe; padding:20px 0; flex-shrink:0; }

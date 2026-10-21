@@ -7,11 +7,12 @@
     <meta name="description" content="{{ __('site.hero.subtitle') }}">
     <meta property="og:title" content="{{ __('site.brand') }} — {{ __('site.hero.title') }}">
     <meta property="og:description" content="{{ __('site.hero.subtitle') }}">
+    @include('partials.fonts')
     <style>
         :root { --g:#00a86b; --gd:#006b45; --gl:#e9f8f1; --tx:#14201b; --mut:#64727a; --bd:#e6eaed; --bg:#fff; --soft:#f6f9f8; --r:22px; }
         * { box-sizing:border-box; }
         html { scroll-behavior:smooth; }
-        body { margin:0; font:16px/1.65 Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif; color:var(--tx); background:var(--bg); -webkit-font-smoothing:antialiased; }
+        body { margin:0; font:16px/1.65 'Inter',system-ui,-apple-system,Segoe UI,Roboto,sans-serif; color:var(--tx); background:var(--bg); -webkit-font-smoothing:antialiased; }
         a { color:inherit; text-decoration:none; }
         img { max-width:100%; height:auto; display:block; }
         .container { width:min(1120px,92vw); margin:0 auto; }

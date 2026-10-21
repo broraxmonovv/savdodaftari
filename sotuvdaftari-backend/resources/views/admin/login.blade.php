@@ -3,8 +3,9 @@
 <head>
     <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Kirish — Savdo Up Admin</title>
+    @include('partials.fonts')
     <style>
-        body { margin:0; min-height:100vh; display:grid; place-items:center; background:#0f1f19; font:14px system-ui,sans-serif; }
+        body { margin:0; min-height:100vh; display:grid; place-items:center; background:#0f1f19; font:14px 'Inter',system-ui,sans-serif; -webkit-font-smoothing:antialiased; }
         form { background:#fff; padding:28px; border-radius:16px; width:min(360px,92vw); }
         h1 { margin:0 0 16px; font-size:20px; } label { display:block; font-size:12px; color:#7a828a; margin:12px 0 4px; }
         input { width:100%; padding:10px; border:1px solid #e6eaed; border-radius:8px; font:inherit; }

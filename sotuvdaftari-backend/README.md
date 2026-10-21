@@ -264,6 +264,10 @@ Yangi foydalanuvchi ro'yxatdan o'tganda **14 kunlik bepul Standart** (savdo va o
 - **ilova ichidagi bildirishnoma + push** (foydalanuvchi tilida, ro'yxat "Bildirishnomalar" bo'limida).
 Foydalanuvchida uzoqroq amal qiladigan boshqa obuna bo'lsa yoki u bloklangan bo'lsa yuborilmaydi. Cron bo'lmasa ham, qarz SMS'lari kabi zaxira yo'l ishlaydi. Sinash: `--dry-run`.
 
+### Shrift
+
+Sayt va admin panel ilovadagi **Inter** shrifti bilan ko'rinadi. Shrift tashqi CDN'dan emas, `public/fonts/inter/` dan beriladi (SIL OFL litsenziyasi, `LICENSE.txt`): lotin, lotin-kengaytma (o', g'), kirill va kirill-kengaytma (ў, қ, ғ, ҳ). Ulash: `@include('partials.fonts')`. PDF eksport DejaVu Sans'da qoladi (dompdf WOFF2 ni qo'llamaydi).
+
 ### Ochiq sayt (`/`)
 
 Minimalist, bir sahifali sayt (uz/ru, `?lang=ru`): xizmat imkoniyatlari, qanday boshlash, **tariflar (bazadagi joriy narxlar)**, referal dasturi, savol-javob va **ariza formasi**. Yuklab olish tugmalari `SITE_APP_ANDROID_URL` / `SITE_APP_IOS_URL` berilganda chiqadi; aloqa ma'lumotlari `SUPPORT_*` dan olinadi.
