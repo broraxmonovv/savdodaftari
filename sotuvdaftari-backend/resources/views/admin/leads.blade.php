@@ -30,7 +30,7 @@
             <button type="submit" class="sec">Saqlash</button>
         </form>
     </td>
-    <td><form method="post" action="{{ route('admin.leads.destroy', $l->id) }}" onsubmit="return confirm('O\'chirilsinmi?')">@csrf @method('DELETE')<button class="red" type="submit">✕</button></form></td>
+    <td><form method="post" action="{{ route('admin.leads.destroy', $l->id) }}" onsubmit="return confirm('O\'chirilsinmi?')">@csrf @method('DELETE')<button class="red" type="submit">×</button></form></td>
 </tr>
 @empty<tr><td colspan="6" class="muted">Arizalar yo'q</td></tr>@endforelse
 </table></div>

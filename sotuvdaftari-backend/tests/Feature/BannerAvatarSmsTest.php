@@ -108,6 +108,8 @@ class BannerAvatarSmsTest extends TestCase
     public function test_debt_sms_reminders_overdue_and_due_soon(): void
     {
         ArraySmsSender::flush();
+        // Buyruq sanalarni Toshkent vaqti bo'yicha hisoblaydi
+        $today = \Illuminate\Support\Carbon::now('Asia/Tashkent')->startOfDay();
         $owner = User::factory()->create(['name' => 'Bro', 'shop_name' => 'Bozor do\'koni', 'locale' => 'uz']);
         $ali = Customer::factory()->create(['user_id' => $owner->id, 'name' => 'Ali', 'phone' => '+998901112233']);
         $vali = Customer::factory()->create(['user_id' => $owner->id, 'name' => 'Vali', 'phone' => '+998907778899']);
@@ -119,14 +121,14 @@ class BannerAvatarSmsTest extends TestCase
         ]);
 
         // Ali: ikkita muddati o'tgan qarz — bitta SMS, jami summa
-        $mk($ali, 100000, today()->subDays(3)->toDateString());
-        $mk($ali, 50000, today()->subDay()->toDateString(), 10000);
+        $mk($ali, 100000, $today->copy()->subDays(3)->toDateString());
+        $mk($ali, 50000, $today->copy()->subDay()->toDateString(), 10000);
         // Vali: ertaga tugaydi
-        $mk($vali, 70000, today()->addDay()->toDateString());
+        $mk($vali, 70000, $today->copy()->addDay()->toDateString());
         // Telefonsiz va to'langan qarz — SMS yo'q
-        $mk($noPhone, 5000, today()->subDay()->toDateString());
+        $mk($noPhone, 5000, $today->copy()->subDay()->toDateString());
         Debt::create(['user_id' => $owner->id, 'customer_id' => $ali->id, 'amount' => 1000, 'paid_amount' => 1000,
-            'due_date' => today()->subDays(5), 'status' => 'paid', 'issued_at' => now()]);
+            'due_date' => $today->copy()->subDays(5), 'status' => 'paid', 'issued_at' => now()]);
 
         $this->artisan('debts:sms-reminders')->assertSuccessful();
 
@@ -203,7 +205,7 @@ class BannerAvatarSmsTest extends TestCase
         foreach ([$off, $ru] as $owner) {
             $c = Customer::factory()->create(['user_id' => $owner->id, 'phone' => '+99890'.random_int(1000000, 9999999)]);
             Debt::create(['user_id' => $owner->id, 'customer_id' => $c->id, 'amount' => 1000, 'paid_amount' => 0,
-                'due_date' => today()->subDay(), 'status' => 'open', 'issued_at' => now()]);
+                'due_date' => \Illuminate\Support\Carbon::now('Asia/Tashkent')->startOfDay()->subDay(), 'status' => 'open', 'issued_at' => now()]);
         }
 
         $this->artisan('debts:sms-reminders')->assertSuccessful();

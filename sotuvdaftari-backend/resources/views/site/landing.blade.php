@@ -39,14 +39,14 @@
         .lead { font-size:19px; color:var(--mut); margin:0 0 30px; max-width:560px; }
         .cta { display:flex; gap:12px; flex-wrap:wrap; }
         .stats { display:flex; gap:32px; margin-top:38px; flex-wrap:wrap; }
-        .stats b { display:block; font-size:26px; letter-spacing:-.02em; } .stats span { color:var(--mut); font-size:14px; }
+        .stats b { display:block; font-size:26px; letter-spacing:-.02em; } .stats b.si { color:var(--g); line-height:1; padding:3px 0; } .stats span { color:var(--mut); font-size:14px; }
         /* Telefon ramkasi (ilovaning haqiqiy ekrani) */
         .device { position:relative; justify-self:center; width:min(300px,78vw); }
         .device::before { content:''; position:absolute; inset:8% -12% -6% -12%; background:radial-gradient(closest-side, rgba(0,168,107,.28), transparent); filter:blur(30px); z-index:0; }
         .frame { position:relative; z-index:1; background:#0f1a15; border-radius:44px; padding:10px; box-shadow:0 40px 80px rgba(16,24,40,.28), inset 0 0 0 2px #27332d; }
         .frame img { border-radius:34px; width:100%; background:#f7fafb; }
         .chip { position:absolute; z-index:3; background:#fff; border:1px solid var(--bd); border-radius:16px; padding:10px 14px; box-shadow:0 16px 36px rgba(16,24,40,.14); display:flex; align-items:center; gap:10px; font-size:13px; font-weight:600; animation:float 6s ease-in-out infinite; }
-        .chip i { width:30px; height:30px; border-radius:10px; background:var(--gl); display:grid; place-items:center; font-style:normal; }
+        .chip i { width:30px; height:30px; border-radius:10px; background:var(--gl); color:var(--gd); display:grid; place-items:center; font-style:normal; }
         .chip.a { left:-48px; top:22%; } .chip.b { right:-40px; bottom:26%; animation-delay:-3s; }
         @keyframes float { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-10px); } }
         @media (prefers-reduced-motion:reduce) { .chip { animation:none; } html { scroll-behavior:auto; } }
@@ -58,13 +58,13 @@
         .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:20px; }
         .card { background:#fff; border:1px solid var(--bd); border-radius:var(--r); padding:26px; box-shadow:0 10px 30px rgba(16,24,40,.05); transition:transform .2s, box-shadow .2s; }
         .grid > .card:hover { transform:translateY(-4px); box-shadow:0 18px 40px rgba(16,24,40,.09); }
-        .card .ic { width:52px; height:52px; border-radius:16px; background:linear-gradient(135deg,var(--gl),#d3f3e5); display:grid; place-items:center; font-size:26px; margin-bottom:16px; }
+        .card .ic { color:var(--gd); width:52px; height:52px; border-radius:16px; background:linear-gradient(135deg,var(--gl),#d3f3e5); display:grid; place-items:center; font-size:26px; margin-bottom:16px; }
         .card h3 { margin:0 0 6px; font-size:18px; } .card p { margin:0; color:var(--mut); }
         .step { text-align:center; padding:8px 12px; } .step .n { width:48px; height:48px; border-radius:16px; background:linear-gradient(135deg,var(--g),var(--gd)); color:#fff; font-weight:700; font-size:20px; display:grid; place-items:center; margin:0 auto 14px; box-shadow:0 10px 20px rgba(0,168,107,.3); }
         .step h3 { margin:0 0 4px; }
         .plan h3 { font-size:20px; margin:0; } .plan .price { font-size:38px; font-weight:800; margin:10px 0 2px; letter-spacing:-.03em; } .plan .price small { font-size:14px; font-weight:500; color:var(--mut); letter-spacing:0; }
         .plan ul { list-style:none; padding:0; margin:18px 0 0; } .plan li { padding:7px 0 7px 28px; position:relative; }
-        .plan li::before { content:'✓'; position:absolute; left:0; top:7px; width:20px; height:20px; border-radius:50%; background:var(--gl); color:var(--g); font-size:12px; font-weight:700; display:grid; place-items:center; }
+        .plan li::before { content:''; position:absolute; left:0; top:7px; width:20px; height:20px; border-radius:50%; background:var(--gl) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2300a86b' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='5 12.5 10 17.5 19 7'/%3E%3C/svg%3E") center/12px no-repeat; }
         .plan.best { border:2px solid var(--g); position:relative; box-shadow:0 20px 50px rgba(0,168,107,.18); } .plan .tag { position:absolute; top:-13px; right:22px; background:linear-gradient(135deg,var(--g),var(--gd)); color:#fff; font-size:12px; font-weight:700; padding:4px 14px; border-radius:999px; }
         .ref { position:relative; overflow:hidden; background:linear-gradient(135deg,var(--gd),var(--g)); color:#fff; border-radius:28px; padding:54px 32px; text-align:center; }
         .ref::after { content:''; position:absolute; width:320px; height:320px; right:-80px; top:-120px; border-radius:50%; background:rgba(255,255,255,.12); }
@@ -89,7 +89,7 @@
 <body>
 <header>
     <div class="container">
-        <a class="logo" href="{{ route('site.home', ['lang' => $lang]) }}"><i>↑</i>{{ __('site.brand') }}</a>
+        <a class="logo" href="{{ route('site.home', ['lang' => $lang]) }}"><i>@include('site.icon', ['name' => 'arrow', 'size' => 20])</i>{{ __('site.brand') }}</a>
         <nav>
             <span class="links">
                 <a href="#features">{{ __('site.nav.features') }}</a>
@@ -112,22 +112,22 @@
                 <h1>{{ __('site.hero.title') }}</h1>
                 <p class="lead">{{ __('site.hero.subtitle') }}</p>
                 <div class="cta">
-                    @if($site['android_url'])<a class="btn" href="{{ $site['android_url'] }}">▶ {{ __('site.hero.android') }}</a>@endif
-                    @if($site['ios_url'])<a class="btn" href="{{ $site['ios_url'] }}">  {{ __('site.hero.ios') }}</a>@endif
+                    @if($site['android_url'])<a class="btn" href="{{ $site['android_url'] }}">@include('site.icon', ['name' => 'play', 'size' => 16]) {{ __('site.hero.android') }}</a>@endif
+                    @if($site['ios_url'])<a class="btn" href="{{ $site['ios_url'] }}">@include('site.icon', ['name' => 'phone', 'size' => 16]) {{ __('site.hero.ios') }}</a>@endif
                     <a class="btn {{ ($site['android_url'] || $site['ios_url']) ? 'ghost' : '' }}" href="#contact">{{ __('site.hero.cta_request') }}</a>
                 </div>
                 <div class="stats">
                     <div><b>14 {{ $lang === 'ru' ? 'дней' : 'kun' }}</b><span>{{ $lang === 'ru' ? 'бесплатно Стандарт' : 'bepul Standart' }}</span></div>
                     <div><b>UZ · RU</b><span>{{ $lang === 'ru' ? 'два языка' : 'ikki til' }}</span></div>
-                    <div><b>🎙️</b><span>{{ $lang === 'ru' ? 'голосовой ввод' : 'ovozli kiritish' }}</span></div>
+                    <div><b class="si">@include('site.icon', ['name' => 'mic', 'size' => 28])</b><span>{{ $lang === 'ru' ? 'голосовой ввод' : 'ovozli kiritish' }}</span></div>
                 </div>
             </div>
             <div class="device">
-                <span class="chip a"><i>📈</i>{{ $lang === 'ru' ? 'Прибыль растёт' : 'Foyda o\'smoqda' }}</span>
+                <span class="chip a"><i>@include('site.icon', ['name' => 'trend', 'size' => 16])</i>{{ $lang === 'ru' ? 'Прибыль растёт' : 'Foyda o\'smoqda' }}</span>
                 <div class="frame">
                     <img src="{{ asset('site/app-home.webp') }}" width="640" height="1288" alt="{{ __('site.brand') }} — {{ $lang === 'ru' ? 'главный экран приложения' : 'ilovaning bosh sahifasi' }}" fetchpriority="high">
                 </div>
-                <span class="chip b"><i>🔔</i>{{ $lang === 'ru' ? 'Напоминание о долге' : 'Qarz eslatmasi' }}</span>
+                <span class="chip b"><i>@include('site.icon', ['name' => 'bell', 'size' => 16])</i>{{ $lang === 'ru' ? 'Напоминание о долге' : 'Qarz eslatmasi' }}</span>
             </div>
         </div>
     </div>
@@ -139,7 +139,7 @@
             <p class="sub"></p>
             <div class="grid">
                 @foreach(__('site.features.items') as $item)
-                    <div class="card"><div class="ic">{{ $item['icon'] }}</div><h3>{{ $item['title'] }}</h3><p>{{ $item['text'] }}</p></div>
+                    <div class="card"><div class="ic">@include('site.icon', ['name' => $item['icon'], 'size' => 26])</div><h3>{{ $item['title'] }}</h3><p>{{ $item['text'] }}</p></div>
                 @endforeach
             </div>
         </div>

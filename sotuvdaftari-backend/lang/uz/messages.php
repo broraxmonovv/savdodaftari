@@ -86,7 +86,7 @@ return [
     ],
 
     'trial' => [
-        'welcome_title' => 'Xush kelibsiz! 🎁',
+        'welcome_title' => 'Xush kelibsiz!',
         'welcome_body' => 'Sizga :days kunlik bepul Standart tarif sovg\'a qilindi: savdo va ombor bo\'limlari :date gacha ochiq.',
         'ending_title' => 'Bepul sinov tugayapti',
         'ending_body' => 'Standart tarifning :days kunlik bepul bonus muddati :date da tugaydi. Savdo va ombor bo\'limlari yopilib qolmasligi uchun Standartga (:price so\'m) to\'lov qiling — tarif 30 kunga cho\'ziladi.',

@@ -14,12 +14,12 @@ return [
     'features' => [
         'title' => 'Nimalar qila oladi',
         'items' => [
-            ['icon' => '📒', 'title' => 'Qarz daftari', 'text' => 'Kim qancha qarz, qachon qaytaradi — qisman to\'lovlar va muddat eslatmalari bilan.'],
-            ['icon' => '🛒', 'title' => 'Savdo', 'text' => 'Mahsulotni tanlang, miqdorni kiriting — chek va foyda avtomatik hisoblanadi.'],
-            ['icon' => '📦', 'title' => 'Ombor', 'text' => 'Qoldiq, tannarx va kam qolgan mahsulot ogohlantirishi. Barcode bilan tez qidirish.'],
-            ['icon' => '📊', 'title' => 'Hisobot', 'text' => 'Kunlik, haftalik, oylik savdo, xarajat va sof foyda.'],
-            ['icon' => '🎙️', 'title' => 'Ovozli boshqaruv va AI', 'text' => '"Ali akaga 150 ming qarz yoz" deb ayting — ilova o\'zi yozadi (Pro).'],
-            ['icon' => '💱', 'title' => 'Kurslar va kalkulyator', 'text' => 'Markaziy bank kurslari va har sahifada turadigan kalkulyator.'],
+            ['icon' => 'book', 'title' => 'Qarz daftari', 'text' => 'Kim qancha qarz, qachon qaytaradi — qisman to\'lovlar va muddat eslatmalari bilan.'],
+            ['icon' => 'cart', 'title' => 'Savdo', 'text' => 'Mahsulotni tanlang, miqdorni kiriting — chek va foyda avtomatik hisoblanadi.'],
+            ['icon' => 'box', 'title' => 'Ombor', 'text' => 'Qoldiq, tannarx va kam qolgan mahsulot ogohlantirishi. Barcode bilan tez qidirish.'],
+            ['icon' => 'chart', 'title' => 'Hisobot', 'text' => 'Kunlik, haftalik, oylik savdo, xarajat va sof foyda.'],
+            ['icon' => 'mic', 'title' => 'Ovozli boshqaruv va AI', 'text' => '"Ali akaga 150 ming qarz yoz" deb ayting — ilova o\'zi yozadi (Pro).'],
+            ['icon' => 'exchange', 'title' => 'Kurslar va kalkulyator', 'text' => 'Markaziy bank kurslari va har sahifada turadigan kalkulyator.'],
         ],
     ],
     'steps' => [

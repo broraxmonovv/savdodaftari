@@ -47,7 +47,7 @@ class TrialTest extends TestCase
             ->assertJsonPath('data.free.limits.customers', 30);
 
         // Xush kelibsiz bildirishnomasi
-        $this->getJson('/api/v1/announcements')->assertJsonPath('data.0.title', 'Xush kelibsiz! 🎁');
+        $this->getJson('/api/v1/announcements')->assertJsonPath('data.0.title', 'Xush kelibsiz!');
 
         // Qayta kirish, hisobni o'chirib qayta ro'yxatdan o'tish — sinov qayta berilmaydi
         $this->register();
