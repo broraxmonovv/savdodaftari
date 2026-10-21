@@ -94,6 +94,13 @@ return [
         'ended_body' => 'Standart tarifning bonus muddati tugadi, savdo va ombor bo\'limlari yopildi. Qolgan bo\'limlar (mijozlar, qarz daftari, xarajatlar) ishlashda davom etadi. Qayta yoqish uchun Standartga (:price so\'m) to\'lov qiling — 30 kun.',
     ],
 
+    'expiry' => [
+        'free_prefix' => 'bepul',
+        'title' => 'Tarif tugashiga 1 kun qoldi',
+        'body' => "Sizning Savdo Up :plan tarifingiz tugashiga 1 kun qoldi. Yoqishni unutmang, aks holda ilovaning tarif imkoniyatlari o'chadi.",
+        'sms' => "Sizning Savdo Up :plan tarifingiz tugashiga 1 kun qoldi. Yoqishni unutmang, aks holda ilovaning tarif imkoniyatlari o'chadi.",
+    ],
+
     'limits' => [
         'customers' => 'Mijozlar soni limitiga yetdingiz (:limit ta). Ko\'proq qo\'shish uchun :plan tarifiga o\'ting.',
         'products' => 'Mahsulotlar soni limitiga yetdingiz (:limit ta). Ko\'proq qo\'shish uchun :plan tarifiga o\'ting.',

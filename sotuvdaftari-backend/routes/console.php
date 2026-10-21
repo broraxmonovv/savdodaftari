@@ -19,3 +19,9 @@ Schedule::command('debts:sms-reminders')
     ->dailyAt((string) config('savdodaftar.sms_reminders.send_at', '09:00'))
     ->timezone((string) config('savdodaftar.timezone', 'Asia/Tashkent'))
     ->withoutOverlapping();
+
+// Tarif (bepul sinov ham) tugashiga 1 kun qolganda SMS + bildirishnoma (har kuni 09:00, Toshkent vaqti)
+Schedule::command('subscriptions:remind-expiring')
+    ->dailyAt((string) config('savdodaftar.sms_reminders.send_at', '09:00'))
+    ->timezone((string) config('savdodaftar.timezone', 'Asia/Tashkent'))
+    ->withoutOverlapping();

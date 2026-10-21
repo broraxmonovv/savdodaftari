@@ -252,6 +252,13 @@ Yangi foydalanuvchi ro'yxatdan o'tganda **14 kunlik bepul Standart** (savdo va o
 - `ChangePassword` qo'llab-quvvatlanadi: Payme parolni almashtirsa yangi kalit `storage/app/private/payme/password` (yoki `storage/app/payme/password`) fayliga saqlanadi va `.env` dagi `PAYME_KEY` o'rniga ishlatiladi. Qo'lda qaytarish: shu faylni o'chiring.
 - Lokal tekshirish: `vendor/bin/phpunit --filter BillingTest`.
 
+### Tarif tugashi eslatmasi (SMS + bildirishnoma)
+
+`php artisan subscriptions:remind-expiring` (har kuni 09:00 Toshkent vaqti): tugash sanasi ertaga bo'lgan faol obunalar (bepul sinov ham, pullik Standart/Pro ham) uchun har obunaga bir marta:
+- **SMS (doim o'zbekcha):** *"Sizning Savdo Up {tarif} tarifingiz tugashiga 1 kun qoldi. Yoqishni unutmang, aks holda ilovaning tarif imkoniyatlari o'chadi."* (sinovda tarif nomi "bepul Standart");
+- **ilova ichidagi bildirishnoma + push** (foydalanuvchi tilida, ro'yxat "Bildirishnomalar" bo'limida).
+Foydalanuvchida uzoqroq amal qiladigan boshqa obuna bo'lsa yoki u bloklangan bo'lsa yuborilmaydi. Cron bo'lmasa ham, qarz SMS'lari kabi zaxira yo'l ishlaydi. Sinash: `--dry-run`.
+
 ### Ochiq sayt (`/`)
 
 Minimalist, bir sahifali sayt (uz/ru, `?lang=ru`): xizmat imkoniyatlari, qanday boshlash, **tariflar (bazadagi joriy narxlar)**, referal dasturi, savol-javob va **ariza formasi**. Yuklab olish tugmalari `SITE_APP_ANDROID_URL` / `SITE_APP_IOS_URL` berilganda chiqadi; aloqa ma'lumotlari `SUPPORT_*` dan olinadi.

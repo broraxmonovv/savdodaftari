@@ -38,6 +38,7 @@ class Subscription extends Model
         'expires_at',
         'ending_notified_at',
         'ended_notified_at',
+        'expiry_reminded_at',
     ];
 
     protected function casts(): array
@@ -48,6 +49,7 @@ class Subscription extends Model
             'is_trial' => 'boolean',
             'ending_notified_at' => 'datetime',
             'ended_notified_at' => 'datetime',
+            'expiry_reminded_at' => 'datetime',
         ];
     }
 
