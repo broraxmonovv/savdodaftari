@@ -107,25 +107,48 @@ class ReportController extends Controller
         ]);
     }
 
-    /** GET /reports/daily?period=week|month yoki from=&to= — grafik uchun kunlik dinamika (TZ 17) */
+    /**
+     * GET /reports/daily?period=week|month|all yoki from=&to= [&group=day|week|month] — grafik uchun dinamika (TZ 17).
+     *
+     * `group` berilmasa kunlik; `period=all` (butun davr, Pro) uchun davr uzunligiga qarab avtomatik:
+     * ≤62 kun — kunlik, ≤250 kun — haftalik, undan uzun — oylik. Haftalik/oylik guruhda `date` — davr boshi,
+     * `date_to` — davr oxiri.
+     */
     public function daily(Request $request): JsonResponse
     {
         $data = $request->validate([
-            'period' => ['nullable', Rule::in(['week', 'month'])],
+            'period' => ['nullable', Rule::in(['week', 'month', 'all'])],
+            'group' => ['nullable', Rule::in(['day', 'week', 'month'])],
             'from' => ['nullable', 'date_format:Y-m-d'],
             'to' => ['nullable', 'date_format:Y-m-d', 'after_or_equal:from'],
         ]);
 
+        $user = $request->user();
         [$from, $to] = $this->range($data, defaultPeriod: 'month');
-        $from ??= today()->subDays(29)->toDateString();
-        $to ??= today()->toDateString();
+        $isAll = ($data['period'] ?? null) === 'all' && empty($data['from']) && empty($data['to']);
 
-        // Juda uzun oraliqni cheklaymiz — grafik uchun 92 kun yetarli
-        if (Carbon::parse($from)->diffInDays(Carbon::parse($to)) > 92) {
-            $from = Carbon::parse($to)->subDays(92)->toDateString();
+        if ($isAll) {
+            // Butun davr: birinchi savdo/xarajat sanasidan bugungacha
+            $first = collect([
+                Sale::forUser($user)->min('sold_at'),
+                Expense::forUser($user)->min('spent_at'),
+            ])->filter()->map(fn ($d) => Carbon::parse($d)->toDateString())->min();
+
+            $from = $first ?? today()->subDays(29)->toDateString();
+            $to = today()->toDateString();
         }
 
-        $user = $request->user();
+        $from ??= today()->subDays(29)->toDateString();
+        $to ??= today()->toDateString();
+        $span = Carbon::parse($from)->diffInDays(Carbon::parse($to)) + 1;
+
+        $group = $data['group'] ?? ($isAll ? ($span <= 62 ? 'day' : ($span <= 250 ? 'week' : 'month')) : 'day');
+
+        // Kunlik grafik uchun 92 kun, haftalik uchun ~5 yil, oylik uchun 10 yil bilan cheklaymiz
+        $maxDays = ['day' => 92, 'week' => 1830, 'month' => 3660][$group];
+        if ($span > $maxDays) {
+            $from = Carbon::parse($to)->subDays($maxDays - 1)->toDateString();
+        }
 
         $sales = Sale::forUser($user)->between($from, $to)
             ->selectRaw('DATE(sold_at) as day')
@@ -180,7 +203,48 @@ class ReportController extends Controller
             $cursor->addDay();
         }
 
-        return $this->success(['from' => $from, 'to' => $to, 'days' => $days]);
+        if ($group !== 'day') {
+            $days = $this->groupSeries($days, $group);
+        }
+
+        return $this->success(['from' => $from, 'to' => $to, 'group' => $group, 'days' => $days]);
+    }
+
+    /**
+     * Kunlik qatorlarni hafta (dushanbadan) yoki oy bo'yicha yig'adi. Oraliqning chetidagi to'liq bo'lmagan
+     * hafta/oy ham alohida bo'lak sifatida qoladi.
+     *
+     * @param  array<int, array<string, mixed>>  $days
+     * @return array<int, array<string, mixed>>
+     */
+    private function groupSeries(array $days, string $group): array
+    {
+        $sum = ['sales_count', 'revenue', 'gross_profit', 'expenses', 'net_profit', 'debt_given', 'debt_repaid'];
+        $buckets = [];
+
+        foreach ($days as $row) {
+            $date = Carbon::parse($row['date']);
+            $start = $group === 'week' ? $date->copy()->startOfWeek() : $date->copy()->startOfMonth();
+            $key = $start->toDateString();
+
+            if (! isset($buckets[$key])) {
+                $buckets[$key] = array_merge(['date' => $key, 'date_to' => $row['date']], array_fill_keys($sum, 0));
+            }
+
+            $buckets[$key]['date_to'] = $row['date'];
+
+            foreach ($sum as $field) {
+                $buckets[$key][$field] += $row[$field];
+            }
+        }
+
+        return array_values(array_map(function (array $bucket) use ($sum) {
+            foreach ($sum as $field) {
+                $bucket[$field] = $field === 'sales_count' ? (int) $bucket[$field] : round($bucket[$field], 2);
+            }
+
+            return $bucket;
+        }, $buckets));
     }
 
     /** GET /reports/top-products?period|from&to&by=revenue|qty|profit&limit= (TZ 17, 19) */

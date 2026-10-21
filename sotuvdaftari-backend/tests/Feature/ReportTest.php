@@ -137,6 +137,49 @@ class ReportTest extends TestCase
         $this->assertSame(0, (int) $yesterday['revenue']);
     }
 
+    public function test_daily_series_can_be_grouped_by_week_month_and_whole_period(): void
+    {
+        $this->seedData();
+        \App\Models\Sale::query()->orderBy('id')->first()->forceFill(['sold_at' => today()->subDays(75)])->save();
+
+        // Haftalik guruh: yig'indi kunlik yig'indiga teng
+        $daily = $this->getJson('/api/v1/reports/daily?period=month')->assertOk()->json('data');
+        $weekly = $this->getJson('/api/v1/reports/daily?period=month&group=week')->assertOk()
+            ->assertJsonPath('data.group', 'week')->json('data');
+        $this->assertSame(
+            round(collect($daily['days'])->sum('revenue'), 2),
+            round(collect($weekly['days'])->sum('revenue'), 2),
+        );
+        $this->assertLessThanOrEqual(6, count($weekly['days']));
+        $this->assertSame(1, \Carbon\Carbon::parse($weekly['days'][0]['date'])->dayOfWeekIso); // dushanbadan
+        $this->assertArrayHasKey('date_to', $weekly['days'][0]);
+
+        // Butun davr (Pro): birinchi savdo sanasidan boshlanadi, davr uzunligiga qarab guruhlanadi
+        $all = $this->getJson('/api/v1/reports/daily?period=all')->assertOk()->json('data');
+        $this->assertSame(today()->subDays(75)->toDateString(), $all['from']);
+        $this->assertSame('week', $all['group']); // 76 kun -> haftalik
+        $this->assertGreaterThan(10, count($all['days']));
+
+        $monthly = $this->getJson('/api/v1/reports/daily?period=all&group=month')->assertOk()->json('data');
+        $this->assertSame('month', $monthly['group']);
+        $this->assertSame(1, \Carbon\Carbon::parse($monthly['days'][0]['date'])->day);
+        $this->assertSame(
+            round(collect($all['days'])->sum('revenue'), 2),
+            round(collect($monthly['days'])->sum('revenue'), 2),
+        );
+
+        $this->getJson('/api/v1/reports/daily?group=year')->assertStatus(422);
+    }
+
+    public function test_whole_period_and_month_trend_require_pro(): void
+    {
+        \Laravel\Sanctum\Sanctum::actingAs(\App\Models\User::factory()->standard()->create());
+
+        $this->getJson('/api/v1/reports/daily?period=week')->assertOk();
+        $this->getJson('/api/v1/reports/daily?period=month')->assertStatus(403)->assertJsonPath('code', 'plan_required');
+        $this->getJson('/api/v1/reports/daily?period=all')->assertStatus(403)->assertJsonPath('code', 'plan_required');
+    }
+
     public function test_top_products_ranked_and_net_of_returns(): void
     {
         $this->seedData();

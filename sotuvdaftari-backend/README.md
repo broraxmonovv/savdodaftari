@@ -233,6 +233,10 @@ Yangi foydalanuvchi ro'yxatdan o'tganda **14 kunlik bepul Standart** (savdo va o
 
 **Zaxira va tiklash (Pro):** `GET/POST /backups`, `GET /backups/{id}` (payload), `DELETE /backups/{id}` va **`POST /backups/{id}/restore {confirm: true}`** — ma'lumotlar (mijoz, qarz, mahsulot, savdo, qaytarish, harakat, xarajat) zaxiradagi holatga qaytariladi, asl ID'lar saqlanadi. Xavfsizlik: checksum tekshiriladi, avval joriy holatning avtomatik zaxirasi olinadi (qaytish nuqtasi), almashtirish bitta tranzaksiyada, boshqa foydalanuvchilarga tegilmaydi.
 
+### Savdo dinamikasi grafigi (`GET /reports/daily`)
+
+`period=week|month|all` yoki `from/to`, ixtiyoriy `group=day|week|month`. `period=all` (butun davr, Pro) birinchi savdo sanasidan boshlanadi va uzunligiga qarab avtomatik guruhlanadi (≤62 kun kunlik, ≤250 kun haftalik, undan uzun oylik). Haftalik/oylik guruhda `date` — davr boshi, `date_to` — oxiri. 30 kun va butun davr faqat Pro; haftalik hammaga.
+
 ### Reklama bannerlari, profil rasmi, qarz SMS eslatmalari
 
 - **Reklama karuseli** (`/admin/banners`): sarlavha, havola (faqat http/https), rasm (tavsiya 1200×500), necha kun ko'rsatilishi (bo'sh = cheksiz), o'chirib qo'yish / yoqish, muddatni uzaytirish va o'chirish. Ilova `GET /api/v1/banners` orqali faqat faol va muddati tugamaganlarini oladi, bosilganda `POST /api/v1/banners/{id}/click` statistikasi yuboriladi.
