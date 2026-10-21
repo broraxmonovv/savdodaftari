@@ -8,12 +8,14 @@ use App\Models\Debt;
 use App\Models\User;
 use App\Services\Sms\SmsSender;
 use Illuminate\Console\Command;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 
 /**
  * Qarzdor mijozlarga SMS eslatma:
  *  - qaytarish muddatiga 1 kun qolganda (bir marta);
+ *  - qarzda belgilangan muddat kuni, ertalab 09:00 da (bir marta);
  *  - muddati o'tgach (birinchi kuni, so'ng har `overdue_repeat_days` kunda).
  * Bir mijozning bir nechta qarzi bitta SMS'da jamlanadi.
  */
@@ -32,6 +34,7 @@ class SendDebtSmsReminders extends Command
             ->chunkById(100, function ($owners) use ($sms, &$sent) {
                 foreach ($owners as $owner) {
                     $sent += $this->remind($owner, $sms, 'debt_due_soon');
+                    $sent += $this->remind($owner, $sms, 'debt_due_today');
                     $sent += $this->remind($owner, $sms, 'debt_overdue');
                 }
             });
@@ -44,12 +47,22 @@ class SendDebtSmsReminders extends Command
     private function remind(User $owner, SmsSender $sms, string $kind): int
     {
         $repeat = max(1, (int) config('savdodaftar.sms_reminders.overdue_repeat_days'));
+        // Sanalar mahalliy (Toshkent) vaqt bo'yicha: "muddat kuni" = qarzda belgilangan sana
+        $today = Carbon::now((string) config('savdodaftar.timezone', 'Asia/Tashkent'))->startOfDay();
+        $column = match ($kind) {
+            'debt_due_soon' => 'due_soon_sms_at',
+            'debt_due_today' => 'due_today_sms_at',
+            default => 'overdue_sms_at',
+        };
 
         $debts = Debt::forUser($owner)->unpaid()->with('customer')->whereHas('customer', fn ($q) => $q->whereNotNull('phone'))
             ->when($kind === 'debt_due_soon',
-                fn ($q) => $q->whereDate('due_date', today()->addDay())->whereNull('due_soon_sms_at'),
-                fn ($q) => $q->whereDate('due_date', '<', today())
-                    ->where(fn ($w) => $w->whereNull('overdue_sms_at')->orWhereDate('overdue_sms_at', '<=', today()->subDays($repeat))))
+                fn ($q) => $q->whereDate('due_date', $today->copy()->addDay()->toDateString())->whereNull('due_soon_sms_at'))
+            ->when($kind === 'debt_due_today',
+                fn ($q) => $q->whereDate('due_date', $today->toDateString())->whereNull('due_today_sms_at'))
+            ->when($kind === 'debt_overdue',
+                fn ($q) => $q->whereDate('due_date', '<', $today->toDateString())
+                    ->where(fn ($w) => $w->whereNull('overdue_sms_at')->orWhereDate('overdue_sms_at', '<=', $today->copy()->subDays($repeat)->toDateString())))
             ->get();
 
         $count = 0;
@@ -86,7 +99,7 @@ class SendDebtSmsReminders extends Command
                 continue;
             }
 
-            Debt::whereIn('id', $group->pluck('id'))->update([$kind === 'debt_due_soon' ? 'due_soon_sms_at' : 'overdue_sms_at' => today()]);
+            Debt::whereIn('id', $group->pluck('id'))->update([$column => $today->toDateString()]);
             $count++;
         }
 

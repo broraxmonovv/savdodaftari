@@ -153,6 +153,47 @@ class BannerAvatarSmsTest extends TestCase
         $this->assertGreaterThan(2, count(ArraySmsSender::all()));
     }
 
+    public function test_due_date_sms_is_sent_once_on_the_due_date(): void
+    {
+        ArraySmsSender::flush();
+        $owner = User::factory()->create(['name' => 'Bro', 'shop_name' => 'Bozor do\'koni', 'locale' => 'uz']);
+        $ali = Customer::factory()->create(['user_id' => $owner->id, 'name' => 'Ali', 'phone' => '+998901112233']);
+
+        // Toshkent vaqti bilan bugungi sana muddat kuni
+        $due = \Illuminate\Support\Carbon::now('Asia/Tashkent')->toDateString();
+        Debt::create(['user_id' => $owner->id, 'customer_id' => $ali->id, 'amount' => 250000, 'paid_amount' => 0,
+            'due_date' => $due, 'status' => 'open', 'issued_at' => now()]);
+
+        $this->artisan('debts:sms-reminders')->assertSuccessful();
+
+        $this->assertCount(1, ArraySmsSender::all());
+        $message = ArraySmsSender::last()['message'];
+        $this->assertStringContainsString('Assalomu alaykum Ali', $message);
+        $this->assertStringContainsString('Bozor do\'koni', $message);
+        $this->assertStringContainsString('250 000', $message);
+        $this->assertStringContainsString('muddati bugun', $message);
+
+        // Shu kuni qayta ishga tushsa takrorlanmaydi
+        $this->artisan('debts:sms-reminders')->assertSuccessful();
+        $this->assertCount(1, ArraySmsSender::all());
+
+        // Ertasi kuni muddati o'tgan qarz sifatida alohida eslatma ketadi
+        $this->travel(1)->days();
+        $this->artisan('debts:sms-reminders')->assertSuccessful();
+        $this->assertCount(2, ArraySmsSender::all());
+        $this->assertStringContainsString("muddati o'tib ketti", ArraySmsSender::last()['message']);
+    }
+
+    public function test_sms_reminder_is_scheduled_daily_at_9_tashkent_time(): void
+    {
+        $event = collect(app(\Illuminate\Console\Scheduling\Schedule::class)->events())
+            ->first(fn ($e) => str_contains($e->command, 'debts:sms-reminders'));
+
+        $this->assertNotNull($event);
+        $this->assertSame('0 9 * * *', $event->expression);
+        $this->assertSame('Asia/Tashkent', (string) $event->timezone);
+    }
+
     public function test_sms_reminders_respect_owner_switch_and_locale(): void
     {
         ArraySmsSender::flush();

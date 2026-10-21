@@ -41,7 +41,12 @@ return [
         'max_kb' => (int) env('AVATAR_MAX_KB', 3072),
     ],
 
+    // Jadval va sanalar shu vaqt mintaqasida hisoblanadi (qarz SMS'lari 09:00 da)
+    'timezone' => env('SAVDODAFTAR_TIMEZONE', 'Asia/Tashkent'),
+
     'sms_reminders' => [
+        // Eslatma yuboriladigan soat (mahalliy vaqt)
+        'send_at' => env('SMS_REMINDER_TIME', '09:00'),
         // Muddati o'tgan qarz bo'yicha SMS necha kunda bir takrorlanadi
         'overdue_repeat_days' => (int) env('SMS_OVERDUE_REPEAT_DAYS', 7),
     ],

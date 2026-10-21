@@ -125,6 +125,7 @@ return [
 
     'sms' => [
         'debt_overdue' => "Assalomu alaykum :name, Sizning :shop do'kondan, :owner dan :amount so'm qarzingiz bor va berish muddati o'tib ketti. Tezroq to'lashingizni so'raymiz.",
+        'debt_due_today' => "Assalomu alaykum :name, Sizning :shop do'kondan, :owner dan :amount so'm qarzingiz bor va berish muddati bugun. Iltimos, bugun to'lang.",
         'debt_due_soon' => "Assalomu alaykum :name, Sizning :shop do'kondan, :owner dan :amount so'm qarzingiz bor va berish muddati ertaga tugaydi. Iltimos, o'z vaqtida to'lang.",
     ],
 
