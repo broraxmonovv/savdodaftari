@@ -19,7 +19,7 @@ Route::get('media/{path}', function (string $path) {
     abort_unless(preg_match('#^(banners|avatars|products)/#', $path) === 1 && ! str_contains($path, '..') && ! str_contains($path, '\\'), 404);
     abort_unless(Storage::disk('public')->exists($path), 404);
 
-    return Storage::disk('public')->response($path, null, ['Cache-Control' => 'public, max-age=86400']);
+    return Storage::disk('public')->response($path, null, ['Cache-Control' => 'public, max-age=31536000, immutable']);
 })->where('path', '.*');
 
 // Ochiq sayt

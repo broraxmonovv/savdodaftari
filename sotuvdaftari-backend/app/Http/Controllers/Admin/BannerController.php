@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Banner;
+use App\Support\ImageOptimizer;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -29,7 +30,7 @@ class BannerController extends Controller
         Banner::create([
             'title' => $data['title'],
             'url' => $data['url'],
-            'image_path' => $request->file('image')->store('banners', Banner::disk()),
+            'image_path' => ImageOptimizer::store($request->file('image'), 'banners', Banner::disk()),
             'is_active' => true,
             'starts_at' => now(),
             // Muddat bo'sh qoldirilsa — cheksiz
@@ -55,7 +56,7 @@ class BannerController extends Controller
 
         if ($request->hasFile('image')) {
             Storage::disk(Banner::disk())->delete($banner->image_path);
-            $banner->image_path = $request->file('image')->store('banners', Banner::disk());
+            $banner->image_path = ImageOptimizer::store($request->file('image'), 'banners', Banner::disk());
         }
 
         // "Necha kun" berilsa, muddat bugundan boshlab qayta hisoblanadi

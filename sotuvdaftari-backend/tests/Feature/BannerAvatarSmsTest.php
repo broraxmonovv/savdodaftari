@@ -267,4 +267,46 @@ class BannerAvatarSmsTest extends TestCase
         $this->get('/api/v1/support')->assertOk();
         $this->assertCount(1, ArraySmsSender::all());
     }
+
+    public function test_uploaded_banner_is_resized_and_compressed(): void
+    {
+        Storage::fake('public');
+        $admin = $this->admin();
+        $this->post('/admin/login', ['phone' => $admin->phone, 'password' => 'secret-pass-1'])->assertRedirect();
+
+        // Katta (4000x1600) rasm
+        $big = UploadedFile::fake()->image('big.png', 4000, 1600);
+        $originalSize = $big->getSize();
+
+        $this->post('/admin/banners', ['title' => 'Katta', 'url' => 'https://a.uz', 'image' => $big])->assertSessionHasNoErrors();
+
+        $banner = Banner::first();
+        $this->assertStringEndsWith('.webp', $banner->image_path);
+
+        $binary = Storage::disk('public')->get($banner->image_path);
+        [$w, $h] = getimagesizefromstring($binary);
+        $this->assertSame(1200, $w);
+        $this->assertSame(480, $h); // nisbat saqlanadi
+        $this->assertLessThan($originalSize, strlen($binary));
+
+        // Kichik rasm kattalashtirilmaydi
+        $this->post('/admin/banners', ['title' => 'Kichik', 'url' => 'https://b.uz', 'image' => UploadedFile::fake()->image('s.jpg', 600, 250)]);
+        [$w2] = getimagesizefromstring(Storage::disk('public')->get(Banner::latest('id')->first()->image_path));
+        $this->assertSame(600, $w2);
+    }
+
+    public function test_banners_optimize_command_recompresses_existing_images(): void
+    {
+        Storage::fake('public');
+        $path = UploadedFile::fake()->image('old.png', 3000, 1200)->store('banners', 'public');
+        $before = Storage::disk('public')->size($path);
+        $banner = Banner::create(['title' => 'Eski', 'url' => 'https://a.uz', 'image_path' => $path, 'is_active' => true]);
+
+        $this->artisan('banners:optimize')->assertSuccessful();
+
+        $banner->refresh();
+        $this->assertNotSame($path, $banner->image_path);
+        Storage::disk('public')->assertMissing($path);
+        $this->assertLessThan($before, Storage::disk('public')->size($banner->image_path));
+    }
 }
