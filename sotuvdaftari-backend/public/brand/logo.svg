@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="97 97 446 446" role="img" aria-label="Savdo Up">
+  <defs>
+    <clipPath id="card"><rect x="193" y="186" width="254" height="267" rx="34"/></clipPath>
+  </defs>
+  <circle cx="320" cy="320" r="223" fill="#108F6A"/>
+  <rect x="193" y="186" width="254" height="267" rx="34" fill="#FFFFFF"/>
+  <g clip-path="url(#card)"><rect x="193" y="186" width="50" height="267" rx="25" fill="#CCE5DE"/></g>
+  <rect x="271" y="364" width="36" height="52" rx="10" fill="#108F6A"/>
+  <rect x="324" y="328" width="36" height="88" rx="10" fill="#108F6A"/>
+  <rect x="377" y="283" width="36" height="133" rx="10" fill="#108F6A"/>
+  <g fill="none" stroke="#F5A00B" stroke-width="24" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M260 312 L402 224"/>
+    <path d="M354 222 L404 222 L404 272"/>
+  </g>
+</svg>

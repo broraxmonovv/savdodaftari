@@ -4,6 +4,9 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>@yield('title', 'Admin') — Savdo Up</title>
+    <link rel="icon" type="image/svg+xml" href="{{ asset('brand/logo.svg') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('brand/favicon-32.png') }}">
+    <link rel="apple-touch-icon" href="{{ asset('brand/apple-touch-icon.png') }}">
     @include('partials.fonts')
     <style>
         :root { --g:#00a86b; --gd:#006b45; --bg:#f4f6f8; --card:#fff; --tx:#1a1a1a; --mut:#7a828a; --bd:#e6eaed; --red:#e53935; --amb:#f5a623; --blue:#2f80ed; }
@@ -51,7 +54,7 @@
 @php($menu = ['admin.dashboard' => 'Dashboard', 'admin.users' => 'Foydalanuvchilar', 'admin.plans' => 'Tariflar', 'admin.withdrawals' => 'Yechib olish', 'admin.leads' => 'Arizalar', 'admin.announcements' => 'Bildirishnomalar', 'admin.banners' => 'Reklama'])
 <div class="wrap">
     <nav>
-        <div class="brand">Savdo Up Admin</div>
+        <div class="brand" style="display:flex;align-items:center;gap:10px"><img src="{{ asset('brand/logo.svg') }}" width="30" height="30" alt="">Savdo Up Admin</div>
         @foreach($menu as $route => $label)
             <a href="{{ route($route) }}" class="{{ request()->routeIs($route.'*') ? 'on' : '' }}">{{ $label }}</a>
         @endforeach

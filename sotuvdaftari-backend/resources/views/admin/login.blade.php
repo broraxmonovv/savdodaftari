@@ -3,6 +3,9 @@
 <head>
     <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Kirish — Savdo Up Admin</title>
+    <link rel="icon" type="image/svg+xml" href="{{ asset('brand/logo.svg') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('brand/favicon-32.png') }}">
+    <link rel="apple-touch-icon" href="{{ asset('brand/apple-touch-icon.png') }}">
     @include('partials.fonts')
     <style>
         body { margin:0; min-height:100vh; display:grid; place-items:center; background:#0f1f19; font:14px 'Inter',system-ui,sans-serif; -webkit-font-smoothing:antialiased; }
@@ -16,6 +19,7 @@
 <body>
 <form method="post" action="{{ route('admin.login.submit') }}">
     @csrf
+    <img src="{{ asset('brand/logo.svg') }}" width="64" height="64" alt="" style="display:block;margin:0 auto 10px">
     <h1>Savdo Up Admin</h1>
     @if($errors->any())<div class="err">{{ $errors->first() }}</div>@endif
     <label>Telefon</label><input name="phone" value="{{ old('phone') }}" placeholder="+998901234567" autofocus required>

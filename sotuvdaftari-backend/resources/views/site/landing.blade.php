@@ -7,6 +7,12 @@
     <meta name="description" content="{{ __('site.hero.subtitle') }}">
     <meta property="og:title" content="{{ __('site.brand') }} — {{ __('site.hero.title') }}">
     <meta property="og:description" content="{{ __('site.hero.subtitle') }}">
+    <meta property="og:image" content="{{ asset('brand/og-image.png') }}">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" type="image/svg+xml" href="{{ asset('brand/logo.svg') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('brand/favicon-32.png') }}">
+    <link rel="apple-touch-icon" href="{{ asset('brand/apple-touch-icon.png') }}">
     @include('partials.fonts')
     <style>
         :root { --g:#00a86b; --gd:#006b45; --gl:#e9f8f1; --tx:#14201b; --mut:#64727a; --bd:#e6eaed; --bg:#fff; --soft:#f6f9f8; --r:22px; }
@@ -19,6 +25,7 @@
         header { position:sticky; top:0; z-index:20; background:rgba(255,255,255,.85); backdrop-filter:saturate(180%) blur(14px); border-bottom:1px solid rgba(230,234,237,.8); }
         header .container { display:flex; align-items:center; justify-content:space-between; height:68px; gap:16px; }
         .logo { display:flex; align-items:center; gap:10px; font-weight:800; font-size:20px; color:var(--gd); letter-spacing:-.02em; }
+        .logo img { display:block; border-radius:50%; flex:none; }
         .logo i { width:34px; height:34px; border-radius:11px; background:linear-gradient(135deg,var(--g),var(--gd)); display:grid; place-items:center; color:#fff; font-style:normal; font-size:18px; box-shadow:0 6px 14px rgba(0,168,107,.35); }
         nav { display:flex; gap:22px; align-items:center; font-size:15px; }
         nav a:hover { color:var(--g); }
@@ -90,7 +97,7 @@
 <body>
 <header>
     <div class="container">
-        <a class="logo" href="{{ route('site.home', ['lang' => $lang]) }}"><i>@include('site.icon', ['name' => 'arrow', 'size' => 20])</i>{{ __('site.brand') }}</a>
+        <a class="logo" href="{{ route('site.home', ['lang' => $lang]) }}"><img src="{{ asset('brand/logo.svg') }}" width="38" height="38" alt="">{{ __('site.brand') }}</a>
         <nav>
             <span class="links">
                 <a href="#features">{{ __('site.nav.features') }}</a>
