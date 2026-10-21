@@ -47,6 +47,8 @@ return [
     'sms_reminders' => [
         // Eslatma yuboriladigan soat (mahalliy vaqt)
         'send_at' => env('SMS_REMINDER_TIME', '09:00'),
+        // Cron ishlamasa ham: belgilangan vaqtdan keyingi birinchi API so'rovdan so'ng eslatmalar yuboriladi
+        'web_fallback' => (bool) env('SMS_WEB_FALLBACK', true),
         // Muddati o'tgan qarz bo'yicha SMS necha kunda bir takrorlanadi
         'overdue_repeat_days' => (int) env('SMS_OVERDUE_REPEAT_DAYS', 7),
     ],

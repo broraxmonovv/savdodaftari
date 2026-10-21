@@ -5,6 +5,7 @@ use App\Http\Middleware\EnsureAdmin;
 use App\Http\Middleware\EnsureNotBlocked;
 use App\Http\Middleware\EnsureReportRange;
 use App\Http\Middleware\EnsurePlan;
+use App\Http\Middleware\RunDueSmsReminders;
 use App\Http\Middleware\SetLocale;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -26,7 +27,7 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        $middleware->api(prepend: [SetLocale::class]);
+        $middleware->api(prepend: [SetLocale::class], append: [RunDueSmsReminders::class]);
         $middleware->alias(['plan' => EnsurePlan::class, 'admin' => EnsureAdmin::class, 'not_blocked' => EnsureNotBlocked::class, 'report_range' => EnsureReportRange::class]
         );
         // Admin panel: kirmagan foydalanuvchi login sahifasiga yo'naltiriladi

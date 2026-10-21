@@ -209,7 +209,9 @@ class BannerAvatarSmsTest extends TestCase
         $this->artisan('debts:sms-reminders')->assertSuccessful();
 
         $this->assertCount(1, ArraySmsSender::all());
-        $this->assertStringContainsString('Здравствуйте', ArraySmsSender::last()['message']);
+        // Do'kon egasi rus tilida bo'lsa ham mijozga SMS doim o'zbekcha ketadi
+        $this->assertStringContainsString('Assalomu alaykum', ArraySmsSender::last()['message']);
+        $this->assertStringNotContainsString('Здравствуйте', ArraySmsSender::last()['message']);
     }
 
     public function test_uploaded_images_are_served_even_without_storage_link(): void
@@ -232,5 +234,37 @@ class BannerAvatarSmsTest extends TestCase
         $this->get('/media/backups/secret.json')->assertNotFound();
         $this->get('/media/banners/yoq.jpg')->assertNotFound();
         $this->get('/media/banners/../../.env')->assertNotFound();
+    }
+
+    public function test_web_fallback_sends_sms_after_9_without_cron_and_only_once_per_slot(): void
+    {
+        config()->set('savdodaftar.sms_reminders.web_fallback', true);
+        ArraySmsSender::flush();
+
+        $owner = User::factory()->create(['name' => 'Bro', 'shop_name' => 'Do\'kon']);
+        $ali = Customer::factory()->create(['user_id' => $owner->id, 'name' => 'Ali', 'phone' => '+998901112233']);
+        Debt::create(['user_id' => $owner->id, 'customer_id' => $ali->id, 'amount' => 100000, 'paid_amount' => 0,
+            'due_date' => '2026-10-21', 'status' => 'open', 'issued_at' => now()]);
+
+        // 08:30 Toshkent — hali erta, yuborilmaydi
+        $this->travelTo(\Illuminate\Support\Carbon::parse('2026-10-21 08:30', 'Asia/Tashkent'));
+        $this->getJson('/up');
+        $this->get('/api/v1/support')->assertOk();
+        $this->assertCount(0, ArraySmsSender::all());
+
+        // 09:05 — birinchi API so'rovdan so'ng avtomatik yuboriladi (cron shart emas)
+        $this->travelTo(\Illuminate\Support\Carbon::parse('2026-10-21 09:05', 'Asia/Tashkent'));
+        $this->get('/api/v1/support')->assertOk();
+        $this->assertCount(1, ArraySmsSender::all());
+        $this->assertStringContainsString('muddati bugun', ArraySmsSender::last()['message']);
+
+        // Keyingi so'rovlarda takrorlanmaydi
+        $this->get('/api/v1/support')->assertOk();
+        $this->assertCount(1, ArraySmsSender::all());
+
+        // Kechasi (20:00 dan keyin) ishga tushmaydi
+        $this->travelTo(\Illuminate\Support\Carbon::parse('2026-10-22 21:00', 'Asia/Tashkent'));
+        $this->get('/api/v1/support')->assertOk();
+        $this->assertCount(1, ArraySmsSender::all());
     }
 }

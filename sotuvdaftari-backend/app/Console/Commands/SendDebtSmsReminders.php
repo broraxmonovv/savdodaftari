@@ -82,7 +82,7 @@ class SendDebtSmsReminders extends Command
                 'shop' => $owner->shop_name ?: $owner->name,
                 'owner' => $owner->name,
                 'amount' => number_format($amount, 0, '.', ' '),
-            ], $owner->locale ?: 'uz');
+            ], 'uz'); // Mijozlarga SMS doim o'zbek (lotin) tilida ketadi
 
             if ($this->option('dry-run')) {
                 $this->line("{$customer->phone}: {$message}");
