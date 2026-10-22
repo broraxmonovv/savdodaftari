@@ -264,6 +264,10 @@ Yangi foydalanuvchi ro'yxatdan o'tganda **14 kunlik bepul Standart** (savdo va o
 - **ilova ichidagi bildirishnoma + push** (foydalanuvchi tilida, ro'yxat "Bildirishnomalar" bo'limida).
 Foydalanuvchida uzoqroq amal qiladigan boshqa obuna bo'lsa yoki u bloklangan bo'lsa yuborilmaydi. Cron bo'lmasa ham, qarz SMS'lari kabi zaxira yo'l ishlaydi. Sinash: `--dry-run`.
 
+### Google Play tugmasi
+
+Saytning bosh sahifasi va "Yuklab olish" bo'limida Google Play tugmasi bor. Havola `.env` dagi `SITE_APP_ANDROID_URL` dan olinadi (bo'sh bo'lsa tugma xira va "Tez orada" bo'ladi). Rasmiy badge kerak bo'lsa https://play.google.com/intl/en_us/badges/ dan yuklab, `public/brand/google-play-badge.svg` (yoki `.png`) nomi bilan qo'ying: u o'zi ishlatiladi. iOS uchun `SITE_APP_IOS_URL`.
+
 ### Shrift
 
 Sayt va admin panel ilovadagi **Inter** shrifti bilan ko'rinadi. Shrift tashqi CDN'dan emas, `public/fonts/inter/` dan beriladi (SIL OFL litsenziyasi, `LICENSE.txt`): lotin, lotin-kengaytma (o', g'), kirill va kirill-kengaytma (ў, қ, ғ, ҳ). Ulash: `@include('partials.fonts')`. PDF eksport DejaVu Sans'da qoladi (dompdf WOFF2 ni qo'llamaydi).

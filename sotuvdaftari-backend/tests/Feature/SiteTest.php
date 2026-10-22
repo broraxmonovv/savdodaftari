@@ -51,7 +51,10 @@ class SiteTest extends TestCase
         // Yuklab olish tugmalari faqat havola berilganda
         $this->get('/?lang=uz')->assertDontSee('Android uchun');
         config()->set('savdodaftar.site.android_url', 'https://play.google.com/store/apps/details?id=x');
-        $this->get('/')->assertSee('Android uchun');
+        $this->get('/')->assertSee('Android uchun')
+            ->assertSee('class="play-badge', false)
+            ->assertSee('href="https://play.google.com/store/apps/details?id=x"', false)
+            ->assertSee('id="download"', false);
     }
 
     public function test_lead_form_saves_normalized_phone_and_deduplicates(): void

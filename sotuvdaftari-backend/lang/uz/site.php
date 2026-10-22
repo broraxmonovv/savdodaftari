@@ -2,7 +2,7 @@
 
 return [
     'brand' => 'Savdo Up',
-    'nav' => ['features' => 'Imkoniyatlar', 'plans' => 'Tariflar', 'faq' => 'Savol-javob', 'contact' => 'Ariza qoldirish'],
+    'nav' => ['features' => 'Imkoniyatlar', 'plans' => 'Tariflar', 'faq' => 'Savol-javob', 'download' => 'Yuklab olish', 'contact' => 'Ariza qoldirish'],
     'hero' => [
         'title' => 'Bozorchi uchun telefon ichidagi aqlli daftar',
         'subtitle' => 'Qarz, mijoz, savdo, ombor va xarajatlarni qog\'oz daftarsiz, 2–3 bosishda yuriting. Foyda va qarzlaringiz doim ko\'z oldingizda.',
@@ -21,6 +21,10 @@ return [
             ['icon' => 'mic', 'title' => 'Ovozli boshqaruv va AI', 'text' => '"Ali akaga 150 ming qarz yoz" deb ayting — ilova o\'zi yozadi (Pro).'],
             ['icon' => 'exchange', 'title' => 'Kurslar va kalkulyator', 'text' => 'Markaziy bank kurslari va har sahifada turadigan kalkulyator.'],
         ],
+    ],
+    'download' => [
+        'title' => 'Ilovani hoziroq yuklab oling',
+        'text' => 'Savdo Up Android telefonlar uchun Google Play orqali yuklab olinadi. Yangi foydalanuvchilarga dastlabki 14 kun Standart tarif sovg\'a: savdo va ombor bo\'limlari bepul.',
     ],
     'steps' => [
         'title' => 'Qanday boshlanadi',

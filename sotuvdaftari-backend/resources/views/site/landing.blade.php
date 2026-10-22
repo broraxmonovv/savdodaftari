@@ -58,6 +58,21 @@
         .chip.a { left:-48px; top:22%; } .chip.b { right:-40px; bottom:26%; animation-delay:-3s; }
         @keyframes float { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-10px); } }
         @media (prefers-reduced-motion:reduce) { .chip { animation:none; } html { scroll-behavior:auto; } }
+        .play-badge { display:inline-flex; align-items:center; gap:12px; background:#0b0f0d; color:#fff; border-radius:14px; padding:9px 20px 9px 16px; border:1px solid #2a3330; text-decoration:none; transition:transform .15s, box-shadow .15s; box-shadow:0 8px 22px rgba(0,0,0,.18); }
+        a.play-badge:hover { transform:translateY(-2px); box-shadow:0 14px 28px rgba(0,0,0,.24); }
+        .play-badge span { display:flex; flex-direction:column; line-height:1.1; text-align:left; }
+        .play-badge small { font-size:11px; letter-spacing:.04em; opacity:.85; text-transform:uppercase; }
+        .play-badge b { font-size:22px; letter-spacing:-.01em; font-weight:600; }
+        .play-badge.soon { opacity:.78; cursor:default; }
+        .play-official { display:inline-flex; position:relative; } .play-official img { display:block; height:56px; width:auto; }
+        .play-official.soon { opacity:.78; } .play-official em { position:absolute; right:-6px; top:-10px; background:var(--g); color:#fff; font-style:normal; font-size:11px; font-weight:700; padding:2px 8px; border-radius:999px; }
+        .download { position:relative; overflow:hidden; border-radius:28px; background:linear-gradient(135deg,var(--gd),var(--g)); color:#fff; padding:48px 40px; display:grid; grid-template-columns:1.3fr .7fr; gap:32px; align-items:center; }
+        .download::after { content:''; position:absolute; width:340px; height:340px; right:-90px; top:-140px; border-radius:50%; background:rgba(255,255,255,.12); }
+        .download h2 { text-align:left; color:#fff; margin:0 0 10px; } .download p { margin:0 0 24px; opacity:.94; font-size:17px; max-width:520px; position:relative; z-index:1; }
+        .download .actions { display:flex; gap:14px; flex-wrap:wrap; align-items:center; position:relative; z-index:1; }
+        .download .logo-big { justify-self:center; width:min(210px,50vw); position:relative; z-index:1; filter:drop-shadow(0 20px 30px rgba(0,0,0,.28)); }
+        .download .btn.ghost { background:rgba(255,255,255,.14); color:#fff; border:1px solid rgba(255,255,255,.35); }
+        @media (max-width:760px) { .download { grid-template-columns:1fr; padding:36px 24px; text-align:left; } .download .logo-big { display:none; } }
         section { padding:84px 0; }
         section.alt { background:var(--soft); }
         .eyebrow { display:block; text-align:center; color:var(--g); font-weight:700; font-size:13px; letter-spacing:.12em; text-transform:uppercase; margin-bottom:10px; }
@@ -102,6 +117,7 @@
             <span class="links">
                 <a href="#features">{{ __('site.nav.features') }}</a>
                 <a href="#plans">{{ __('site.nav.plans') }}</a>
+                <a href="#download">{{ __('site.nav.download') }}</a>
                 <a href="#faq">{{ __('site.nav.faq') }}</a>
             </span>
             <span class="lang">
@@ -120,7 +136,7 @@
                 <h1>{{ __('site.hero.title') }}</h1>
                 <p class="lead">{{ __('site.hero.subtitle') }}</p>
                 <div class="cta">
-                    @if($site['android_url'])<a class="btn" href="{{ $site['android_url'] }}">@include('site.icon', ['name' => 'play', 'size' => 16]) {{ __('site.hero.android') }}</a>@endif
+                    @include('site.play-badge', ['url' => $site['android_url'], 'lang' => $lang])
                     @if($site['ios_url'])<a class="btn" href="{{ $site['ios_url'] }}">@include('site.icon', ['name' => 'phone', 'size' => 16]) {{ __('site.hero.ios') }}</a>@endif
                     <a class="btn {{ ($site['android_url'] || $site['ios_url']) ? 'ghost' : '' }}" href="#contact">{{ __('site.hero.cta_request') }}</a>
                 </div>
@@ -162,6 +178,23 @@
                 @foreach(__('site.steps.items') as $i => $step)
                     <div class="step"><div class="n">{{ $i + 1 }}</div><h3>{{ $step['title'] }}</h3><p style="color:var(--mut);margin:0">{{ $step['text'] }}</p></div>
                 @endforeach
+            </div>
+        </div>
+    </section>
+
+    <section id="download">
+        <div class="container">
+            <div class="download">
+                <div>
+                    <h2>{{ __('site.download.title') }}</h2>
+                    <p>{{ __('site.download.text') }}</p>
+                    <div class="actions">
+                        @include('site.play-badge', ['url' => $site['android_url'], 'lang' => $lang])
+                        @if($site['ios_url'])<a class="btn ghost" href="{{ $site['ios_url'] }}">@include('site.icon', ['name' => 'phone', 'size' => 16]) {{ __('site.hero.ios') }}</a>@endif
+                        <a class="btn ghost" href="#contact">{{ __('site.hero.cta_request') }}</a>
+                    </div>
+                </div>
+                <img class="logo-big" src="{{ asset('brand/logo.svg') }}" alt="{{ __('site.brand') }}" width="210" height="210">
             </div>
         </div>
     </section>
